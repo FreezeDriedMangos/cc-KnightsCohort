@@ -169,5 +169,44 @@ namespace KnightsCohort
             //registry.RegisterArtifact(antiqueMotor);
 
         }
+
+        public void LoadManifest(IStoryRegistry storyRegistry)
+        {
+            storyRegistry.RegisterStory(new ExternalStory(
+                "clay.KnightsCohort.Honorable_Win",
+                node: new StoryNode()
+                {
+                    type = Enum.Parse<NodeType>("event"),
+                    never = true,
+                    oncePerCombat = true,
+                },
+                instructions: new List<object>()
+                {
+                    new ExternalStory.ExternalSaySwitch(new()
+                    {
+                        new ExternalStory.ExternalSay()
+                        {
+                            Who="comp",
+                            What="Goodbye!"
+                        },
+                        new ExternalStory.ExternalSay()
+                        {
+                            Who="comp",
+                            What="Good fight!"
+                        },
+                        new ExternalStory.ExternalSay()
+                        {
+                            Who="comp",
+                            What="See ya later!"
+                        },
+                        new ExternalStory.ExternalSay()
+                        {
+                            Who="comp",
+                            What="See you next loop I guess!"
+                        }
+                    })
+                }
+            ));
+        }
     }
 }
