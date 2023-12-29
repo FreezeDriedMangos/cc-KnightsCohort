@@ -43,13 +43,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="sprites\cards\*">
+    <None Update="sprites\*\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="sprites\character\*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="sprites\icons\*">
+    <None Update="sprites\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
