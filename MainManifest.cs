@@ -3,6 +3,7 @@ using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
+using KnightsCohort.Knight.Cards;
 using shockah;
 
 namespace KnightsCohort
@@ -24,8 +25,8 @@ namespace KnightsCohort
         public static Dictionary<string, ExternalCard> cards = new Dictionary<string, ExternalCard>();
         public static Dictionary<string, ExternalStatus> statuses = new Dictionary<string, ExternalStatus>();
         public static Dictionary<string, ExternalGlossary> glossary = new Dictionary<string, ExternalGlossary>();
-        public static ExternalCharacter character;
-        public static ExternalDeck deck;
+        public static Dictionary<string, ExternalDeck> decks = new Dictionary<string, ExternalDeck>();
+        public static Dictionary<string, ExternalCharacter> characters = new Dictionary<string, ExternalCharacter>();
 
         public void BootMod(IModLoaderContact contact)
         {
@@ -40,7 +41,22 @@ namespace KnightsCohort
         public void LoadManifest(ISpriteRegistry artRegistry)
         {
             var filenames = new string[] {
-                "icons/honor"
+                "icons/honor",
+
+                "character/knight_neutral_0",
+                "character/knight_neutral_1",
+                "character/knight_neutral_2",
+
+                "frame_knight",
+                "card_default_knight",
+                "char_frame_knight",
+
+                "midrow/sword",
+                "midrow/dagger",
+
+                "icons/missile_sword",
+                "icons/missile_dagger",
+                "icons/vow_of_mercy",
             };
 
             foreach (var filename in filenames) {
@@ -60,7 +76,8 @@ namespace KnightsCohort
             var namePrefix = Name + ".cards.";
             var cardDefinitions = new ExternalCard[]
             {
-                //new ExternalCard(namePrefix + "Mutual Gain", typeof(MutualGain), sprites["cards/Mutual_Gain"], deck),
+                new ExternalCard(namePrefix + "Fighting Chance", typeof(FightingChance), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Offhand Weapon", typeof(OffhandWeapon), sprites["card_default_knight"], decks["knight"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -74,74 +91,69 @@ namespace KnightsCohort
 
         public void LoadManifest(IDeckRegistry registry)
         {
-            //var sirRatzoColor = 0;
-            //unchecked { sirRatzoColor = (int)0xffbe9821; }
+            var knightColor = 0;
+            unchecked { knightColor = (int)0xffbe9821; }
 
-            //deck = new ExternalDeck(
-            //    Name + ".deck.SirRatzo",
-            //    System.Drawing.Color.FromArgb(sirRatzoColor),
-            //    System.Drawing.Color.Black,
-            //    null, //sprites["cards/Sabotage"], // TODO
-            //    null, //sprites["cards/Card_Border"], // TODO
-            //    null
-            //);
-            //if (!registry.RegisterDeck(deck)) throw new Exception("Sir Ratzo has taken his deck on a quest, cannot proceeed.");
+            decks["knight"] = new ExternalDeck(
+                Name + ".deck.Knight",
+                System.Drawing.Color.FromArgb(knightColor),
+                System.Drawing.Color.Black,
+                sprites["card_default_knight"],
+                sprites["frame_knight"],
+                null
+            );
+            if (!registry.RegisterDeck(decks["knight"])) throw new Exception("Sir Ratzo has taken his deck on a quest, cannot proceeed.");
         }
 
         public void LoadManifest(ICharacterRegistry registry)
         {
-            ////var realStartingCards = new Type[] { typeof(OverdriveMod), typeof(RecycleParts) };
-            //// TODO: initialize realStartingCards like above
-            //var realStartingCards = new Type[] { };
-            //var allCards = cards.Values.Select(card => card.CardType).ToList();
+            characters["knight"] = new ExternalCharacter(
+                Name + ".Knight",
+                decks["knight"],
+                sprites["char_frame_knight"],
+                new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.OffhandWeapon) },
+                new Type[0],
+                animations["knight_neutral"],
+                animations["knight_mini"]
+            );
 
-            //character = new ExternalCharacter(
-            //    Name + ".SirRatzo",
-            //    deck,
-            //    null, //sprites["character/tucker_border"], // TODO
-            //    realStartingCards,
-            //    new Type[0],
-            //    animations["sirratzo_neutral"],
-            //    animations["sirratzo_mini"]
-            //);
+            characters["knight"].AddNameLocalisation("Sir Ratzo");
+            // TODO: write the description
+            characters["knight"].AddDescLocalisation("<c=be9821>Sir Ratzo</c>\nSir Ratzo! <c=keyword>honor</c> and <c=keyword>vows</c>.");
 
-            //character.AddNameLocalisation("Sir Ratzo");
-            //// TODO: write the description
-            //character.AddDescLocalisation("<c=be9821>Sir Ratzo</c>\nSir Ratzo! <c=keyword>honor</c> and <c=keyword>vows</c>.");
-
-            //if (!registry.RegisterCharacter(character)) throw new Exception("Sir Ratzo is lost! Could not register Sir Ratzo!");
+            if (!registry.RegisterCharacter(characters["knight"])) throw new Exception("Sir Ratzo is lost! Could not register Sir Ratzo!");
         }
 
         public void LoadManifest(IAnimationRegistry registry)
         {
-            //var animationInfo = new Dictionary<string, IEnumerable<ExternalSprite>>();
-            //// these are the required animations
-            //animationInfo["sirratzo_neutral"] = new ExternalSprite[] { sprites["character/tucker_neutral_1"], sprites["character/tucker_neutral_2"], sprites["character/tucker_neutral_3"], sprites["character/tucker_neutral_4"] };
-            //animationInfo["sirratzo_squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
-            //animationInfo["sirratzo_gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
-            //animationInfo["sirratzo_mini"] = new ExternalSprite[] { sprites["character/mini_tucker"] };
+            var animationInfo = new Dictionary<string, IEnumerable<ExternalSprite>>();
+            // these are the required animations
+            animationInfo["knight_neutral"] = new ExternalSprite[] { sprites["character/knight_neutral_0"], sprites["character/knight_neutral_1"], sprites["character/knight_neutral_2"] };
+            //animationInfo["knight_squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
+            //animationInfo["knight_gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
+            //animationInfo["knight_mini"] = new ExternalSprite[] { sprites["character/mini_tucker"] };
 
-            //foreach (var kvp in animationInfo)
-            //{
-            //    var animation = new ExternalAnimation(
-            //        Name+".animations."+kvp.Key,
-            //        deck,
-            //        kvp.Key,
-            //        false,
-            //        kvp.Value
-            //    );
-            //    animations[kvp.Key] = animation;
+            foreach (var kvp in animationInfo)
+            {
+                var animation = new ExternalAnimation(
+                    Name + ".animations." + kvp.Key,
+                    decks["knight"],
+                    kvp.Key,
+                    false,
+                    kvp.Value
+                );
+                animations[kvp.Key] = animation;
 
-            //    if (!registry.RegisterAnimation(animation)) throw new Exception("Error registering animation " + kvp.Key);
-            //}
+                if (!registry.RegisterAnimation(animation)) throw new Exception("Error registering animation " + kvp.Key);
+            }
         }
 
         public void LoadManifest(IGlossaryRegisty registry)
         {
-            //RegisterGlossaryEntry(registry, "AReplay", sprites["icons/Replay"],
-            //    "play twice",
-            //    "Play all actions prior to the Play Twice action twice."
-            //);
+            RegisterGlossaryEntry(registry, "missile_dagger", sprites["icons/Replay"],
+                "DAGGER",
+                "This missile is going to deal <c=damage>{0}</c> damage."
+            );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description)
         {
@@ -156,10 +168,15 @@ namespace KnightsCohort
             var honorColor = 0;
             unchecked { honorColor = (int)0xfff1c442; }
 
-            var honor = new ExternalStatus(Name + ".statuses.honor", true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/honor"], false);
-            statusRegistry.RegisterStatus(honor);
-            honor.AddLocalisation("Honor", "Once your honor has matched the opponent's remaining hull and shield, they will flee the battle, leaving you victorious.");
-            statuses["honor"] = honor;
+            var status = "honor";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/honor"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation(status, "Once your honor has matched the opponent's remaining hull and shield, they will flee the battle, leaving you victorious.");
+
+            status = "vowOfMercy";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mercy"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Mercy", "At the end of your turn, if you have not attacked this turn, gain 1 honor. Lose 1 Vow of Mercy.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)
