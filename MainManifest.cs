@@ -3,6 +3,7 @@ using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
+using KnightsCohort.Knight;
 using KnightsCohort.Knight.Cards;
 using Microsoft.Extensions.Logging;
 using shockah;
@@ -52,14 +53,16 @@ namespace KnightsCohort
                 "card_default_knight",
                 "char_frame_knight",
 
-                "midrow/sword",
+                //"midrow/sword", // sprite exits in banilla
                 "midrow/dagger",
+                "midrow/excalibur",
 
-                "icons/missile_sword",
+                //"icons/missile_sword", // sprite exists in vanilla
                 "icons/missile_dagger",
+                "icons/missile_excalibur",
                 "icons/vow_of_mercy",
                 "icons/vow_of_adamancy",
-                "vow_of_adamancy",
+                "icons/vow_of_teamwork",
             };
 
             foreach (var filename in filenames) {
@@ -81,6 +84,13 @@ namespace KnightsCohort
             {
                 new ExternalCard(namePrefix + "Fighting Chance", typeof(FightingChance), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Offhand Weapon", typeof(OffhandWeapon), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Claymore", typeof(Claymore), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Footwork", typeof(Footwork), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Unmoving Faith", typeof(UnmovingFaith), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Fix Your Form", typeof(FixYourForm), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Excalibur", typeof(Excalibur), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Teamwork", typeof(Teamwork), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Cheap Shot", typeof(CheapShot), sprites["card_default_knight"], decks["knight"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -153,9 +163,17 @@ namespace KnightsCohort
 
         public void LoadManifest(IGlossaryRegisty registry)
         {
-            RegisterGlossaryEntry(registry, "missiledagger", sprites["icons/missile_dagger"],
+            RegisterGlossaryEntry(registry, "missileDagger", sprites["icons/missile_dagger"],
                 "DAGGER",
                 "This missile is going to deal <c=damage>{0}</c> damage."
+            );
+            RegisterGlossaryEntry(registry, "missileSword", sprites["icons/missile_dagger"],
+                "SWORD",
+                "This missile is going to deal <c=damage>{0}</c> damage."
+            );
+            RegisterGlossaryEntry(registry, "missileExcalibur", sprites["icons/missile_excalibur"],
+                "EXCALIBUR",
+                "This missile is going to deal <c=damage>{0}</c> damage, piercing shields and armor."
             );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description)
@@ -180,11 +198,16 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mercy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Vow of Mercy", "At the end of your turn, if you have not attacked this turn, gain 1 honor. Lose 1 Vow of Mercy.");
-            
+
             status = "vowOfAdamancy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_adamancy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Adamancy", "If you move by any effect, lose 1 Honor and 1 Vow of Adamancy.");
+            statuses[status].AddLocalisation("Vow of Adamancy", $"If you move by any effect, lose {VowsController.VOW_OF_ADAMANCY_HONOR} Honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfTeamwork";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_teamwork"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Teamwork", $"If you play two or more cards from the same crew member in one turn, lose {VowsController.VOW_OF_TEAMWORK_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)

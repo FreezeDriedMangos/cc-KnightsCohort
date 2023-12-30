@@ -12,6 +12,7 @@ namespace KnightsCohort.Knight
     {
         public static readonly int VOW_OF_MERCY_HONOR = 1;
         public static readonly int VOW_OF_ADAMANCY_HONOR = 1;
+        public static readonly int VOW_OF_TEAMWORK_HONOR = 3;
 
 
         //
@@ -19,6 +20,13 @@ namespace KnightsCohort.Knight
         //
 
         private static int previousX = 0;
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
+        public static void HarmonyPostfix_VowOfAdamancy_Cleanup(G g, State s, Combat c)
+        {
+            previousX = 0; // cleanup for second combat
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrainCardActions))]
@@ -46,6 +54,13 @@ namespace KnightsCohort.Knight
 
         static bool attackedThisTurn = false;
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
+        public static void HarmonyPostfix_VowOfMercy_Cleanup(G g, State s, Combat c)
+        {
+            // to handle player gaining Vow of Mercy on the first turn of combat, when the previous combat ended with them attacking
+            attackedThisTurn = false;
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AAfterPlayerTurn), nameof(AAfterPlayerTurn.Begin))]
@@ -75,5 +90,60 @@ namespace KnightsCohort.Knight
                 attackedThisTurn = true;
             }
         }
+
+        //
+        // Vow of Teamwork
+        //
+
+        static HashSet<Deck> cardColorsPlayedThisTurn = new();
+        static bool hasBrokenTeamworkVow = false;
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
+        public static void HarmonyPostfix_VowOfTeamwork_Cleanup(G g, State s, Combat c)
+        {
+            if (hasBrokenTeamworkVow) // check to see if we missed breaking the vow
+            {
+                var teamworkStacks = s.ship.Get((Status)MainManifest.statuses["vowOfTeamwork"].Id);
+                var honor = s.ship.Get((Status)MainManifest.statuses["honor"].Id);
+                s.ship.Set((Status)MainManifest.statuses["honor"].Id, honor - VOW_OF_TEAMWORK_HONOR * teamworkStacks);
+                s.ship.Set((Status)MainManifest.statuses["vowOfTeamwork"].Id, 0);
+            }
+            cardColorsPlayedThisTurn.Clear();
+            hasBrokenTeamworkVow = false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void HarmonyPostfix_VowOfTeamwork_Enforcement(ref bool __result, State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            if (!__result) return;
+            var teamworkStacks = s.ship.Get((Status)MainManifest.statuses["vowOfTeamwork"].Id);
+
+            var deck = card.GetMeta().deck;
+            if (!NewRunOptions.allChars.Contains(deck)) return; // don't prevent player from playing trash or things like Spent Casings from that one custom ship
+
+            if (cardColorsPlayedThisTurn.Contains(deck) || hasBrokenTeamworkVow) // check to see if we've just broken the vow or if we already have
+            {
+                if (teamworkStacks > 0)
+                {
+                    var honor = s.ship.Get((Status)MainManifest.statuses["honor"].Id);
+                    s.ship.Set((Status)MainManifest.statuses["honor"].Id, honor - VOW_OF_TEAMWORK_HONOR * teamworkStacks);
+                    s.ship.Set((Status)MainManifest.statuses["vowOfTeamwork"].Id, 0);
+                    hasBrokenTeamworkVow = false;
+                } 
+                else
+                {
+                    hasBrokenTeamworkVow = true;
+                }
+            }
+
+            cardColorsPlayedThisTurn.Add(deck);
+        }
+
+        //
+        // Vow of Left/Right
+        //
     }
 }
