@@ -28,17 +28,6 @@ namespace KnightsCohort.Knight.Midrow
         // set this.skin
         static Dagger()
         {
-            Missile.missileData.Add(
-                MissileTypeExtender.Get("dagger"),
-                new Missile.MissileMetadata()
-                {
-                    key = "missile_dagger",
-                    exhaustColor = new Color("cc33ff"),
-                    icon = (Spr)MainManifest.sprites["icons/missile_dagger"].Id,
-                    baseDamage = 1
-                }
-            );
-
             DB.drones["missile_dagger"] = (Spr)MainManifest.sprites["midrow/dagger"].Id;
         }
         public Dagger()
@@ -47,12 +36,22 @@ namespace KnightsCohort.Knight.Midrow
             base.missileType = MissileTypeExtender.Get("dagger");
         }
 
+        // to circumvent missileData
+        public override Spr? GetIcon()
+        {
+            return (Spr)MainManifest.sprites["icons/missile_dagger"].Id;
+        }
+
+        public override string GetDialogueTag()
+        {
+            return "missile_dagger";
+        }
 
         public override List<Tooltip> GetTooltips()
         {
             List<Tooltip> tooltips = new List<Tooltip>()
             {
-                new TTGlossary(MainManifest.glossary["missile_dagger"].Head, Missile.missileData[this.missileType].baseDamage)
+                new TTGlossary(MainManifest.glossary["missiledagger"].Head, 1)
                 {
                     flipIconY = base.targetPlayer
                 }
@@ -63,6 +62,19 @@ namespace KnightsCohort.Knight.Midrow
                 tooltips.Add(new TTGlossary("midrow.bubbleShield"));
             }
             return tooltips;
+        }
+
+        public override List<CardAction>? GetActions(State s, Combat c)
+        {
+            return new List<CardAction>()
+            {
+                new AMissileHit
+                {
+                    worldX = x,
+                    outgoingDamage = 1,
+                    targetPlayer = targetPlayer
+                }
+            };
         }
     }
 }
