@@ -4,6 +4,7 @@ using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
 using KnightsCohort.Knight.Cards;
+using Microsoft.Extensions.Logging;
 using shockah;
 
 namespace KnightsCohort
@@ -57,6 +58,8 @@ namespace KnightsCohort
                 "icons/missile_sword",
                 "icons/missile_dagger",
                 "icons/vow_of_mercy",
+                "icons/vow_of_adamancy",
+                "vow_of_adamancy",
             };
 
             foreach (var filename in filenames) {
@@ -113,8 +116,8 @@ namespace KnightsCohort
                 sprites["char_frame_knight"],
                 new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.OffhandWeapon) },
                 new Type[0],
-                animations["knight_neutral"],
-                animations["knight_mini"]
+                animations["neutral"],
+                animations["mini"]
             );
 
             characters["knight"].AddNameLocalisation("Sir Ratzo");
@@ -128,10 +131,10 @@ namespace KnightsCohort
         {
             var animationInfo = new Dictionary<string, IEnumerable<ExternalSprite>>();
             // these are the required animations
-            animationInfo["knight_neutral"] = new ExternalSprite[] { sprites["character/knight_neutral_0"], sprites["character/knight_neutral_1"], sprites["character/knight_neutral_2"] };
-            //animationInfo["knight_squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
-            //animationInfo["knight_gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
-            //animationInfo["knight_mini"] = new ExternalSprite[] { sprites["character/mini_tucker"] };
+            animationInfo["neutral"] = new ExternalSprite[] { sprites["character/knight_neutral_0"], sprites["character/knight_neutral_1"], sprites["character/knight_neutral_2"] };
+            //animationInfo["squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
+            //animationInfo["gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
+            animationInfo["mini"] = new ExternalSprite[] { sprites["character/knight_neutral_0"] };
 
             foreach (var kvp in animationInfo)
             {
@@ -150,7 +153,7 @@ namespace KnightsCohort
 
         public void LoadManifest(IGlossaryRegisty registry)
         {
-            RegisterGlossaryEntry(registry, "missile_dagger", sprites["icons/Replay"],
+            RegisterGlossaryEntry(registry, "missiledagger", sprites["icons/missile_dagger"],
                 "DAGGER",
                 "This missile is going to deal <c=damage>{0}</c> damage."
             );
@@ -160,7 +163,7 @@ namespace KnightsCohort
             var entry = new ExternalGlossary(Name + ".Glossary." + itemName, itemName, false, ExternalGlossary.GlossayType.action, sprite);
             entry.AddLocalisation("en", displayName, description);
             registry.RegisterGlossary(entry);
-            glossary[entry.ItemName] = entry;
+            glossary[itemName] = entry;
         }
 
         public void LoadManifest(IStatusRegistry statusRegistry)
@@ -177,6 +180,11 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mercy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Vow of Mercy", "At the end of your turn, if you have not attacked this turn, gain 1 honor. Lose 1 Vow of Mercy.");
+            
+            status = "vowOfAdamancy";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_adamancy"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Adamancy", "If you move by any effect, lose 1 Honor and 1 Vow of Adamancy.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)
