@@ -15,7 +15,7 @@ namespace KnightsCohort
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrainCardActions))]
-        public static void HarmonyPostfix_Combat_DrainCardActions(Combat __instance, G g)
+        public static void HarmonyPostfix_HonorableWinCheck(Combat __instance, G g)
         {
             bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
             if (!actionJustEnded) return;
@@ -38,7 +38,7 @@ namespace KnightsCohort
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.RenderHealthBar))]
-        public static void HarmonyPostfix_Ship_RenderHealthBar(Ship __instance, G g, bool isPreview, string keyPrefix)
+        public static void HarmonyPostfix_RenderHonorOnOpponentHealthBar(Ship __instance, G g, bool isPreview, string keyPrefix)
         {
             if (g.state.route is Combat c)
             {
