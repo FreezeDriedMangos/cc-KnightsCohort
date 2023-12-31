@@ -12,6 +12,7 @@ namespace KnightsCohort
 {
     public class MainManifest : IModManifest, ISpriteManifest, ICardManifest, ICharacterManifest, IDeckManifest, IAnimationManifest, IGlossaryManifest, IStatusManifest, IArtifactManifest, IStoryManifest
     {
+        public static readonly string MOD_NAMESPACE = "clay.KnightsCohort";
         public static MainManifest Instance;
 
         public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[0];
@@ -20,7 +21,7 @@ namespace KnightsCohort
         public Microsoft.Extensions.Logging.ILogger? Logger { get; set; }
         public DirectoryInfo? ModRootFolder { get; set; }
 
-        public string Name => "clay.KnightsCohort";
+        public string Name => MOD_NAMESPACE;
 
         public static Dictionary<string, ExternalSprite> sprites = new Dictionary<string, ExternalSprite>();
         public static Dictionary<string, ExternalAnimation> animations = new Dictionary<string, ExternalAnimation>();
@@ -60,9 +61,17 @@ namespace KnightsCohort
                 //"icons/missile_sword", // sprite exists in vanilla
                 "icons/missile_dagger",
                 "icons/missile_excalibur",
+                "icons/oathbreaker",
                 "icons/vow_of_mercy",
                 "icons/vow_of_adamancy",
                 "icons/vow_of_teamwork",
+                "icons/vow_of_action",
+                "icons/vow_of_courage", 
+                "icons/vow_of_left",    
+                "icons/vow_of_right",   
+                "icons/vow_of_chivalry",
+                "icons/vow_of_rest",
+                "icons/vow_of_mega_rest",
             };
 
             foreach (var filename in filenames) {
@@ -91,6 +100,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Excalibur", typeof(Excalibur), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Teamwork", typeof(Teamwork), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Cheap Shot", typeof(CheapShot), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Honorable Strike", typeof(HonorableStrike), sprites["card_default_knight"], decks["knight"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -192,7 +202,12 @@ namespace KnightsCohort
             var status = "honor";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/honor"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation(status, "Once your honor has matched the opponent's remaining hull and shield, they will flee the battle, leaving you victorious.");
+            statuses[status].AddLocalisation("Honor", "Once your honor has matched the opponent's remaining hull and shield, they will flee the battle, leaving you victorious.");
+
+            status = "oathbreaker";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/oathbreaker"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Oathbreaker", "Whenever you lose honor, gain an equal amount of temp shield.");
 
             status = "vowOfMercy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mercy"], false);
@@ -208,6 +223,41 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_teamwork"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Vow of Teamwork", $"If you play two or more cards from the same crew member in one turn, lose {VowsController.VOW_OF_TEAMWORK_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfAction";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_action"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Action", $"If you gain shield by any effect, lose {VowsController.VOW_OF_ACTION_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfCourage";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_courage"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Courage", $"If you are hit by the opponent's cannons, gain {VowsController.VOW_OF_COURAGE_HONOR} honor for each stack of this vow. Lose 1 stack of this vow at the start of your turn.");
+
+            status = "vowOfLeft";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_left"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of the Left Hand", $"If you move right by any effect or play your rightmost card, lose {VowsController.VOW_OF_LEFT_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfRight";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_right"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of the Right Hand", $"If you move left by any effect or play your leftmost card, lose {VowsController.VOW_OF_RIGHT_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfChivalry";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_chivalry"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Chivalry", $"If you are hit in a weak or brittle part by a drone or cannon, gain {VowsController.VOW_OF_CHIVALRY_HONOR} honor for each stack of this vow, and lose 1 stack of this vow. If you hit your opponent in a weak or brittle spot with a drone or your cannon, lose {VowsController.VOW_OF_CHIVALRY_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfRest";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_rest"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Rest", $"If end your turn with less than 1 energy, lose {VowsController.VOW_OF_REST_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            
+            status = "vowOfMegaRest";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mega_rest"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Mega Rest", $"If end your turn with less than 2 energy, lose {VowsController.VOW_OF_MEGA_REST_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)
