@@ -1,4 +1,9 @@
-﻿using KnightsCohort.Knight.Midrow;
+﻿using CobaltCoreModding.Definitions;
+using CobaltCoreModding.Definitions.ExternalItems;
+using CobaltCoreModding.Definitions.ModContactPoints;
+using CobaltCoreModding.Definitions.ModManifests;
+using KnightsCohort.Knight.Midrow;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -173,6 +178,78 @@ namespace KnightsCohort.Knight.Cards
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfTeamwork"].Id, statusAmount = 1, targetPlayer = true },
                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_TEAMWORK_HONOR, targetPlayer = true },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, exhaust = true };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class HonorableStrike : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+               new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
+               new AAttack() { damage = GetDmg(s, s.ship.Get((Status)MainManifest.statuses["honor"].Id)), xHint = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 3 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class FinancialAdvice : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            var vowName = base.upgrade switch
+            {
+                Upgrade.None => "vowOfPoverty",
+                Upgrade.A => "vowOfAffluence",
+                Upgrade.B => "vowOfMiddlingIncome",
+                _ => throw new Exception("Card was upgraded to an upgrade that doesn't exist!"),
+            };
+
+            var honor = base.upgrade switch
+            {
+                Upgrade.None => VowsController.VOW_OF_POVERTY_HONOR,
+                Upgrade.A => VowsController.VOW_OF_AFFLUENCE_HONOR,
+                Upgrade.B => VowsController.VOW_OF_MIDDLING_INCOME_HONOR,
+                _ => throw new Exception("Card was upgraded to an upgrade that doesn't exist!"),
+            };
+
+            return new()
+            {
+               new AStatus() { status = (Status)MainManifest.statuses[vowName].Id, statusAmount = 1, targetPlayer = true },
+               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = honor, targetPlayer = true },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, exhaust = true };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class KnightsRest : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+               new AStatus() { status = (Status)MainManifest.statuses["vowOfRest"].Id, statusAmount = 1, targetPlayer = true },
+               new AStatus() 
+               { 
+                   status = (Status)MainManifest.statuses["honor"].Id, 
+                   statusAmount = base.upgrade == Upgrade.A ? VowsController.VOW_OF_REST_HONOR+1 : VowsController.VOW_OF_REST_HONOR, 
+                   targetPlayer = true 
+               },
             };
         }
         public override CardData GetData(State state)
