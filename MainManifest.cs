@@ -72,6 +72,9 @@ namespace KnightsCohort
                 "icons/vow_of_chivalry",
                 "icons/vow_of_rest",
                 "icons/vow_of_mega_rest",
+                "icons/vow_of_poverty",
+                "icons/vow_of_middling_income",
+                "icons/vow_of_affluence",
             };
 
             foreach (var filename in filenames) {
@@ -269,6 +272,21 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mega_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Vow of Mega Rest", $"If end your turn with less than 2 energy, lose {VowsController.VOW_OF_MEGA_REST_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfPoverty";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_poverty"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Poverty", $"If you play a card that costs 0 energy, lose {VowsController.VOW_OF_POVERTY_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfMiddlingIncome";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_middling_income"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Middling Income", $"If you play a card that costs 1 energy, lose {VowsController.VOW_OF_MIDDLING_INCOME_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            status = "vowOfAffluence";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_affluence"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Vow of Affluence", $"If you play a card that costs 2 energy, lose {VowsController.VOW_OF_AFFLUENCE_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)

@@ -321,8 +321,8 @@ namespace KnightsCohort.Knight.Cards
             bool disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0;
             return new()
             {
-                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -1 },
-                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1 },
+                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -1, targetPlayer = true },
+                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -338,8 +338,8 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_LEFT_HONOR },
-                new AStatus() { status = (Status)MainManifest.statuses["vowOfLeft"].Id, statusAmount = 1 },
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_LEFT_HONOR, targetPlayer = true },
+                new AStatus() { status = (Status)MainManifest.statuses["vowOfLeft"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -355,7 +355,7 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["oathbreaker"].Id, statusAmount = 1 },
+                new AStatus() { status = (Status)MainManifest.statuses["oathbreaker"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -371,8 +371,8 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 3 },
-                new AStatus() { status = (Status)MainManifest.statuses["vowOfChivalry"].Id, statusAmount = 1 },
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 3, targetPlayer = true },
+                new AStatus() { status = (Status)MainManifest.statuses["vowOfChivalry"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)

@@ -349,7 +349,7 @@ namespace KnightsCohort.Knight
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(nameof(Ship.OnBeginTurn))]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
         public static void HarmonyPostfix_VowOfCourage_Cleanup(Ship __instance, State s, Combat c)
         {
             GetAndDecrement(__instance, "vowOfCourage");
