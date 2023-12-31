@@ -244,17 +244,156 @@ namespace KnightsCohort.Knight.Cards
             return new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfRest"].Id, statusAmount = 1, targetPlayer = true },
-               new AStatus() 
-               { 
-                   status = (Status)MainManifest.statuses["honor"].Id, 
-                   statusAmount = base.upgrade == Upgrade.A ? VowsController.VOW_OF_REST_HONOR+1 : VowsController.VOW_OF_REST_HONOR, 
-                   targetPlayer = true 
+               new AStatus()
+               {
+                   status = (Status)MainManifest.statuses["honor"].Id,
+                   statusAmount = base.upgrade == Upgrade.A ? VowsController.VOW_OF_REST_HONOR+1 : VowsController.VOW_OF_REST_HONOR,
+                   targetPlayer = true
                },
             };
         }
         public override CardData GetData(State state)
         {
             return new() { cost = 1, exhaust = true };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class UnrelentingOath : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+               new AStatus() { status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = 1, targetPlayer = true },
+               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_ACTION_HONOR, targetPlayer = true },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Truce : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+               new AStatus() { status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 2, targetPlayer = true },
+               new AEndTurn()
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 2 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class ShieldBash : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            int shield = s.ship.Get(Enum.Parse<Status>("shield"));
+            int direction = flipped ? -1 : 1;
+
+            return new()
+            {
+                new AVariableHint() { status = Enum.Parse<Status>("shield") },
+                new AAttack() { damage = GetDmg(s, shield), xHint = 1, moveEnemy = direction*shield },
+                new AStatus() { status = Enum.Parse<Status>("shield"), mode = Enum.Parse<AStatusMode>("Set"), statusAmount = 0 }
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 2 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class FreeHit : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            bool disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0;
+            return new()
+            {
+                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -1 },
+                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Handicap : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_LEFT_HONOR },
+                new AStatus() { status = (Status)MainManifest.statuses["vowOfLeft"].Id, statusAmount = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, exhaust = true };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Oathbreaker : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AStatus() { status = (Status)MainManifest.statuses["oathbreaker"].Id, statusAmount = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, exhaust = true };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class FriendlyDuel : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 3 },
+                new AStatus() { status = (Status)MainManifest.statuses["vowOfChivalry"].Id, statusAmount = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, exhaust = true };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Challenge : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AMove() { targetPlayer = false, dir = s.ship.x - c.otherShip.x },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, description = "Move opponent ship to align with your ship." };
         }
     }
 }
