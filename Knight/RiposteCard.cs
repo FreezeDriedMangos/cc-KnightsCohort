@@ -51,7 +51,7 @@ namespace KnightsCohort.Knight
             if (__instance.targetPlayer) return;
             if (AttackWillBeVolley(__instance, g)) return;
 
-            Part? hitPart = VowsController.AAttackPostfix_GetHitShipPart(__instance, g, s, c);
+            Part? hitPart = VowsController.AAttackPostfix_GetHitShipPart(__instance, s, c);
             if (hitPart == null) return;
             if (hitPart.type == Enum.Parse<PType>("empty")) return;
 

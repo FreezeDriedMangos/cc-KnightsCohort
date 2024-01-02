@@ -125,6 +125,7 @@ namespace KnightsCohort.Knight.Midrow
             };
         }
     }
+
     public class ExcaliburMissile : Missile
     {
         public static readonly string MIDROW_OBJECT_NAME = "missileExcalibur";

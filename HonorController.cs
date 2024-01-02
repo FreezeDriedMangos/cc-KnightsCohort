@@ -19,21 +19,43 @@ namespace KnightsCohort
         {
             bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
             if (!actionJustEnded) return;
-            if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) < __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield"))) return;
 
-            __instance.Queue(new AMidCombatDialogue
+            if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) >= __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield")))
             {
-                script = "clay.KnightsCohort.Honorable_Win" // make this randomly pick a line from a list of multiple for each of the 3 knights
-            });
-            __instance.Queue(new ADelay
+                // TODO: don't do this for certain fights, like Soggins
+
+                __instance.Queue(new AMidCombatDialogue
+                {
+                    script = "clay.KnightsCohort.Honorable_Win" // make this randomly pick a line from a list of multiple for each of the 3 knights
+                });
+                __instance.Queue(new ADelay
+                {
+                    time = 0.0,
+                    timer = 0.1
+                });
+                __instance.Queue(new AEscape
+                {
+                    targetPlayer = false
+                });
+            }
+            else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= g.state.ship.hull + g.state.ship.Get(Enum.Parse<Status>("shield")))
             {
-                time = 0.0,
-                timer = 0.1
-            });
-            __instance.Queue(new AEscape
-            {
-                targetPlayer = false
-            });
+                __instance.noReward = true;
+
+                __instance.Queue(new AMidCombatDialogue
+                {
+                    script = "clay.KnightsCohort.Honorable_Loss" // make this randomly pick a line from a list of multiple for each of the 3 knights
+                });
+                __instance.Queue(new ADelay
+                {
+                    time = 0.0,
+                    timer = 0.1
+                });
+                __instance.Queue(new AEscape
+                {
+                    targetPlayer = true
+                });
+            }
         }
 
         [HarmonyPostfix]

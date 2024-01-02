@@ -3,6 +3,7 @@ using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
+using KnightsCohort.Bannerlady.Cards;
 using KnightsCohort.Knight;
 using KnightsCohort.Knight.Cards;
 using Microsoft.Extensions.Logging;
@@ -75,6 +76,29 @@ namespace KnightsCohort
                 "icons/vow_of_poverty",
                 "icons/vow_of_middling_income",
                 "icons/vow_of_affluence",
+
+
+                "midrow/banner_of_mercy",
+                "midrow/banner_of_martyr",
+                "midrow/banner_of_war",
+                "midrow/banner_of_pirate",
+                "midrow/banner_of_inspiration",
+                "midrow/banner_of_shielding",
+                "midrow/tattered_banner_of_war",
+                "midrow/tattered_banner_of_martyr",
+                "midrow/arrow",
+                "midrow/broadhead_arrow",
+
+                "icons/banner_mercy",
+                "icons/banner_martyr",
+                "icons/banner_war",
+                "icons/banner_pirate",
+                "icons/banner_inspiration",
+                "icons/banner_shielding",
+                "icons/tattered_banner_war",
+                "icons/tattered_banner_martyr",
+                "icons/arrow",
+                "icons/broadhead_arrow",
             };
 
             foreach (var filename in filenames) {
@@ -115,6 +139,24 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Oathbreaker", typeof(Oathbreaker), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Friendly Duel", typeof(FriendlyDuel), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Challenge", typeof(Challenge), sprites["card_default_knight"], decks["knight"]),
+
+
+
+
+
+
+                new ExternalCard(namePrefix + "Remembered Glory", typeof(RememberedGlory), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Lead from the Front", typeof(LeadFromTheFront), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Bow and Arrow", typeof(BowAndArrow), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Pity", typeof(BannerladyPity), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Bodyguard", typeof(BannerladyBodyguard), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Rest and Reprieve", typeof(RestAndReprieve), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Valiant Charge", typeof(ValiantCharge), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Archery Training", typeof(ArcheryTraining), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Platemail Piercer", typeof(PlatemailPiercer), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Telegraph", typeof(BannerladyTelegraph), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Martyrdom", typeof(Martyrdom), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Is It War?", typeof(IsItWar), sprites["card_default_knight"], decks["bannerlady"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -140,6 +182,17 @@ namespace KnightsCohort
                 null
             );
             if (!registry.RegisterDeck(decks["knight"])) throw new Exception("Sir Ratzo has taken his deck on a quest, cannot proceeed.");
+
+
+            decks["bannerlady"] = new ExternalDeck(
+                Name + ".deck.Bannerlady",
+                System.Drawing.Color.FromArgb(knightColor),
+                System.Drawing.Color.Black,
+                sprites["card_default_knight"],
+                sprites["frame_knight"],
+                null
+            );
+            if (!registry.RegisterDeck(decks["bannerlady"])) throw new Exception("Dame Emily has taken her deck on campaign, cannot proceeed.");
         }
 
         public void LoadManifest(ICharacterRegistry registry)
@@ -159,6 +212,23 @@ namespace KnightsCohort
             characters["knight"].AddDescLocalisation("<c=be9821>Sir Ratzo</c>\nSir Ratzo! <c=keyword>honor</c> and <c=keyword>vows</c>.");
 
             if (!registry.RegisterCharacter(characters["knight"])) throw new Exception("Sir Ratzo is lost! Could not register Sir Ratzo!");
+
+
+            characters["bannerlady"] = new ExternalCharacter(
+                Name + ".Bannerlady",
+                decks["bannerlady"],
+                sprites["char_frame_knight"],
+                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.LeadFromTheFront) },
+                new Type[0],
+                animations["neutral"],
+                animations["mini"]
+            );
+
+            characters["bannerlady"].AddNameLocalisation("Dame Emily");
+            // TODO: write the description
+            characters["bannerlady"].AddDescLocalisation("<c=be9821>Dame Emily</c>\nThe Bannerlady Dame Emily! <c=keyword>glory</c> and <c=keyword>banners</c>.");
+
+            if (!registry.RegisterCharacter(characters["bannerlady"])) throw new Exception("Dame Emily is lost! Could not register Dame Emily!");
         }
 
         public void LoadManifest(IAnimationRegistry registry)
@@ -197,6 +267,15 @@ namespace KnightsCohort
             );
             RegisterGlossaryEntry(registry, "missileExcalibur", sprites["icons/missile_excalibur"],
                 "EXCALIBUR",
+                "This missile is going to deal <c=damage>{0}</c> damage, piercing shields and armor."
+            );
+
+            RegisterGlossaryEntry(registry, "missileArrow", sprites["icons/arrow"],
+                "ARROW",
+                "This missile is going to deal <c=damage>{0}</c> damage, piercing shields and armor."
+            );
+            RegisterGlossaryEntry(registry, "missileBroadheadArrow", sprites["icons/broadhead_arrow"],
+                "BROADHEAD ARROW",
                 "This missile is going to deal <c=damage>{0}</c> damage, piercing shields and armor."
             );
         }

@@ -44,7 +44,7 @@ namespace KnightsCohort.Knight
             ship.Set((Status)MainManifest.statuses[statusName].Id, Math.Max(0, retval-1));
             return retval;
         }
-        public static Part? AAttackPostfix_GetHitShipPart(AAttack aattack, G g, State s, Combat c)
+        public static Part? AAttackPostfix_GetHitShipPart(AAttack aattack, State s, Combat c)
         {
             Ship targetShip = (aattack.targetPlayer ? s.ship : c.otherShip);
             Ship attackingShip = (aattack.targetPlayer ? c.otherShip : s.ship);
@@ -340,7 +340,7 @@ namespace KnightsCohort.Knight
             var vowStacks = s.ship.Get((Status)MainManifest.statuses["vowOfCourage"].Id);
             if (vowStacks <= 0) return;
 
-            Part? hitPart = AAttackPostfix_GetHitShipPart(__instance, g, s, c);
+            Part? hitPart = AAttackPostfix_GetHitShipPart(__instance, s, c);
             if (hitPart == null) return;
             if (hitPart.type == Enum.Parse<PType>("empty")) return;
 
@@ -366,7 +366,7 @@ namespace KnightsCohort.Knight
             var vowStacks = s.ship.Get((Status)MainManifest.statuses["vowOfChivalry"].Id);
             if (vowStacks <= 0) return;
 
-            Part? hitPart = AAttackPostfix_GetHitShipPart(__instance, g, s, c);
+            Part? hitPart = AAttackPostfix_GetHitShipPart(__instance, s, c);
             if (hitPart == null) return;
 
             PDamMod targetPartStatus = hitPart.GetDamageModifier();
