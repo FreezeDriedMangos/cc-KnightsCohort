@@ -95,6 +95,7 @@ namespace KnightsCohort
                 "icons/vow_of_poverty",
                 "icons/vow_of_middling_income",
                 "icons/vow_of_affluence",
+                "icons/charge",
 
 
                 "midrow/banner_of_mercy",
@@ -184,7 +185,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Cover Me", typeof(CoverMe), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Deadly Conviction", typeof(DeadlyConviction), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Diplomatic Immunity", typeof(DiplomaticImmunity), sprites["card_default_bannerlady"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Desperate Measures", typeof(DesperateMeasures), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Desperate Measures", typeof(BannerladyDesperateMeasures), sprites["card_default_bannerlady"], decks["bannerlady"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -246,7 +247,7 @@ namespace KnightsCohort
                 Name + ".Bannerlady",
                 decks["bannerlady"],
                 sprites["char_frame_bannerlady"],
-                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.LeadFromTheFront) },
+                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.ValiantCharge) },
                 new Type[0],
                 animations["bannerlady.neutral"],
                 animations["bannerlady.mini"]
@@ -314,6 +315,11 @@ namespace KnightsCohort
             RegisterGlossaryEntry(registry, "missileBroadheadArrow", sprites["icons/broadhead_arrow"],
                 "BROADHEAD ARROW",
                 "This missile is going to deal <c=damage>{0}</c> damage, piercing shields and armor."
+            );
+
+            RegisterGlossaryEntry(registry, "charge", sprites["icons/charge"],
+                "CHARGE",
+                "Move your ship's center {0} towards the enemy ship's center."
             );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description)
@@ -403,6 +409,18 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_affluence"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Vow of Affluence", $"If you play a card that costs 2 energy, lose {VowsController.VOW_OF_AFFLUENCE_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+
+            //TODO: make sprites for these statuses
+
+            status = "flurry";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/arrow"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Flurry", $"Launch 1 arrow and droneshift right 1 at the end of every turn.");
+
+            status = "shieldOfFaith";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/arrow"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Shield of Faith", $"Banners block shots. Decrease by 1 at the start of every turn.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)

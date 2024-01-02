@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TuckerTheSaboteur.actions
+namespace KnightsCohort.actions
 {
     [HarmonyPatch(typeof(Card))]
     public class ATooltipDummy : ADummyAction

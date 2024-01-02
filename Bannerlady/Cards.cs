@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KnightsCohort.actions;
 
 namespace KnightsCohort.Bannerlady.Cards
 {
@@ -65,6 +66,7 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
+                new AAttack() { targetPlayer = false, damage = GetDmg(s, 1) },
                new ASpawn() { thing = new ArrowMissile() },
             };
         }
@@ -116,13 +118,18 @@ namespace KnightsCohort.Bannerlady.Cards
             // TODO: make sure this can't be flipped
             return new()
             {
-               new AMove() { dir = Math.Sign(c.otherShip.x - s.ship.x), targetPlayer = true },
-               new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true },
+                new ATooltipDummy()
+                {
+                    tooltips = new() { new TTGlossary(MainManifest.glossary["charge"].Head, 1) }    // TODO: make charge an action, then remove this tooltipdummy and description from this card
+                },
+                new AMove() { dir = Math.Sign(c.otherShip.x - s.ship.x), targetPlayer = true },
+                new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
+                new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = 1, description = "<c=card>Charge 1!</c> Attack for 1. Gain 1 shield." };
         }
     }
 
@@ -221,8 +228,8 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
+               new AAttack() { damage = GetDmg(s, 1) },
                new AMove() { dir = -2, targetPlayer = true },
-               new AAttack() { damage = GetDmg(s, 1) }
             };
         }
         public override CardData GetData(State state)
@@ -238,7 +245,7 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-               new AStatus() { status = (Status)MainManifest.statuses["flurry"].Id, statusAmount = 1 }
+               new AStatus() { status = (Status)MainManifest.statuses["flurry"].Id, statusAmount = 1, targetPlayer = true }
             };
         }
         public override CardData GetData(State state)
@@ -340,7 +347,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3 };
+            return new() { cost = 3, description = "From every banner, launch a 1 damage attack towards the enemy and towards you." };
         }
     }
 
@@ -362,7 +369,7 @@ namespace KnightsCohort.Bannerlady.Cards
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class DesperateMeasures : Card
+    public class BannerladyDesperateMeasures : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
