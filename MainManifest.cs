@@ -47,6 +47,7 @@ namespace KnightsCohort
             var filenames = new string[] {
                 "icons/honor",
 
+                // knight
                 "character/knight_neutral_0",
                 "character/knight_neutral_1",
                 "character/knight_neutral_2",
@@ -54,6 +55,23 @@ namespace KnightsCohort
                 "frame_knight",
                 "card_default_knight",
                 "char_frame_knight",
+
+                // bannerlady
+                "character/bannerlady_neutral_1",
+                "character/bannerlady_neutral_2",
+                "character/bannerlady_neutral_3",
+                "character/bannerlady_neutral_4",
+                "character/bannerlady_squint_1",
+                "character/bannerlady_squint_2",
+                "character/bannerlady_squint_3",
+                "character/bannerlady_squint_4",
+                "character/bannerlady_gameover",
+
+                "frame_bannerlady",
+                "card_default_bannerlady",
+                "char_frame_bannerlady",
+
+                // misc
 
                 //"midrow/sword", // sprite exits in banilla
                 "midrow/dagger",
@@ -145,18 +163,18 @@ namespace KnightsCohort
 
 
 
-                new ExternalCard(namePrefix + "Remembered Glory", typeof(RememberedGlory), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Lead from the Front", typeof(LeadFromTheFront), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Bow and Arrow", typeof(BowAndArrow), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Pity", typeof(BannerladyPity), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Bodyguard", typeof(BannerladyBodyguard), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Rest and Reprieve", typeof(RestAndReprieve), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Valiant Charge", typeof(ValiantCharge), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Archery Training", typeof(ArcheryTraining), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Platemail Piercer", typeof(PlatemailPiercer), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Telegraph", typeof(BannerladyTelegraph), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Martyrdom", typeof(Martyrdom), sprites["card_default_knight"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Is It War?", typeof(IsItWar), sprites["card_default_knight"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Remembered Glory", typeof(RememberedGlory), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Lead from the Front", typeof(LeadFromTheFront), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Bow and Arrow", typeof(BowAndArrow), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Pity", typeof(BannerladyPity), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Bodyguard", typeof(BannerladyBodyguard), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Rest and Reprieve", typeof(RestAndReprieve), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Valiant Charge", typeof(ValiantCharge), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Archery Training", typeof(ArcheryTraining), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Platemail Piercer", typeof(PlatemailPiercer), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Telegraph", typeof(BannerladyTelegraph), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Martyrdom", typeof(Martyrdom), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Is It War?", typeof(IsItWar), sprites["card_default_bannerlady"], decks["bannerlady"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -188,8 +206,8 @@ namespace KnightsCohort
                 Name + ".deck.Bannerlady",
                 System.Drawing.Color.FromArgb(knightColor),
                 System.Drawing.Color.Black,
-                sprites["card_default_knight"],
-                sprites["frame_knight"],
+                sprites["card_default_bannerlady"],
+                sprites["frame_bannerlady"],
                 null
             );
             if (!registry.RegisterDeck(decks["bannerlady"])) throw new Exception("Dame Emily has taken her deck on campaign, cannot proceeed.");
@@ -203,8 +221,8 @@ namespace KnightsCohort
                 sprites["char_frame_knight"],
                 new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.OffhandWeapon) },
                 new Type[0],
-                animations["neutral"],
-                animations["mini"]
+                animations["knight.neutral"],
+                animations["knight.mini"]
             );
 
             characters["knight"].AddNameLocalisation("Sir Ratzo");
@@ -217,16 +235,16 @@ namespace KnightsCohort
             characters["bannerlady"] = new ExternalCharacter(
                 Name + ".Bannerlady",
                 decks["bannerlady"],
-                sprites["char_frame_knight"],
+                sprites["char_frame_bannerlady"],
                 new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.LeadFromTheFront) },
                 new Type[0],
-                animations["neutral"],
-                animations["mini"]
+                animations["bannerlady.neutral"],
+                animations["bannerlady.mini"]
             );
 
             characters["bannerlady"].AddNameLocalisation("Dame Emily");
             // TODO: write the description
-            characters["bannerlady"].AddDescLocalisation("<c=be9821>Dame Emily</c>\nThe Bannerlady Dame Emily! <c=keyword>glory</c> and <c=keyword>banners</c>.");
+            characters["bannerlady"].AddDescLocalisation("<c=be9821>Dame Emily</c>\nThe Bannerlady, Dame Emily! <c=keyword>glory</c> and <c=keyword>banners</c>.");
 
             if (!registry.RegisterCharacter(characters["bannerlady"])) throw new Exception("Dame Emily is lost! Could not register Dame Emily!");
         }
@@ -235,17 +253,26 @@ namespace KnightsCohort
         {
             var animationInfo = new Dictionary<string, IEnumerable<ExternalSprite>>();
             // these are the required animations
-            animationInfo["neutral"] = new ExternalSprite[] { sprites["character/knight_neutral_0"], sprites["character/knight_neutral_1"], sprites["character/knight_neutral_2"] };
-            //animationInfo["squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
-            //animationInfo["gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
-            animationInfo["mini"] = new ExternalSprite[] { sprites["character/knight_neutral_0"] };
+            animationInfo["knight.neutral"] = new ExternalSprite[] { sprites["character/knight_neutral_0"], sprites["character/knight_neutral_1"], sprites["character/knight_neutral_2"] };
+            //animationInfo["knight.squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
+            //animationInfo["knight.gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
+            animationInfo["knight.mini"] = new ExternalSprite[] { sprites["character/knight_neutral_0"] };
+
+            animationInfo["bannerlady.neutral"] = new ExternalSprite[] { sprites["character/bannerlady_neutral_1"], sprites["character/bannerlady_neutral_2"], sprites["character/bannerlady_neutral_3"], sprites["character/bannerlady_neutral_4"] };
+            animationInfo["bannerlady.squint"] = new ExternalSprite[] { sprites["character/bannerlady_squint_1"], sprites["character/bannerlady_squint_2"], sprites["character/bannerlady_squint_3"], sprites["character/bannerlady_squint_4"] };
+            animationInfo["bannerlady.gameover"] = new ExternalSprite[] { sprites["character/bannerlady_gameover"] };
+            animationInfo["bannerlady.mini"] = new ExternalSprite[] { sprites["character/bannerlady_neutral_1"] };
 
             foreach (var kvp in animationInfo)
             {
+                var parts = kvp.Key.Split('.');
+                var deckname = parts[0];
+                var animationname = parts[1];
+
                 var animation = new ExternalAnimation(
                     Name + ".animations." + kvp.Key,
-                    decks["knight"],
-                    kvp.Key,
+                    decks[deckname],
+                    animationname,
                     false,
                     kvp.Value
                 );
