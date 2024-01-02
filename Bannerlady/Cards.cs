@@ -21,26 +21,26 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
-        }
-    }
-
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class LeadFromTheFront : Card
-    {
-        public override List<CardAction> GetActions(State s, Combat c)
-        {
-            return new()
-            {
-               new AMove() { dir = flipped ? -2 : 2, targetPlayer = true },
-               new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 1, targetPlayer = true }
-            };
-        }
-        public override CardData GetData(State state)
-        {
             return new() { cost = 1 };
         }
     }
+
+    //[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    //public class ForgeAhead : Card
+    //{
+    //    public override List<CardAction> GetActions(State s, Combat c)
+    //    {
+    //        return new()
+    //        {
+    //           new AMove() { dir = flipped ? -2 : 2, targetPlayer = true },
+    //           new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 1, targetPlayer = true }
+    //        };
+    //    }
+    //    public override CardData GetData(State state)
+    //    {
+    //        return new() { cost = 1 };
+    //    }
+    //}
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class BannerladyPity : Card
@@ -115,21 +115,16 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            // TODO: make sure this can't be flipped
             return new()
             {
-                new ATooltipDummy()
-                {
-                    tooltips = new() { new TTGlossary(MainManifest.glossary["charge"].Head, 1) }    // TODO: make charge an action, then remove this tooltipdummy and description from this card
-                },
-                new AMove() { dir = Math.Sign(c.otherShip.x - s.ship.x), targetPlayer = true },
+                new ACharge() { distance = 1 },
                 new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
                 new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = "<c=card>Charge 1!</c> Attack for 1. Gain 1 shield." };
+            return new() { cost = 1 };
         }
     }
 
@@ -378,6 +373,24 @@ namespace KnightsCohort.Bannerlady.Cards
             {
                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = -1 },
                new ADrawCard() { disabled = disabled, count = 3 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class LeadFromTheFront : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
+                new ACharge() { distance = 1 },
+                new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
             };
         }
         public override CardData GetData(State state)
