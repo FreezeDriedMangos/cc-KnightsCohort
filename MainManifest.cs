@@ -96,7 +96,8 @@ namespace KnightsCohort
                 "icons/vow_of_middling_income",
                 "icons/vow_of_affluence",
                 "icons/charge",
-
+                "icons/flurry",
+                "icons/shieldOfFaith",
 
                 "midrow/banner_of_mercy",
                 "midrow/banner_of_martyr",
@@ -166,6 +167,7 @@ namespace KnightsCohort
 
 
                 new ExternalCard(namePrefix + "Remembered Glory", typeof(RememberedGlory), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                //new ExternalCard(namePrefix + "Charge Ahead", typeof(ChargeAhead), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Lead from the Front", typeof(LeadFromTheFront), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Bow and Arrow", typeof(BowAndArrow), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Pity", typeof(BannerladyPity), sprites["card_default_bannerlady"], decks["bannerlady"]),
@@ -413,12 +415,12 @@ namespace KnightsCohort
             //TODO: make sprites for these statuses
 
             status = "flurry";
-            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/arrow"], false);
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/flurry"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Flurry", $"Launch 1 arrow and droneshift right 1 at the end of every turn.");
 
             status = "shieldOfFaith";
-            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/arrow"], false);
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/shieldOfFaith"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Shield of Faith", $"Banners block shots. Decrease by 1 at the start of every turn.");
         }
