@@ -66,6 +66,7 @@ namespace KnightsCohort
                 "character/bannerlady_squint_3",
                 "character/bannerlady_squint_4",
                 "character/bannerlady_gameover",
+                "character/bannerlady_mini",
 
                 "frame_bannerlady",
                 "card_default_bannerlady",
@@ -175,6 +176,15 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Telegraph", typeof(BannerladyTelegraph), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Martyrdom", typeof(Martyrdom), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Is It War?", typeof(IsItWar), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Covered Retreat", typeof(CoveredRetreat), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Master of Archery", typeof(MasterOfArchery), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "False Flag", typeof(FalseFlag), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Shield of Faith", typeof(ShieldOfFaith), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Raise Morale", typeof(RaiseMorale), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Cover Me", typeof(CoverMe), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Deadly Conviction", typeof(DeadlyConviction), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Diplomatic Immunity", typeof(DiplomaticImmunity), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Desperate Measures", typeof(DesperateMeasures), sprites["card_default_bannerlady"], decks["bannerlady"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -261,7 +271,7 @@ namespace KnightsCohort
             animationInfo["bannerlady.neutral"] = new ExternalSprite[] { sprites["character/bannerlady_neutral_1"], sprites["character/bannerlady_neutral_2"], sprites["character/bannerlady_neutral_3"], sprites["character/bannerlady_neutral_4"] };
             animationInfo["bannerlady.squint"] = new ExternalSprite[] { sprites["character/bannerlady_squint_1"], sprites["character/bannerlady_squint_2"], sprites["character/bannerlady_squint_3"], sprites["character/bannerlady_squint_4"] };
             animationInfo["bannerlady.gameover"] = new ExternalSprite[] { sprites["character/bannerlady_gameover"] };
-            animationInfo["bannerlady.mini"] = new ExternalSprite[] { sprites["character/bannerlady_neutral_1"] };
+            animationInfo["bannerlady.mini"] = new ExternalSprite[] { sprites["character/bannerlady_mini"] };
 
             foreach (var kvp in animationInfo)
             {

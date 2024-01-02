@@ -279,7 +279,6 @@ namespace KnightsCohort.Bannerlady.Cards
         }
     }
 
-
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class RaiseMorale : Card
     {
@@ -312,17 +311,71 @@ namespace KnightsCohort.Bannerlady.Cards
         }
     }
 
-
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class DeadlyConviction : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            
+            List<CardAction> outgoingAttacks = new();
+            List<CardAction> incomingAttacks = new();
+            foreach (var kvp in c.stuff)
+            {
+                if (kvp.Value is not Banner) continue;
+                outgoingAttacks.Add(new AAttack()
+                {
+                    damage = 1,
+                    fromDroneX = kvp.Key,
+                    targetPlayer = false
+                });
+                incomingAttacks.Add(new AAttack()
+                {
+                    damage = 1,
+                    fromDroneX = kvp.Key,
+                    targetPlayer = true
+                });
+            }
+
+            outgoingAttacks.AddRange(incomingAttacks);
+            return outgoingAttacks;
         }
         public override CardData GetData(State state)
         {
             return new() { cost = 3 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class DiplomaticImmunity : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+               new AStatus() { status = Enum.Parse<Status>("shield"), targetPlayer = true, statusAmount = 2 },
+               new AStatus() { status = Enum.Parse<Status>("autododgeRight"), targetPlayer = true, statusAmount = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 2 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class DesperateMeasures : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            bool disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) < 1;
+            return new()
+            {
+               new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = -1 },
+               new ADrawCard() { disabled = disabled, count = 3 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1 };
         }
     }
 }
