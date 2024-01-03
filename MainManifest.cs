@@ -4,6 +4,9 @@ using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
 using KnightsCohort.Bannerlady.Cards;
+using KnightsCohort.External;
+using KnightsCohort.Herbalist;
+using KnightsCohort.Herbalist.Cards;
 using KnightsCohort.Knight;
 using KnightsCohort.Knight.Cards;
 using Microsoft.Extensions.Logging;
@@ -15,8 +18,7 @@ namespace KnightsCohort
     {
         public static readonly string MOD_NAMESPACE = "clay.KnightsCohort";
         public static MainManifest Instance;
-
-        public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[0];
+        public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[] { new DependencyEntry<IModManifest>("Shockah.Kokoro", false) };
 
         public DirectoryInfo? GameRootFolder { get; set; }
         public Microsoft.Extensions.Logging.ILogger? Logger { get; set; }
@@ -32,6 +34,8 @@ namespace KnightsCohort
         public static Dictionary<string, ExternalDeck> decks = new Dictionary<string, ExternalDeck>();
         public static Dictionary<string, ExternalCharacter> characters = new Dictionary<string, ExternalCharacter>();
 
+        public static IKokoroApi KokoroApi = null!;
+
         public void BootMod(IModLoaderContact contact)
         {
             ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.dll"));
@@ -40,6 +44,8 @@ namespace KnightsCohort
             Instance = this;
             var harmony = new Harmony(this.Name);
             harmony.PatchAll();
+
+            KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
         }
 
         public void LoadManifest(ISpriteRegistry artRegistry)
@@ -51,6 +57,7 @@ namespace KnightsCohort
                 "character/knight_neutral_0",
                 "character/knight_neutral_1",
                 "character/knight_neutral_2",
+                "character/knight_mini",
 
                 "frame_knight",
                 "card_default_knight",
@@ -71,6 +78,14 @@ namespace KnightsCohort
                 "frame_bannerlady",
                 "card_default_bannerlady",
                 "char_frame_bannerlady",
+
+                // herbalist
+                "character/herbalist_neutral",
+                "character/herbalist_mini",
+                "frame_herb",
+                "frame_herbalist",
+                "card_default_herbalist",
+                "char_frame_herbalist",
 
                 // misc
 
@@ -95,9 +110,6 @@ namespace KnightsCohort
                 "icons/vow_of_poverty",
                 "icons/vow_of_middling_income",
                 "icons/vow_of_affluence",
-                "icons/charge",
-                "icons/flurry",
-                "icons/shieldOfFaith",
 
                 "midrow/banner_of_mercy",
                 "midrow/banner_of_martyr",
@@ -110,6 +122,9 @@ namespace KnightsCohort
                 "midrow/arrow",
                 "midrow/broadhead_arrow",
 
+                "icons/charge",
+                "icons/flurry",
+                "icons/shieldOfFaith",
                 "icons/banner_mercy",
                 "icons/banner_martyr",
                 "icons/banner_war",
@@ -120,6 +135,12 @@ namespace KnightsCohort
                 "icons/tattered_banner_martyr",
                 "icons/arrow",
                 "icons/broadhead_arrow",
+
+                "icons/dazed",
+                "icons/blindness",
+                "icons/herb_bundle",
+                "icons/herb_bundle_add_oxidize",
+                "icons/herb_search",
             };
 
             foreach (var filename in filenames) {
@@ -188,6 +209,20 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Deadly Conviction", typeof(DeadlyConviction), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Diplomatic Immunity", typeof(DiplomaticImmunity), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Desperate Measures", typeof(BannerladyDesperateMeasures), sprites["card_default_bannerlady"], decks["bannerlady"]),
+
+
+
+                new ExternalCard(namePrefix + "Literally Doesn't Exist", typeof(HerbCard), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Poultice", typeof(HerbCard_Poultice), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Mystery Leaf", typeof(HerbCard_Leaf), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Mystery Bark", typeof(HerbCard_Bark), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Mystery Seed", typeof(HerbCard_Seed), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Mystery Root", typeof(HerbCard_Root), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Dont Eat This", typeof(HerbCard_Shroom), sprites["card_default_herbalist"], decks["herbs"]),
+
+                new ExternalCard(namePrefix + "Mortar & Pestle", typeof(MortarAndPestle), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Smolder", typeof(Smolder), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Leaf Pack", typeof(LeafPack), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -224,6 +259,28 @@ namespace KnightsCohort
                 null
             );
             if (!registry.RegisterDeck(decks["bannerlady"])) throw new Exception("Dame Emily has taken her deck on campaign, cannot proceeed.");
+
+
+            decks["herbalist"] = new ExternalDeck(
+                Name + ".deck.Herbalist",
+                System.Drawing.Color.FromArgb(knightColor),
+                System.Drawing.Color.White,
+                sprites["card_default_herbalist"],
+                sprites["frame_herbalist"],
+                null
+            );
+            if (!registry.RegisterDeck(decks["herbalist"])) throw new Exception("Dame Halla has taken her deck and wandered off into the forest, cannot proceeed.");
+
+
+            decks["herbs"] = new ExternalDeck(
+                Name + ".deck.Herbs",
+                System.Drawing.Color.FromArgb(knightColor),
+                System.Drawing.Color.White,
+                sprites["card_default_herbalist"],
+                sprites["frame_herb"],
+                null
+            );
+            if (!registry.RegisterDeck(decks["herbs"])) throw new Exception("It's the end. Climate change has eliminated all herbs in existence. Cannot proceed.");
         }
 
         public void LoadManifest(ICharacterRegistry registry)
@@ -260,6 +317,23 @@ namespace KnightsCohort
             characters["bannerlady"].AddDescLocalisation("<c=be9821>Dame Emily</c>\nThe Bannerlady, Dame Emily! <c=keyword>glory</c> and <c=keyword>banners</c>.");
 
             if (!registry.RegisterCharacter(characters["bannerlady"])) throw new Exception("Dame Emily is lost! Could not register Dame Emily!");
+
+
+            characters["herbalist"] = new ExternalCharacter(
+                Name + ".Herbalist",
+                decks["herbalist"],
+                sprites["char_frame_herbalist"],
+                new Type[] { typeof(Herbalist.Cards.MortarAndPestle), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.LeafPack) },
+                new Type[0],
+                animations["herbalist.neutral"],
+                animations["herbalist.mini"]
+            );
+
+            characters["herbalist"].AddNameLocalisation("Dame Halla");
+            // TODO: write the description
+            characters["herbalist"].AddDescLocalisation("<c=be9821>Dame Halla</c>\nThe Herbalist, Dame Halla! <c=keyword>herbs</c> and <c=keyword>honor</c>.");
+
+            if (!registry.RegisterCharacter(characters["herbalist"])) throw new Exception("Dame Halla is lost! Could not register Dame Halla!");
         }
 
         public void LoadManifest(IAnimationRegistry registry)
@@ -269,12 +343,15 @@ namespace KnightsCohort
             animationInfo["knight.neutral"] = new ExternalSprite[] { sprites["character/knight_neutral_0"], sprites["character/knight_neutral_1"], sprites["character/knight_neutral_2"] };
             //animationInfo["knight.squint"] = new ExternalSprite[] { sprites["character/tucker_squint_1"], sprites["character/tucker_squint_2"], sprites["character/tucker_squint_3"], sprites["character/tucker_squint_4"] };
             //animationInfo["knight.gameover"] = new ExternalSprite[] { sprites["character/tucker_death"] };
-            animationInfo["knight.mini"] = new ExternalSprite[] { sprites["character/knight_neutral_0"] };
+            animationInfo["knight.mini"] = new ExternalSprite[] { sprites["character/knight_mini"] };
 
             animationInfo["bannerlady.neutral"] = new ExternalSprite[] { sprites["character/bannerlady_neutral_1"], sprites["character/bannerlady_neutral_2"], sprites["character/bannerlady_neutral_3"], sprites["character/bannerlady_neutral_4"] };
             animationInfo["bannerlady.squint"] = new ExternalSprite[] { sprites["character/bannerlady_squint_1"], sprites["character/bannerlady_squint_2"], sprites["character/bannerlady_squint_3"], sprites["character/bannerlady_squint_4"] };
             animationInfo["bannerlady.gameover"] = new ExternalSprite[] { sprites["character/bannerlady_gameover"] };
             animationInfo["bannerlady.mini"] = new ExternalSprite[] { sprites["character/bannerlady_mini"] };
+
+            animationInfo["herbalist.neutral"] = new ExternalSprite[] { sprites["character/herbalist_neutral"] };
+            animationInfo["herbalist.mini"] = new ExternalSprite[] { sprites["character/herbalist_mini"] };
 
             foreach (var kvp in animationInfo)
             {
@@ -412,8 +489,6 @@ namespace KnightsCohort
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Vow of Affluence", $"If you play a card that costs 2 energy, lose {VowsController.VOW_OF_AFFLUENCE_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
 
-            //TODO: make sprites for these statuses
-
             status = "flurry";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/flurry"], false);
             statusRegistry.RegisterStatus(statuses[status]);
@@ -423,6 +498,17 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/shieldOfFaith"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Shield of Faith", $"Banners block shots. Decrease by 1 at the start of every turn.");
+
+
+            status = "dazed";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/dazed"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Dazed", $"Flip direction of movement for all effects. Lose one stack at the start of your turn.");
+
+            status = "blindness";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/blindness"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Blindness", $"Card titles and actions do not render. On opponent, causes random movement. Lose one stack at the start of your turn.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)
