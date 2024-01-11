@@ -153,6 +153,10 @@ namespace KnightsCohort
                 "icons/tattered_banner_pirate",
                 "icons/arrow",
                 "icons/broadhead_arrow",
+                "icons/evade_cost",
+                "icons/evade_cost_unsatisfied",
+                "icons/droneshift_cost",
+                "icons/droneshift_cost_unsatisfied",
 
                 "icons/dazed",
                 "icons/blindness",
