@@ -479,13 +479,12 @@ namespace KnightsCohort.Bannerlady.Cards
             {
                 upper,
                 new ADummyAction(),
-                new ADummyAction(),
                 lower,
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, infinite = true };
+            return new() { cost = 1, infinite = true, floppable = true };
         }
     }
 
@@ -497,7 +496,7 @@ namespace KnightsCohort.Bannerlady.Cards
             return new()
             {
                new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
-               new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = s.ship.Get((Status)MainManifest.statuses["honor"].Id), xHint = 1 },
+               new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = s.ship.Get((Status)MainManifest.statuses["honor"].Id), xHint = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)

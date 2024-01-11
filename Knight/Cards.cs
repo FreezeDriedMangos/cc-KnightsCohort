@@ -138,8 +138,7 @@ namespace KnightsCohort.Knight.Cards
                        targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0,
                        bubbleShield = true
                    }
-               },
-               new AAttack() { damage = GetDmg(s, 2) }
+               }
             };
         }
         public override CardData GetData(State state)
@@ -296,7 +295,7 @@ namespace KnightsCohort.Knight.Cards
             {
                 new AVariableHint() { status = Enum.Parse<Status>("shield") },
                 new AAttack() { damage = GetDmg(s, shield), xHint = 1, moveEnemy = direction*shield },
-                new AStatus() { status = Enum.Parse<Status>("shield"), mode = Enum.Parse<AStatusMode>("Set"), statusAmount = 0 }
+                new AStatus() { status = Enum.Parse<Status>("shield"), mode = Enum.Parse<AStatusMode>("Set"), statusAmount = 0, targetPlayer = true }
             };
         }
         public override CardData GetData(State state)
