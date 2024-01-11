@@ -62,18 +62,6 @@ namespace KnightsCohort.Bannerlady.Midrow
         }
     }
 
-    public class BannerOfInspiration : Banner
-    {
-        public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/banner_of_inspiration"].Id; }
-        public override Spr? GetIcon() { return (Spr)MainManifest.sprites["icons/banner_inspiration"].Id; }
-
-        public override void ModifyAction(AAttack aattack, State s, Combat c, bool wasPlayer)
-        {
-            aattack.status = Enum.Parse<Status>("overdrive");
-            aattack.statusAmount = 1;
-        }
-    }
-
     public class BannerOfShielding : Banner
     {
         public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/banner_of_shielding"].Id; }
@@ -107,6 +95,13 @@ namespace KnightsCohort.Bannerlady.Midrow
                 }
             };
         }
+    }
+
+    public class TatteredPirateBanner : PirateBanner
+    {
+        public override bool Tattered() { return true; }
+        public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/tattered_banner_of_pirate"].Id; }
+        public override Spr? GetIcon() { return (Spr)MainManifest.sprites["icons/tattered_banner_pirate"].Id; }
     }
 
     public class TatteredMartyrBanner : MartyrBanner

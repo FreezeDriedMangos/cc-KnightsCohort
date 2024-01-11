@@ -10,8 +10,6 @@ namespace KnightsCohort.Bannerlady
     [HarmonyPatch]
     public class Banner : StuffBase
     {
-        // TODO: make attack previews render THROUGH banners
-
         public static readonly int MIDROW_SPRITE_WIDTH = 17;
         public static readonly int MIDROW_SPRITE_HEIGHT = 33;
         public static readonly int BANNER_ANIMATION_NUM_FRAMES = 6;
