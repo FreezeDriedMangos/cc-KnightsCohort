@@ -221,8 +221,6 @@ namespace KnightsCohort.Herbalist.Cards
         }
     }
 
-
-    // TODO: wiggle (like abyssal visions)
     // TODO: overlay art (like abyssal visions)
     [HarmonyPatch]
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
@@ -382,8 +380,8 @@ namespace KnightsCohort.Herbalist.Cards
                         (
                             (Status)MainManifest.statuses["honor"].Id,
                             Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
-                            (Spr)MainManifest.sprites["icons/honor"].Id, // TODO: make an unsatisfied honor cost sprite
-                            (Spr)MainManifest.sprites["icons/honor"].Id  // TODO: make a satisfied honor cost sprite (corrode drop with a minus on top of it)
+                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
                         ),
                         amount: 1
                     ),
