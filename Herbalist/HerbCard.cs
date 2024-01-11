@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using KnightsCohort.External;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +77,7 @@ namespace KnightsCohort.Herbalist
         }
         public override void AfterWasPlayed(State state, Combat c) { revealed = true; }
         
-        private CardAction ParseSerializedAction(HerbActions serialized, int count = 1) 
+        public static CardAction ParseSerializedAction(HerbActions serialized, int count = 1) 
         {
             switch (serialized)
             {
@@ -109,15 +108,20 @@ namespace KnightsCohort.Herbalist
             throw new Exception("Unknown herb action passed: " + serialized);
         }
 
-        public override List<CardAction> GetActions(State s, Combat c)
+        public static List<CardAction> ParseSerializedActions(List<HerbActions> SerializedActions)
         {
             Dictionary<HerbActions, int> actionCounts = new();
-            foreach(var serializedAction in SerializedActions)
+            foreach (var serializedAction in SerializedActions)
             {
                 if (!actionCounts.ContainsKey(serializedAction)) actionCounts[serializedAction] = 0;
                 actionCounts[serializedAction]++;
             }
             return actionCounts.Keys.Select(ha => ParseSerializedAction(ha, actionCounts[ha])).ToList();
+        }
+
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return ParseSerializedActions(SerializedActions);
         }
 
         public override CardData GetData(State state)
@@ -280,11 +284,17 @@ namespace KnightsCohort.Herbalist
         protected override string GetTypeName() { return "Shroom"; }
     }
 
-
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
-    public class HerbCard_Poultice: HerbCard
+    public class HerbCard_Poultice : HerbCard
     {
         public HerbCard_Poultice() { name = ""; }
         protected override string GetTypeName() { return "Poultice"; }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
+    public class HerbCard_Tea : HerbCard
+    {
+        public HerbCard_Tea() { name = ""; }
+        protected override string GetTypeName() { return "Tea"; }
     }
 }

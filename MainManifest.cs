@@ -4,13 +4,13 @@ using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
 using KnightsCohort.Bannerlady.Cards;
-using KnightsCohort.External;
 using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
 using KnightsCohort.Knight;
 using KnightsCohort.Knight.Cards;
 using Microsoft.Extensions.Logging;
 using shockah;
+using Shockah.Kokoro;
 
 namespace KnightsCohort
 {
@@ -80,7 +80,14 @@ namespace KnightsCohort
                 "char_frame_bannerlady",
 
                 // herbalist
-                "character/herbalist_neutral",
+                "character/herbalist_neutral_1",
+                "character/herbalist_neutral_2",
+                "character/herbalist_neutral_3",
+                "character/herbalist_neutral_4",
+                "character/herbalist_squint_1",
+                "character/herbalist_squint_2",
+                "character/herbalist_squint_3",
+                "character/herbalist_squint_4",
                 "character/herbalist_mini",
                 "frame_herb",
                 "frame_herbalist",
@@ -141,6 +148,8 @@ namespace KnightsCohort
                 "icons/herb_bundle",
                 "icons/herb_bundle_add_oxidize",
                 "icons/herb_search",
+                "icons/CorrodeCostSatisfied",
+                "icons/CorrodeCostUnsatisfied",
             };
 
             foreach (var filename in filenames) {
@@ -169,7 +178,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Excalibur", typeof(Excalibur), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Teamwork", typeof(Teamwork), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Cheap Shot", typeof(CheapShot), sprites["card_default_knight"], decks["knight"]),
-                new ExternalCard(namePrefix + "Honorable Strike", typeof(HonorableStrike), sprites["card_default_knight"], decks["knight"]),
+                //new ExternalCard(namePrefix + "Honorable Strike", typeof(HonorableStrike), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Riposte", typeof(RiposteCard), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Financial Advice", typeof(FinancialAdvice), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Knight's Rest", typeof(KnightsRest), sprites["card_default_knight"], decks["knight"]),
@@ -213,6 +222,7 @@ namespace KnightsCohort
 
 
                 new ExternalCard(namePrefix + "Literally Doesn't Exist", typeof(HerbCard), sprites["card_default_herbalist"], decks["herbs"]),
+                new ExternalCard(namePrefix + "Safe to Drink. Probably.", typeof(HerbCard_Tea), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Poultice", typeof(HerbCard_Poultice), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Mystery Leaf", typeof(HerbCard_Leaf), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Mystery Bark", typeof(HerbCard_Bark), sprites["card_default_herbalist"], decks["herbs"]),
@@ -220,9 +230,24 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Mystery Root", typeof(HerbCard_Root), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Dont Eat This", typeof(HerbCard_Shroom), sprites["card_default_herbalist"], decks["herbs"]),
 
+                new ExternalCard(namePrefix + "Leaf Pack", typeof(LeafPack), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Bark Pack", typeof(BarkPack), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Seed Pack", typeof(SeedPack), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Root Pack", typeof(RootPack), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Shroom Pack", typeof(ShroomPack), sprites["card_default_herbalist"], decks["herbalist"]),
+
                 new ExternalCard(namePrefix + "Mortar & Pestle", typeof(MortarAndPestle), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Smolder", typeof(Smolder), sprites["card_default_herbalist"], decks["herbalist"]),
-                new ExternalCard(namePrefix + "Leaf Pack", typeof(LeafPack), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Publish Findings", typeof(PublishFindings), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Forage", typeof(Forage), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Consume", typeof(Consume), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "QUEST", typeof(QUEST), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Quest Reward", typeof(QuestReward), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Epic Quest Reward", typeof(EpicQuestReward), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Compassion", typeof(Compassion), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Call on Debts", typeof(CallOnDebts), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Brew Tea", typeof(BrewTea), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Fire and Smoke", typeof(FireAndSmoke), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -350,7 +375,7 @@ namespace KnightsCohort
             animationInfo["bannerlady.gameover"] = new ExternalSprite[] { sprites["character/bannerlady_gameover"] };
             animationInfo["bannerlady.mini"] = new ExternalSprite[] { sprites["character/bannerlady_mini"] };
 
-            animationInfo["herbalist.neutral"] = new ExternalSprite[] { sprites["character/herbalist_neutral"] };
+            animationInfo["herbalist.neutral"] = new ExternalSprite[] { sprites["character/herbalist_neutral_1"], sprites["character/herbalist_neutral_2"], sprites["character/herbalist_neutral_3"], sprites["character/herbalist_neutral_4"] };
             animationInfo["herbalist.mini"] = new ExternalSprite[] { sprites["character/herbalist_mini"] };
 
             foreach (var kvp in animationInfo)

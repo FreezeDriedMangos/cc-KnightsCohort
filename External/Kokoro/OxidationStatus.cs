@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CobaltCoreModding.Definitions.ExternalItems;
 
-namespace KnightsCohort.External
+namespace Shockah.Kokoro
 {
     public partial interface IKokoroApi
     {
