@@ -12,19 +12,7 @@ namespace KnightsCohort.Knight
     public static class VowsController
     {
         public static readonly int VOW_OF_MERCY_HONOR = 1;
-        public static readonly int VOW_OF_ADAMANCY_HONOR = 1;
-        public static readonly int VOW_OF_TEAMWORK_HONOR = 3;
-        public static readonly int VOW_OF_ACTION_HONOR = 2;
-        public static readonly int VOW_OF_REST_HONOR = 1;
-        public static readonly int VOW_OF_MEGA_REST_HONOR = 5;
         public static readonly int VOW_OF_COURAGE_HONOR = 1;
-        public static readonly int VOW_OF_RIGHT_HONOR = 3;
-        public static readonly int VOW_OF_LEFT_HONOR = 1;
-        public static readonly int VOW_OF_CHIVALRY_HONOR = 1;
-
-        public static readonly int VOW_OF_POVERTY_HONOR = 1;
-        public static readonly int VOW_OF_MIDDLING_INCOME_HONOR = 3;
-        public static readonly int VOW_OF_AFFLUENCE_HONOR = 2;
 
         public static void AddHonor(Ship ship, int amt)
         {
@@ -67,6 +55,29 @@ namespace KnightsCohort.Knight
         }
 
         //
+        // SHARED
+        //
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
+        public static void HarmonyPostfix_VowOfCourage_Cleanup(Ship __instance, State s, Combat c)
+        {
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfAdamancy"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfChivalry"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfRight"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfLeft"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfTeamwork"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfAction"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfPoverty"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfAffluence"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfMiddlingIncome"].Id));
+            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfRest"].Id));
+            AddHonor(__instance, 2* __instance.Get((Status)MainManifest.statuses["vowOfMegaRest"].Id));
+
+            GetAndDecrement(__instance, "vowOfCourage");
+        }
+
+        //
         // Vow of Adamancy & Left/Right
         //
 
@@ -89,22 +100,19 @@ namespace KnightsCohort.Knight
             if (previousX != g.state.ship.x)
             {
                 previousX = g.state.ship.x;
-                var adamancyVow = GetAndClear(g.state.ship, "vowOfAdamancy"); 
-                AddHonor(g.state.ship, -VOW_OF_ADAMANCY_HONOR * adamancyVow);
+                GetAndClear(g.state.ship, "vowOfAdamancy"); 
             }
 
             if (previousX < g.state.ship.x)
             {
                 // we've moved right
-                var leftVow = GetAndClear(g.state.ship, "vowOfLeft");
-                AddHonor(g.state.ship, -VOW_OF_LEFT_HONOR * leftVow);
+                GetAndClear(g.state.ship, "vowOfLeft");
             }
 
             if (previousX > g.state.ship.x)
             {
                 // we've moved left
-                var leftVow = GetAndClear(g.state.ship, "vowOfRight");
-                AddHonor(g.state.ship, -VOW_OF_RIGHT_HONOR * leftVow);
+                GetAndClear(g.state.ship, "vowOfRight");
             }
         }
 
@@ -129,15 +137,13 @@ namespace KnightsCohort.Knight
             if (cardIndex == handSize-1)
             {
                 // we've played the rightmost card
-                var leftVow = GetAndClear(s.ship, "vowOfLeft");
-                AddHonor(s.ship, -VOW_OF_LEFT_HONOR * leftVow);
+                GetAndClear(s.ship, "vowOfLeft");
             }
 
             if (cardIndex == 0)
             {
                 // we've played the leftmost card
-                var leftVow = GetAndClear(s.ship, "vowOfRight");
-                AddHonor(s.ship, -VOW_OF_RIGHT_HONOR * leftVow);
+                GetAndClear(s.ship, "vowOfRight");
             }
         }
 
@@ -188,15 +194,13 @@ namespace KnightsCohort.Knight
         static HashSet<Deck> cardColorsPlayedThisTurn = new();
         static bool hasBrokenTeamworkVow = false;
 
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
         public static void HarmonyPostfix_VowOfTeamwork_Cleanup(G g, State s, Combat c)
         {
             if (hasBrokenTeamworkVow) // check to see if we missed breaking the vow
             {
-                var teamworkStacks = GetAndClear(s.ship, "vowOfTeamwork");
-                AddHonor(s.ship, -VOW_OF_TEAMWORK_HONOR * teamworkStacks);
+                GetAndClear(s.ship, "vowOfTeamwork");
             }
             cardColorsPlayedThisTurn.Clear();
             hasBrokenTeamworkVow = false;
@@ -216,7 +220,6 @@ namespace KnightsCohort.Knight
                 var teamworkStacks = GetAndClear(s.ship, "vowOfTeamwork");
                 if (teamworkStacks > 0)
                 {
-                    AddHonor(s.ship, -VOW_OF_TEAMWORK_HONOR * teamworkStacks);
                     hasBrokenTeamworkVow = false;
                 }
                 else
@@ -259,8 +262,7 @@ namespace KnightsCohort.Knight
             int diff = n - __instance.Get(status);
             if (diff <= 0) return true;
 
-            int vowOfAction = GetAndClear(__instance, "vowOfAction");
-            AddHonor(__instance, -vowOfAction * VOW_OF_ACTION_HONOR);
+            GetAndClear(__instance, "vowOfAction");
 
             return true;
         }
@@ -292,18 +294,15 @@ namespace KnightsCohort.Knight
             // we can't just use card.GetCurrentCost, since Combat.TryPlayCard clears the discount the card may have had before this patch is run
             if (originalCardCost == 0)
             {
-                var vowStacks = GetAndClear(s.ship, "vowOfPoverty");
-                AddHonor(s.ship, -VOW_OF_POVERTY_HONOR * vowStacks);
+                GetAndClear(s.ship, "vowOfPoverty");
             }
             else if (originalCardCost == 1)
             {
-                var vowStacks = GetAndClear(s.ship, "vowOfMiddlingIncome");
-                AddHonor(s.ship, -VOW_OF_MIDDLING_INCOME_HONOR * vowStacks);
+                GetAndClear(s.ship, "vowOfMiddlingIncome");
             }
             else if (originalCardCost == 2)
             {
-                var vowStacks = GetAndClear(s.ship, "vowOfAffluence");
-                AddHonor(s.ship, -VOW_OF_AFFLUENCE_HONOR * vowStacks);
+                GetAndClear(s.ship, "vowOfAffluence");
             }
         }
 
@@ -317,13 +316,11 @@ namespace KnightsCohort.Knight
         {
             if (c.energy < 1)
             {
-                var vowStacks = GetAndClear(s.ship, "vowOfRest");
-                AddHonor(s.ship, -VOW_OF_REST_HONOR * vowStacks);
+                GetAndClear(s.ship, "vowOfRest");
             }
             if (c.energy < 2)
             {
-                var vowStacks = GetAndClear(s.ship, "vowOfMegaRest");
-                AddHonor(s.ship, -VOW_OF_MEGA_REST_HONOR * vowStacks);
+                GetAndClear(s.ship, "vowOfMegaRest");
             }
         }
 
@@ -348,13 +345,6 @@ namespace KnightsCohort.Knight
             AddHonor(s.ship, VOW_OF_COURAGE_HONOR * vowStacks);
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
-        public static void HarmonyPostfix_VowOfCourage_Cleanup(Ship __instance, State s, Combat c)
-        {
-            GetAndDecrement(__instance, "vowOfCourage");
-        }
-
         //
         // Vow of Chivalry
         //
@@ -373,14 +363,8 @@ namespace KnightsCohort.Knight
             bool cheapShot = targetPartStatus == Enum.Parse<PDamMod>("brittle") || targetPartStatus == Enum.Parse<PDamMod>("weak");
             if (!cheapShot) return;
 
-            if (__instance.targetPlayer)
+            if (!__instance.targetPlayer)
             {
-                AddHonor(s.ship, VOW_OF_CHIVALRY_HONOR * vowStacks);
-                s.ship.Set((Status)MainManifest.statuses["vowOfChivalry"].Id, vowStacks - 1);
-            }
-            else
-            {
-                AddHonor(s.ship, -VOW_OF_CHIVALRY_HONOR * vowStacks);
                 s.ship.Set((Status)MainManifest.statuses["vowOfChivalry"].Id, 0);
             }
         }

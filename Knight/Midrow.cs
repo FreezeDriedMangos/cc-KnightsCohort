@@ -129,7 +129,6 @@ namespace KnightsCohort.Knight.Midrow
     public class ExcaliburMissile : Missile
     {
         public static readonly string MIDROW_OBJECT_NAME = "missileExcalibur";
-        public static readonly int BASE_DAMAGE = 3;
 
         // add entry to Missile.missileData
         // add entry to DB.drones
@@ -158,7 +157,7 @@ namespace KnightsCohort.Knight.Midrow
         {
             List<Tooltip> tooltips = new List<Tooltip>()
             {
-                new TTGlossary(MainManifest.glossary[MIDROW_OBJECT_NAME].Head, BASE_DAMAGE)
+                new TTGlossary(MainManifest.glossary[MIDROW_OBJECT_NAME].Head)
                 {
                     flipIconY = base.targetPlayer
                 }
@@ -173,12 +172,13 @@ namespace KnightsCohort.Knight.Midrow
 
         public override List<CardAction>? GetActions(State s, Combat c)
         {
+            Ship ship = targetPlayer ? c.otherShip : s.ship;
             return new List<CardAction>()
             {
-                new APiercingMissileHit
+                new AMissileHit
                 {
                     worldX = x,
-                    outgoingDamage = BASE_DAMAGE,
+                    outgoingDamage = ship.Get((Status)MainManifest.statuses["honor"].Id),
                     targetPlayer = targetPlayer
                 }
             };

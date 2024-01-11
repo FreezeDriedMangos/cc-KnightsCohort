@@ -99,7 +99,6 @@ namespace KnightsCohort.Knight.Cards
             return new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfAdamancy"].Id, statusAmount = 1, targetPlayer = true },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_ADAMANCY_HONOR, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -115,8 +114,8 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-               new AStatus() { status = Enum.Parse<Status>("powerdrive"), statusAmount = 1, targetPlayer = false },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true },
+               new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 2, targetPlayer = false },
+               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 2, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -154,18 +153,28 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            int cost = 3;
-            bool canPay = s.ship.Get((Status)MainManifest.statuses["honor"].Id) >= cost;
-
             return new()
             {
-               new AStatus() { disabled = !canPay, status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -cost, targetPlayer = true },
-               new AAttack() { disabled = !canPay, damage = GetDmg(s, 2), weaken = true }
+                MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost
+                    (
+                        MainManifest.KokoroApi.ActionCosts.StatusResource
+                        (
+                            (Status)MainManifest.statuses["honor"].Id,
+                            Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                        ),
+                        amount: 3
+                    ),
+                    new AAttack() { damage = GetDmg(s, 2), weaken = true }
+                ),
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3 };
+            return new() { cost = 2 };
         }
     }
 
@@ -177,7 +186,6 @@ namespace KnightsCohort.Knight.Cards
             return new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfTeamwork"].Id, statusAmount = 1, targetPlayer = true },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_TEAMWORK_HONOR, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -216,18 +224,9 @@ namespace KnightsCohort.Knight.Cards
                 _ => throw new Exception("Card was upgraded to an upgrade that doesn't exist!"),
             };
 
-            var honor = base.upgrade switch
-            {
-                Upgrade.None => VowsController.VOW_OF_POVERTY_HONOR,
-                Upgrade.A => VowsController.VOW_OF_AFFLUENCE_HONOR,
-                Upgrade.B => VowsController.VOW_OF_MIDDLING_INCOME_HONOR,
-                _ => throw new Exception("Card was upgraded to an upgrade that doesn't exist!"),
-            };
-
             return new()
             {
                new AStatus() { status = (Status)MainManifest.statuses[vowName].Id, statusAmount = 1, targetPlayer = true },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = honor, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -244,12 +243,6 @@ namespace KnightsCohort.Knight.Cards
             return new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfRest"].Id, statusAmount = 1, targetPlayer = true },
-               new AStatus()
-               {
-                   status = (Status)MainManifest.statuses["honor"].Id,
-                   statusAmount = base.upgrade == Upgrade.A ? VowsController.VOW_OF_REST_HONOR+1 : VowsController.VOW_OF_REST_HONOR,
-                   targetPlayer = true
-               },
             };
         }
         public override CardData GetData(State state)
@@ -266,7 +259,6 @@ namespace KnightsCohort.Knight.Cards
             return new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = 1, targetPlayer = true },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_ACTION_HONOR, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -338,7 +330,6 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = VowsController.VOW_OF_LEFT_HONOR, targetPlayer = true },
                 new AStatus() { status = (Status)MainManifest.statuses["vowOfLeft"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
@@ -371,7 +362,6 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 3, targetPlayer = true },
                 new AStatus() { status = (Status)MainManifest.statuses["vowOfChivalry"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
@@ -389,6 +379,23 @@ namespace KnightsCohort.Knight.Cards
             return new()
             {
                 new AMove() { targetPlayer = false, dir = s.ship.x - c.otherShip.x },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, description = "Move opponent ship to align with your ship." };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class ShieldOfHonor : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
+                new AStatus() { status = Enum.Parse<Status>("shield") }
             };
         }
         public override CardData GetData(State state)
