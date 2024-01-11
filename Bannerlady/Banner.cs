@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KnightsCohort.Bannerlady.Midrow;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,38 +10,14 @@ namespace KnightsCohort.Bannerlady
     [HarmonyPatch]
     public class Banner : StuffBase
     {
+        // TODO: make attack previews render THROUGH banners
+
         public static readonly int MIDROW_SPRITE_WIDTH = 17;
         public static readonly int MIDROW_SPRITE_HEIGHT = 33;
         public static readonly int BANNER_ANIMATION_NUM_FRAMES = 6;
         public static readonly double BANNER_ANIMATION_SPEED = 7;
-        public override bool Invincible() { return true; }
 
-        //public override List<CardAction>? GetActionsOnDestroyed(State s, Combat c, bool wasPlayer, int worldX)
-        //{
-        //    return GetActionsOnShotWhileInvincible(s, c, wasPlayer, 0);
-        //}
-
-        //public override List<CardAction>? GetActionsOnShotWhileInvincible(State s, Combat c, bool wasPlayer, int damage)
-        //{
-        //    if (s.ship.Get((Status)MainManifest.statuses["shieldOfFaith"].Id) > 0 && !wasPlayer) return new() { };
-
-        //    if (c.currentCardAction is AAttack hit)
-        //    {
-        //        AAttack aattack = Mutil.DeepCopy(hit);
-
-        //        aattack.fromDroneX = this.x;
-        //        aattack.fast = true;
-
-        //        ModifyAction(aattack, s, c, wasPlayer);
-
-        //        //return new() { aattack };
-        //        return new() { };
-        //    }
-
-        //    MainManifest.Instance.Logger.LogError("Banner was shot with non attack " + c.currentCardAction?.GetType().FullName);
-        //    return new() { };
-        //}
-
+        public virtual bool Tattered() { return false; }
 
         public static int? AAttackGetFromX(AAttack a, State s, Combat c)
         {
@@ -55,6 +32,39 @@ namespace KnightsCohort.Bannerlady
             }
             return null;
         }
+
+        //
+        // Draw intent lines through banners patches
+        //
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.DrawIntentLinesForPart))]
+        public static void DrawIntentLinesForAttacksThroughBanners_Setup(Combat __instance, Ship shipSource, Ship shipTarget, int i, Part part, Vec v)
+        {
+            bool isAttack = part.intent is IntentAttack || (part.hilight && part.type == PType.cannon);
+            if (!isAttack) return;
+            int x = shipSource.x + i;
+            if (__instance.stuff.ContainsKey(x) && __instance.stuff[x] is Banner banner) 
+            {
+                removedBanner = banner;
+                __instance.stuff.Remove(x);
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.DrawIntentLinesForPart))]
+        public static void DrawIntentLinesForAttacksThroughBanners_Cleanup(Combat __instance, Ship shipSource, Ship shipTarget, int i, Part part, Vec v)
+        {
+            if (removedBanner == null) return;
+            __instance.stuff[removedBanner.x] = removedBanner;
+            removedBanner = null;
+        }
+
+        //
+        // Attacks pass through banners patches
+        // Attacks are modified by banners patches
+        // Attacks destroy tattered banners patches
+        //
 
         static StuffBase removedBanner = null;
 
@@ -80,7 +90,7 @@ namespace KnightsCohort.Bannerlady
             {
                 banner.ModifyAction(__instance, s, c, !__instance.targetPlayer);
 
-                if (!banner.Invincible())
+                if (banner.Tattered())
                 {
                     banner.DoDestroyedEffect(s, c);
                     c.stuff.Remove(x);
@@ -112,6 +122,10 @@ namespace KnightsCohort.Bannerlady
                 __result.hitDrone = false;
             }
         }
+
+        //
+        // END PATCHES
+        //
 
         public virtual Spr GetSprite()
         {

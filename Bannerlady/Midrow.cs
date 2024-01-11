@@ -24,7 +24,7 @@ namespace KnightsCohort.Bannerlady.Midrow
 
     public class TatteredWarBanner : WarBanner
     {
-        public override bool Invincible() { return false; }
+        public override bool Tattered() { return true; }
         public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/tattered_banner_of_war"].Id; }
         public override Spr? GetIcon() { return (Spr)MainManifest.sprites["icons/tattered_banner_war"].Id; }
     }
@@ -111,7 +111,7 @@ namespace KnightsCohort.Bannerlady.Midrow
 
     public class TatteredMartyrBanner : MartyrBanner
     {
-        public override bool Invincible() { return false; }
+        public override bool Tattered() { return true; }
         public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/tattered_banner_of_martyr"].Id; }
         public override Spr? GetIcon() { return (Spr)MainManifest.sprites["icons/tattered_banner_martyr"].Id; }
     }

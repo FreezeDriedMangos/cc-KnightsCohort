@@ -19,6 +19,7 @@ namespace KnightsCohort.actions
 
         public override Icon? GetIcon(State s)
         {
+            // TODO: add a charge left and charge right and choose the appropriate icon depending on which direction the ship will actually move
             return new Icon((Spr)MainManifest.sprites["icons/charge"].Id, distance, Colors.textMain);
         }
     }
