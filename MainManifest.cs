@@ -35,6 +35,7 @@ namespace KnightsCohort
         public static Dictionary<string, ExternalCharacter> characters = new Dictionary<string, ExternalCharacter>();
 
         public static IKokoroApi KokoroApi = null!;
+        internal static VowsRenderer VowsRenderer = null;
 
         public void BootMod(IModLoaderContact contact)
         {
@@ -46,6 +47,7 @@ namespace KnightsCohort
             harmony.PatchAll();
 
             KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
+            VowsRenderer = new();
         }
 
         public void LoadManifest(ISpriteRegistry artRegistry)

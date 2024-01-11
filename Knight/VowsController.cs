@@ -14,6 +14,22 @@ namespace KnightsCohort.Knight
         public static readonly int VOW_OF_MERCY_HONOR = 1;
         public static readonly int VOW_OF_COURAGE_HONOR = 1;
 
+        public static bool StatusIsVow(Status status) =>
+            status == (Status)MainManifest.statuses["vowOfMercy"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfAdamancy"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfTeamwork"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfAction"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfCourage"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfLeft"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfRight"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfChivalry"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfRest"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfMegaRest"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfPoverty"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfMiddlingIncome"].Id!.Value ||
+            status == (Status)MainManifest.statuses["vowOfAffluence"].Id!.Value;
+
+
         public static void AddHonor(Ship ship, int amt)
         {
             var honor = ship.Get((Status)MainManifest.statuses["honor"].Id);
@@ -57,6 +73,16 @@ namespace KnightsCohort.Knight
         //
         // SHARED
         //
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.Set))]
+        public static bool HarmonyPrefix_VowLimits(Ship __instance, Status status, ref int n)
+        {
+            if (!StatusIsVow(status)) return true;
+            if (n > 2) n = 2;
+            if (n < 0) n = 0;
+            return true;
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
