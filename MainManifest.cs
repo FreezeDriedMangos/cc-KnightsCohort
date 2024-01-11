@@ -52,6 +52,8 @@ namespace KnightsCohort
         {
             var filenames = new string[] {
                 "icons/honor",
+                "icons/honor_cost",
+                "icons/honor_cost_unsatisfied",
 
                 // knight
                 "character/knight_neutral_0",
@@ -124,12 +126,17 @@ namespace KnightsCohort
                 "midrow/banner_of_pirate",
                 "midrow/banner_of_inspiration",
                 "midrow/banner_of_shielding",
+                "midrow/tattered_banner_of_inspiration",
                 "midrow/tattered_banner_of_war",
                 "midrow/tattered_banner_of_martyr",
+                "midrow/tattered_banner_of_pirate",
                 "midrow/arrow",
                 "midrow/broadhead_arrow",
 
                 "icons/charge",
+                "icons/charge_directional",
+                "icons/retreat",
+                "icons/retreat_directional",
                 "icons/flurry",
                 "icons/shieldOfFaith",
                 "icons/banner_mercy",
@@ -138,8 +145,10 @@ namespace KnightsCohort
                 "icons/banner_pirate",
                 "icons/banner_inspiration",
                 "icons/banner_shielding",
+                "icons/tattered_banner_inspiration",
                 "icons/tattered_banner_war",
                 "icons/tattered_banner_martyr",
+                "icons/tattered_banner_pirate",
                 "icons/arrow",
                 "icons/broadhead_arrow",
 
@@ -190,6 +199,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Oathbreaker", typeof(Oathbreaker), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Friendly Duel", typeof(FriendlyDuel), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Challenge", typeof(Challenge), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Shield of Honor", typeof(ShieldOfHonor), sprites["card_default_knight"], decks["knight"]),
 
 
 
@@ -199,18 +209,18 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Remembered Glory", typeof(RememberedGlory), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 //new ExternalCard(namePrefix + "Charge Ahead", typeof(ChargeAhead), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Lead from the Front", typeof(LeadFromTheFront), sprites["card_default_bannerlady"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Bow and Arrow", typeof(BowAndArrow), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                //new ExternalCard(namePrefix + "Bow and Arrow", typeof(BowAndArrow), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Pity", typeof(BannerladyPity), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Bodyguard", typeof(BannerladyBodyguard), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Rest and Reprieve", typeof(RestAndReprieve), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Valiant Charge", typeof(ValiantCharge), sprites["card_default_bannerlady"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Archery Training", typeof(ArcheryTraining), sprites["card_default_bannerlady"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Platemail Piercer", typeof(PlatemailPiercer), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                //new ExternalCard(namePrefix + "Archery Training", typeof(ArcheryTraining), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                //new ExternalCard(namePrefix + "Platemail Piercer", typeof(PlatemailPiercer), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Telegraph", typeof(BannerladyTelegraph), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Martyrdom", typeof(Martyrdom), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Is It War?", typeof(IsItWar), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Covered Retreat", typeof(CoveredRetreat), sprites["card_default_bannerlady"], decks["bannerlady"]),
-                new ExternalCard(namePrefix + "Master of Archery", typeof(MasterOfArchery), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                //new ExternalCard(namePrefix + "Master of Archery", typeof(MasterOfArchery), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "False Flag", typeof(FalseFlag), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Shield of Faith", typeof(ShieldOfFaith), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Raise Morale", typeof(RaiseMorale), sprites["card_default_bannerlady"], decks["bannerlady"]),
@@ -218,6 +228,9 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Deadly Conviction", typeof(DeadlyConviction), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Diplomatic Immunity", typeof(DiplomaticImmunity), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Desperate Measures", typeof(BannerladyDesperateMeasures), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Lifted Burdens", typeof(LiftedBurdens), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Rally", typeof(BannerladyRally), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Sharp Eyes", typeof(SharpEyes), sprites["card_default_bannerlady"], decks["bannerlady"]),
 
 
 
@@ -331,7 +344,7 @@ namespace KnightsCohort
                 Name + ".Bannerlady",
                 decks["bannerlady"],
                 sprites["char_frame_bannerlady"],
-                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.ValiantCharge) },
+                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.LiftedBurdens) },
                 new Type[0],
                 animations["bannerlady.neutral"],
                 animations["bannerlady.mini"]
@@ -409,7 +422,7 @@ namespace KnightsCohort
             );
             RegisterGlossaryEntry(registry, "missileExcalibur", sprites["icons/missile_excalibur"],
                 "EXCALIBUR",
-                "This missile is going to deal <c=damage>{0}</c> damage, piercing shields and armor."
+                "This missile is going to deal damage equal to the origin ship's honor."
             );
 
             RegisterGlossaryEntry(registry, "missileArrow", sprites["icons/arrow"],
@@ -452,22 +465,22 @@ namespace KnightsCohort
             status = "vowOfMercy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mercy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Mercy", "At the end of your turn, if you have not attacked this turn, gain 1 honor. Lose 1 Vow of Mercy.");
+            statuses[status].AddLocalisation("Vow of Mercy", $"At the end of your turn, if you have not attacked this turn, gain {VowsController.VOW_OF_MERCY_HONOR} honor. Lose 1 Vow of Mercy.");
 
             status = "vowOfAdamancy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_adamancy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Adamancy", $"If you move by any effect, lose {VowsController.VOW_OF_ADAMANCY_HONOR} Honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Adamancy", $"Gain {{0}} honor at the start of your turn. If you move by any effect, lose all stacks of this vow.");
 
             status = "vowOfTeamwork";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_teamwork"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Teamwork", $"If you play two or more cards from the same crew member in one turn, lose {VowsController.VOW_OF_TEAMWORK_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Teamwork", $"Gain {{0}} honor at the start of your turn. If you play two or more cards from the same crew member in one turn, lose all stacks of this vow.");
 
             status = "vowOfAction";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_action"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Action", $"If you gain shield by any effect, lose {VowsController.VOW_OF_ACTION_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Action", $"Gain {{0}} honor at the start of your turn. If you gain shield by any effect, lose all stacks of this vow.");
 
             status = "vowOfCourage";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_courage"], false);
@@ -477,42 +490,42 @@ namespace KnightsCohort
             status = "vowOfLeft";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_left"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of the Left Hand", $"If you move right by any effect or play your rightmost card, lose {VowsController.VOW_OF_LEFT_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of the Left Hand", $"Gain {{0}} honor at the start of your turn. If you move right by any effect or play your rightmost card, lose all stacks of this vow.");
 
             status = "vowOfRight";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_right"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of the Right Hand", $"If you move left by any effect or play your leftmost card, lose {VowsController.VOW_OF_RIGHT_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of the Right Hand", $"Gain {{0}} honor at the start of your turn. If you move left by any effect or play your leftmost card, lose all stacks of this vow.");
 
             status = "vowOfChivalry";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_chivalry"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Chivalry", $"If you are hit in a weak or brittle part by a drone or cannon, gain {VowsController.VOW_OF_CHIVALRY_HONOR} honor for each stack of this vow, and lose 1 stack of this vow. If you hit your opponent in a weak or brittle spot with a drone or your cannon, lose {VowsController.VOW_OF_CHIVALRY_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Chivalry", $"Gain {{0}} honor at the start of your turn. If you hit your opponent in a weak or brittle spot with a drone or your cannon, lose all stacks of this vow.");
 
             status = "vowOfRest";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Rest", $"If end your turn with less than 1 energy, lose {VowsController.VOW_OF_REST_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Rest", $"Gain {{0}} honor at the start of your turn. If end your turn with less than 1 energy, lose all stacks of this vow.");
             
             status = "vowOfMegaRest";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mega_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Mega Rest", $"If end your turn with less than 2 energy, lose {VowsController.VOW_OF_MEGA_REST_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain {{0}} honor at the start of your turn. If end your turn with less than 2 energy, lose all stacks of this vow.");
 
             status = "vowOfPoverty";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_poverty"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Poverty", $"If you play a card that costs 0 energy, lose {VowsController.VOW_OF_POVERTY_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Poverty", $"Gain {{0}} honor at the start of your turn. If you play a card that costs 0 energy, lose all stacks of this vow.");
 
             status = "vowOfMiddlingIncome";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_middling_income"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Middling Income", $"If you play a card that costs 1 energy, lose {VowsController.VOW_OF_MIDDLING_INCOME_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Middling Income", $"Gain {{0}} honor at the start of your turn. If you play a card that costs 1 energy, lose all stacks of this vow.");
 
             status = "vowOfAffluence";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_affluence"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Affluence", $"If you play a card that costs 2 energy, lose {VowsController.VOW_OF_AFFLUENCE_HONOR} honor for each stack of this vow, and lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Affluence", $"Gain {{0}} honor at the start of your turn. If you play a card that costs 2 energy, lose all stacks of this vow.");
 
             status = "flurry";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/flurry"], false);
