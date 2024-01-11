@@ -313,8 +313,21 @@ namespace KnightsCohort.Knight.Cards
             bool disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0;
             return new()
             {
-                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -1, targetPlayer = true },
-                new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1, targetPlayer = true },
+                MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost
+                    (
+                        MainManifest.KokoroApi.ActionCosts.StatusResource
+                        (
+                            (Status)MainManifest.statuses["honor"].Id,
+                            Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                        ),
+                        amount: 1
+                    ),
+                    new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1, targetPlayer = true }
+                ),
             };
         }
         public override CardData GetData(State state)
