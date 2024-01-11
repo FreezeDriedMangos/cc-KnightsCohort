@@ -453,7 +453,7 @@ namespace KnightsCohort.Bannerlady.Cards
                         ),
                         amount: 2
                     ),
-                    new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true }
+                    new AStatus() { disabled = this.flipped, status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true }
                 );
             upper.disabled = this.flipped;
 
@@ -471,9 +471,9 @@ namespace KnightsCohort.Bannerlady.Cards
                         ),
                         amount: 2
                     ),
-                    new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true }
+                    new AStatus() { disabled = !this.flipped, status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true }
                 );
-            upper.disabled = this.flipped;
+            lower.disabled = !this.flipped;
 
             return new()
             {
