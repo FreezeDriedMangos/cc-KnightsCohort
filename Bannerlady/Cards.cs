@@ -448,10 +448,10 @@ namespace KnightsCohort.Bannerlady.Cards
                         (
                             Enum.Parse<Status>("droneShift"),
                             Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
-                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
-                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                            Enum.Parse<Spr>("icons_evade"), // TODO: unsatisfied cost sprite
+                            Enum.Parse<Spr>("icons_evade") // TODO: statisfied cost sprite
                         ),
-                        amount: 2
+                        amount: 1
                     ),
                     new AStatus() { disabled = this.flipped, status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true }
                 );
@@ -466,10 +466,10 @@ namespace KnightsCohort.Bannerlady.Cards
                         (
                             (Status)Enum.Parse<Status>("evade"),
                             Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
-                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
-                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                            Enum.Parse<Spr>("icons_droneShift"), // TODO: unsatisfied cost sprite
+                            Enum.Parse<Spr>("icons_droneShift") // TODO: statisfied cost sprite
                         ),
-                        amount: 2
+                        amount: 1
                     ),
                     new AStatus() { disabled = !this.flipped, status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true }
                 );
