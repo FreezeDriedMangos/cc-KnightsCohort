@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static KnightsCohort.Herbalist.Cards.HerbPack;
 
 namespace KnightsCohort.Herbalist
 {
@@ -25,10 +26,15 @@ namespace KnightsCohort.Herbalist
         INSTANTMOVE_RIGHT,
         HEAL,
         HULLDAMAGE,
-        NOSHIELD,
         HEAT,
         POWERDRIVE,
-        NEGATIVE_OXIDATION
+        NEGATIVE_OXIDATION,
+        ENGINESTALL,
+        INSTANTMOVE_RANDOM,
+        ENGINELOCK,
+        PAYBACK,
+        FLUX,
+        PARANOIA,
     }
 
     [HarmonyPatch]
@@ -36,6 +42,9 @@ namespace KnightsCohort.Herbalist
     {
         protected virtual List<HerbActions> GenerateSerializedActions(State s) { return new(); }
         protected virtual string GetTypeName() { return "INVALID"; }
+        protected virtual List<HerbActions> possibleOptions => new();
+
+        public List<HerbActions> PotentialActions = new();
 
         public List<HerbActions> SerializedActions = new();
         public string name;
@@ -46,6 +55,7 @@ namespace KnightsCohort.Herbalist
         {
             c.SerializedActions = c.GenerateSerializedActions(s);
             c.name = GenerateFakeLatinWord(s) + " " + c.GetTypeName();
+            c.PotentialActions = c.possibleOptions;
             return (HerbCard)c;
         }
 
@@ -96,13 +106,52 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.HERMESBOOTS:       return new AStatus() { status = Enum.Parse<Status>("hermes"),                      statusAmount =  count, targetPlayer = true };
                 case HerbActions.HEAT:              return new AStatus() { status = Enum.Parse<Status>("heat"),                        statusAmount =  count, targetPlayer = true };
                 case HerbActions.POWERDRIVE:        return new AStatus() { status = Enum.Parse<Status>("powerdrive"),                  statusAmount =  count, targetPlayer = true };
-                case HerbActions.NOSHIELD:          return new AStatus() { status = Enum.Parse<Status>("shield"),                      statusAmount = 0,      targetPlayer = true, mode = Enum.Parse<AStatusMode>("Set") };
+                case HerbActions.ENGINESTALL:       return new AStatus() { status = Enum.Parse<Status>("engineStall"),                 statusAmount =  count, targetPlayer = true };
+                case HerbActions.ENGINELOCK:        return new AStatus() { status = Enum.Parse<Status>("lockdown"),                    statusAmount =  count, targetPlayer = true };
+                case HerbActions.PAYBACK:           return new AStatus() { status = Enum.Parse<Status>("payback"),                     statusAmount =  count, targetPlayer = true };
+                case HerbActions.FLUX:              return new AStatus() { status = Enum.Parse<Status>("libra"),                     statusAmount =  count, targetPlayer = true };
 
                 case HerbActions.INSTANTMOVE_LEFT:  return new AMove() { dir = -count, targetPlayer = true };
                 case HerbActions.INSTANTMOVE_RIGHT: return new AMove() { dir =  count, targetPlayer = true };
+                case HerbActions.INSTANTMOVE_RANDOM:return new AMove() { dir =  count, isRandom=true, targetPlayer = true };
 
                 case HerbActions.HEAL:              return new AHeal() { healAmount = count, targetPlayer = true };
                 case HerbActions.HULLDAMAGE:        return new AHurt() { hurtAmount = count, targetPlayer = true };
+            }
+
+            throw new Exception("Unknown herb action passed: " + serialized);
+        }
+
+        public static string GetName(HerbActions serialized)
+        {
+            switch (serialized)
+            {
+                case HerbActions.OXIDATION:         return "Oxidation";
+                case HerbActions.NEGATIVE_OXIDATION:return "Reduce Oxidation";
+                case HerbActions.TEMPSHIELD:        return "Temp Shield";
+                case HerbActions.OVERDRIVE:         return "Overdrive";
+                case HerbActions.DAZED:             return "Dazed";
+                case HerbActions.BLINDNESS:         return "Blindness";
+                case HerbActions.STUNCHARGE:        return "Stun Charge";
+                case HerbActions.AUTODODGE_RIGHT:   return "Autododge Right";
+                case HerbActions.REMOVE_CORRODE:    return "Reduce Corrode";
+                case HerbActions.SHIELD:            return "Shield";
+                case HerbActions.NEGATIVE_OVERDIVE: return "Reduce Overdrive";
+                case HerbActions.EVADE:             return "Evade";
+                case HerbActions.HERMESBOOTS:       return "Hermes Boots";
+                case HerbActions.HEAT:              return "Heat";
+                case HerbActions.POWERDRIVE:        return "Powerdrive";
+                case HerbActions.ENGINESTALL:       return "Engine Stall";
+                case HerbActions.ENGINELOCK:        return "Engine Lock";
+                case HerbActions.PAYBACK:           return "Payback";
+                case HerbActions.FLUX:              return "Flux";
+
+                case HerbActions.INSTANTMOVE_LEFT:  return "Instant Move";
+                case HerbActions.INSTANTMOVE_RIGHT: return "Instant Move";
+                case HerbActions.INSTANTMOVE_RANDOM:return "Random Instant Move";
+
+                case HerbActions.HEAL:              return "Heal";
+                case HerbActions.HULLDAMAGE:        return "Hull Damage";
             }
 
             throw new Exception("Unknown herb action passed: " + serialized);
@@ -156,8 +205,25 @@ namespace KnightsCohort.Herbalist
             if (__instance is not HerbCard herb) return true;
             if (herb.revealed) return true;
 
-            // TODO: add a tooltip for what herb cards do - the whole "actions reveal on play and actions apply to opponent on exhaust" deal
-            __result = new List<Tooltip>();
+            var tooltips = new List<Tooltip>()
+            {
+                new TTText() { text = $"The actions on this card will be permanently revealed after playing, exhausting, or combining." },
+                new TTDivider(),
+                new TTText() { text = $"This herb card has 2-3 of the following actions, with potential repeats: " }
+            };
+
+            foreach (HerbActions a in herb.PotentialActions)
+            {
+                TTGlossary ttg = HerbCard.ParseSerializedAction(a).GetTooltips(s).First() as TTGlossary;
+                //tooltips.Add(new TTGlossaryNoDesc(ttg.key, ttg.vals));
+                string name = HerbCard.GetName(a);
+                string suffix = name.StartsWith("Reduce") ? ".reduce" : "";
+                tooltips.Add(new TTGlossaryNoDescNameOverride(ttg.key + suffix, name, ttg.vals));
+            }
+            __result = tooltips;
+
+
+
 
             return false;
         }
@@ -166,17 +232,18 @@ namespace KnightsCohort.Herbalist
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
     public class HerbCard_Leaf : HerbCard
     {
-        static List<HerbActions> options = new()
+        public static List<HerbActions> options => new()
         {
-            HerbActions.TEMPSHIELD,
+            HerbActions.FLUX,
             HerbActions.OVERDRIVE,
             HerbActions.DAZED,
-            HerbActions.BLINDNESS,
+            //HerbActions.BLINDNESS,
             HerbActions.NEGATIVE_OXIDATION,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
         };
+        protected override List<HerbActions> possibleOptions => options;
         protected override List<HerbActions> GenerateSerializedActions(State s)
         {
             Rand rng = s.rngActions;
@@ -190,16 +257,17 @@ namespace KnightsCohort.Herbalist
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
     public class HerbCard_Bark : HerbCard
     {
-        static List<HerbActions> options = new()
+        public static List<HerbActions> options = new()
         {
             HerbActions.STUNCHARGE,
             HerbActions.AUTODODGE_RIGHT,
-            HerbActions.DAZED,
+            HerbActions.ENGINESTALL,
             HerbActions.REMOVE_CORRODE,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
         };
+        protected override List<HerbActions> possibleOptions => options;
         protected override List<HerbActions> GenerateSerializedActions(State s)
         {
             Rand rng = s.rngActions;
@@ -213,7 +281,7 @@ namespace KnightsCohort.Herbalist
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
     public class HerbCard_Root : HerbCard
     {
-        static List<HerbActions> options = new()
+        public static List<HerbActions> options = new()
         {
             HerbActions.SHIELD,
             HerbActions.SHIELD,
@@ -225,6 +293,7 @@ namespace KnightsCohort.Herbalist
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
         };
+        protected override List<HerbActions> possibleOptions => options;
         protected override List<HerbActions> GenerateSerializedActions(State s)
         {
             Rand rng = s.rngActions;
@@ -238,9 +307,8 @@ namespace KnightsCohort.Herbalist
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
     public class HerbCard_Seed : HerbCard
     {
-        static List<HerbActions> options = new()
+        public static List<HerbActions> options = new()
         {
-            HerbActions.EVADE,
             HerbActions.EVADE,
             HerbActions.EVADE,
             HerbActions.EVADE,
@@ -248,10 +316,16 @@ namespace KnightsCohort.Herbalist
             HerbActions.INSTANTMOVE_LEFT,
             HerbActions.INSTANTMOVE_RIGHT,
             HerbActions.INSTANTMOVE_RIGHT,
+            HerbActions.DAZED,
+            HerbActions.DAZED,
+            HerbActions.INSTANTMOVE_RANDOM,
+            HerbActions.INSTANTMOVE_RANDOM,
+            HerbActions.INSTANTMOVE_RANDOM,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
         };
+        protected override List<HerbActions> possibleOptions => options;
         protected override List<HerbActions> GenerateSerializedActions(State s)
         {
             Rand rng = s.rngActions;
@@ -265,15 +339,17 @@ namespace KnightsCohort.Herbalist
     [CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[0], dontOffer = true)]
     public class HerbCard_Shroom : HerbCard
     {
-        static List<HerbActions> options = new()
+        public static List<HerbActions> options = new()
         {
             HerbActions.HEAL,
             HerbActions.HULLDAMAGE,
-            HerbActions.NOSHIELD,
             HerbActions.HEAT,
             HerbActions.POWERDRIVE,
             HerbActions.BLINDNESS,
+            HerbActions.PAYBACK,
+            HerbActions.ENGINELOCK,
         };
+        protected override List<HerbActions> possibleOptions => options;
         protected override List<HerbActions> GenerateSerializedActions(State s)
         {
             Rand rng = s.rngActions;

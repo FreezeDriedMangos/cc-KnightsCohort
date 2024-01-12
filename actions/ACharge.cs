@@ -27,11 +27,13 @@ namespace KnightsCohort.actions
                 var totalDist = c.otherShip.x - s.ship.x;
                 if (totalDist == 0) return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, distance, Colors.textMain);
                 if (totalDist < 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, distance, Colors.textMain);
-                if (totalDist > 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, distance, Colors.textMain, true);
+                if (totalDist > 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite+"_right"].Id, distance, Colors.textMain);
             }
 
             return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, distance, Colors.textMain);
         }
+
+        public override List<Tooltip> GetTooltips(State s) => new() { new TTGlossary(MainManifest.glossary["charge"].Head, distance) };
     }
 
     public class ARetreat : ACharge
@@ -45,6 +47,21 @@ namespace KnightsCohort.actions
             if (direction == 0) direction = 1;
 
             c.QueueImmediate(new AMove() { dir = distance * direction, targetPlayer = true });
+        }
+
+        public override List<Tooltip> GetTooltips(State s) => new() { new TTGlossary(MainManifest.glossary["retreat"].Head, distance) };
+
+        public override Icon? GetIcon(State s)
+        {
+            // if (s.route is Combat c && ((s.routeOverride == null && c.routeOverride == null) || c.eyeballPeek))
+            if (s.route is Combat c)
+            {
+                var totalDist = c.otherShip.x - s.ship.x;
+                if (totalDist < 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, distance, Colors.textMain);
+                else               return new Icon((Spr)MainManifest.sprites[DirectionalSprite + "_right"].Id, distance, Colors.textMain);
+            }
+
+            return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, distance, Colors.textMain);
         }
     }
 }

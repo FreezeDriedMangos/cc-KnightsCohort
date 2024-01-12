@@ -137,8 +137,10 @@ namespace KnightsCohort
 
                 "icons/charge",
                 "icons/charge_directional",
+                "icons/charge_directional_right",
                 "icons/retreat",
                 "icons/retreat_directional",
+                "icons/retreat_directional_right",
                 "icons/flurry",
                 "icons/shieldOfFaith",
                 "icons/banner_mercy",
@@ -165,6 +167,8 @@ namespace KnightsCohort
                 "icons/herb_search",
                 "icons/CorrodeCostSatisfied",
                 "icons/CorrodeCostUnsatisfied",
+
+                "cards/blindness",
             };
 
             foreach (var filename in filenames) {
@@ -240,6 +244,8 @@ namespace KnightsCohort
 
 
 
+
+
                 new ExternalCard(namePrefix + "Literally Doesn't Exist", typeof(HerbCard), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Safe to Drink. Probably.", typeof(HerbCard_Tea), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Poultice", typeof(HerbCard_Poultice), sprites["card_default_herbalist"], decks["herbs"]),
@@ -293,6 +299,7 @@ namespace KnightsCohort
             );
             if (!registry.RegisterDeck(decks["knight"])) throw new Exception("Sir Ratzo has taken his deck on a quest, cannot proceeed.");
 
+            unchecked { knightColor = (int)0xffcd4b4b; }
 
             decks["bannerlady"] = new ExternalDeck(
                 Name + ".deck.Bannerlady",
@@ -304,6 +311,7 @@ namespace KnightsCohort
             );
             if (!registry.RegisterDeck(decks["bannerlady"])) throw new Exception("Dame Emily has taken her deck on campaign, cannot proceeed.");
 
+            unchecked { knightColor = (int)0xff815a30; }
 
             decks["herbalist"] = new ExternalDeck(
                 Name + ".deck.Herbalist",
@@ -315,6 +323,7 @@ namespace KnightsCohort
             );
             if (!registry.RegisterDeck(decks["herbalist"])) throw new Exception("Dame Halla has taken her deck and wandered off into the forest, cannot proceeed.");
 
+            unchecked { knightColor = (int)0xff1a7738; }
 
             decks["herbs"] = new ExternalDeck(
                 Name + ".deck.Herbs",
@@ -443,6 +452,11 @@ namespace KnightsCohort
             RegisterGlossaryEntry(registry, "charge", sprites["icons/charge"],
                 "CHARGE",
                 "Move your ship's center {0} towards the enemy ship's center."
+            );
+
+            RegisterGlossaryEntry(registry, "retreat", sprites["icons/retreat"],
+                "RETREAT",
+                "Move your ship's center {0} away from the enemy ship's center."
             );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description)

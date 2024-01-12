@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using KnightsCohort.actions;
 using KnightsCohort.Knight;
+using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,99 +61,137 @@ namespace KnightsCohort.Herbalist.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class LeafPack : Card
+    [HarmonyPatch]
+    public class HerbPack : Card
     {
+        private static bool isDuringTryPlay = false;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void TrackPlaying(State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            isDuringTryPlay = true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void StopTrackingPlaying(State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            isDuringTryPlay = false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(TTGlossary), nameof(TTGlossary.BuildIconAndText))]
+        public static void BuildIconAndText(TTGlossary __instance, ref (Spr? icon, string text) __result)
+        {
+            if (__instance is TTGlossaryNoDesc)
+            {
+                string[] keyparts = __instance.key.Split('.');
+                string namecolor = keyparts[0];
+                __result.text = $"<c={namecolor}>{Loc.T(namecolor + "." + keyparts[1] + ".name").ToUpperInvariant()}</c>";
+            }
+            
+            if (__instance is TTGlossaryNoDescNameOverride ttgndno)
+            {
+                string[] keyparts = __instance.key.Split('.');
+                string namecolor = keyparts[0];
+                __result.text = $"<c={namecolor}>{ttgndno.nameOverride}</c>";
+            }
+        }
+
+        public class TTGlossaryNoDesc : TTGlossary { public TTGlossaryNoDesc(string key, params object[]? vals) : base(key, vals) { } }
+        public class TTGlossaryNoDescNameOverride : TTGlossary { public string nameOverride; public TTGlossaryNoDescNameOverride(string key, string name, params object[]? vals) : base(key, vals) { nameOverride = name; } }
+
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            if (isDuringTryPlay)
             {
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Leaf()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Leaf()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Leaf()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Leaf()) },
-            };
+                return new()
+                {
+                   new AAddCard() { card = GenerateHerb(s) },
+                   new AAddCard() { card = GenerateHerb(s) },
+                   new AAddCard() { card = GenerateHerb(s) },
+                   new AAddCard() { card = GenerateHerb(s) },
+                };
+            }
+            else
+            {
+                List<Tooltip> tooltips = new()
+                {
+                    new TTText() { text = $"The randomly generated herb cards will have 2-3 of the following actions, with potential repeats: " }
+                };
+
+                foreach (HerbActions a in PossibleActions())
+                {
+                    TTGlossary ttg = HerbCard.ParseSerializedAction(a).GetTooltips(s).First() as TTGlossary;
+                    //tooltips.Add(new TTGlossaryNoDesc(ttg.key, ttg.vals));
+                    string name = HerbCard.GetName(a);
+                    string suffix = name.StartsWith("Reduce") ? ".reduce" : "";
+                    tooltips.Add(new TTGlossaryNoDescNameOverride(ttg.key + suffix, name, ttg.vals));
+                    //MainManifest.Instance.Logger.LogInformation($"Adding tooltip on {GetHerbType()} for {a} : {HerbCard.GetName(a)}");
+                }
+                tooltips.Add(new TTDivider());
+
+                return new()
+                {
+                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } },
+                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } },
+                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } },
+                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) },
+                        tooltips = tooltips
+                    }
+                };
+            }
         }
+
         public override CardData GetData(State state)
         {
-            return new() { cost = 0, description = "Permanently add 4 random leaf herb cards to your deck.", singleUse = true };
+            return new() { cost = 0, description = $"Permanently add 4 random {GetHerbType()} herb cards to your deck.", singleUse = true };
         }
+
+        public virtual string GetHerbType() => "NULL";
+        public virtual HerbCard GenerateHerb(State s) => new HerbCard();
+        public virtual List<HerbActions> PossibleActions() => new();
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class BarkPack : Card
+    public class LeafPack : HerbPack
     {
-        public override List<CardAction> GetActions(State s, Combat c)
-        {
-            return new()
-            {
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Bark()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Bark()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Bark()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Bark()) },
-            };
-        }
-        public override CardData GetData(State state)
-        {
-            return new() { cost = 0, description = "Permanently add 4 random bark herb cards to your deck.", singleUse = true };
-        }
+        public override string GetHerbType() => "leaf";
+        public override HerbCard GenerateHerb(State s) => HerbCard.Generate(s, new HerbCard_Leaf());
+        public override List<HerbActions> PossibleActions() => HerbCard_Leaf.options;
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class BarkPack : HerbPack
+    {
+        public override string GetHerbType() => "bark";
+        public override HerbCard GenerateHerb(State s) => HerbCard.Generate(s, new HerbCard_Bark());
+        public override List<HerbActions> PossibleActions() => HerbCard_Bark.options;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class SeedPack : Card
+    public class SeedPack : HerbPack
     {
-        public override List<CardAction> GetActions(State s, Combat c)
-        {
-            return new()
-            {
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Seed()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Seed()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Seed()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Seed()) },
-            };
-        }
-        public override CardData GetData(State state)
-        {
-            return new() { cost = 0, description = "Permanently add 4 random seed herb cards to your deck.", singleUse = true };
-        }
+        public override string GetHerbType() => "seed";
+        public override HerbCard GenerateHerb(State s) => HerbCard.Generate(s, new HerbCard_Seed());
+        public override List<HerbActions> PossibleActions() => HerbCard_Seed.options;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class RootPack : Card
+    public class RootPack : HerbPack
     {
-        public override List<CardAction> GetActions(State s, Combat c)
-        {
-            return new()
-            {
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Root()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Root()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Root()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Root()) },
-            };
-        }
-        public override CardData GetData(State state)
-        {
-            return new() { cost = 0, description = "Permanently add 4 random root herb cards to your deck.", singleUse = true };
-        }
+        public override string GetHerbType() => "root";
+        public override HerbCard GenerateHerb(State s) => HerbCard.Generate(s, new HerbCard_Root());
+        public override List<HerbActions> PossibleActions() => HerbCard_Root.options;
     }
 
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class ShroomPack : Card
+    public class ShroomPack : HerbPack
     {
-        public override List<CardAction> GetActions(State s, Combat c)
-        {
-            return new()
-            {
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Shroom()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Shroom()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Shroom()) },
-               new AAddCard() { card = HerbCard.Generate(s, new HerbCard_Shroom()) },
-            };
-        }
-        public override CardData GetData(State state)
-        {
-            return new() { cost = 0, description = "Permanently add 4 random shroom herb cards to your deck.", singleUse = true };
-        }
+        public override string GetHerbType() => "shroom";
+        public override HerbCard GenerateHerb(State s) => HerbCard.Generate(s, new HerbCard_Shroom());
+        public override List<HerbActions> PossibleActions() => HerbCard_Shroom.options;
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
@@ -164,12 +204,14 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                    browseAction = new ADelegateAction() { onBegin = (instance, g, s, c) =>
+                    browseAction = new AQueueImmediateOtherActions()
                     {
-                        if (instance.selectedCard == null) return;
-                        s.RemoveCardFromWhereverItIs(instance.selectedCard.uuid);
-                        c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true });
-                    }}
+                        actions = new()
+                        {
+                            new ARemoveSelectedCardFromWhereverItIs(),
+                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true }
+                        }
+                    }
                 }
             };
         }
@@ -205,13 +247,15 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
-                    browseAction = new ADelegateAction() { onBegin = (instance, g, s, c) =>
+                    browseAction = new AQueueImmediateOtherActions()
                     {
-                        if (instance.selectedCard == null) return;
-                        c.Queue(instance.selectedCard.GetActionsOverridden(s, c));
-                        c.Queue(instance.selectedCard.GetActionsOverridden(s, c));
-                        s.RemoveCardFromWhereverItIs(instance.selectedCard.uuid);
-                    }}
+                        actions = new()
+                        {
+                            new AQueueImmediateSelectedCardActions(),
+                            new AQueueImmediateSelectedCardActions(),
+                            new ARemoveSelectedCardFromWhereverItIs()
+                        }
+                    }
                 }
             };
         }
@@ -242,20 +286,11 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
-                    browseAction = new ADelegateAction() { onBegin = (instance, g, s, c) =>
+                    browseAction = new AEvaluateQuestSubmission()
                     {
-                        if (instance.selectedCard == null) return;
-                        var goalActions = SetizeSerializedHerbActions(requirements);
-                        var submittedActions = SetizeSerializedHerbActions((instance.selectedCard as HerbCard).SerializedActions);
-
-                        bool allRequirementsMet = submittedActions.Fast_AllAreIn(goalActions);
-                        bool requirementsPerfectlyMet = submittedActions.Count == goalActions.Count;
-
-                        if (allRequirementsMet && requirementsPerfectlyMet) { c.QueueImmediate(new AAddCard() { card = new EpicQuestReward(), amount=1, destination = Enum.Parse<CardDestination>("Hand") }); }
-                        else if (allRequirementsMet) { c.QueueImmediate(new AAddCard() { card = new QuestReward(), amount=1, destination = Enum.Parse<CardDestination>("Hand") }); }
-
-                        s.RemoveCardFromWhereverItIs(uuid);
-                    }}
+                        requirements = requirements,
+                        uuid = uuid
+                    }
                 }
             };
 
@@ -267,19 +302,6 @@ namespace KnightsCohort.Herbalist.Cards
             actions.Add(new ADummyAction());
 
             return actions;
-        }
-
-        public static HashSet<string> SetizeSerializedHerbActions(List<HerbActions> ha)
-        {
-            Dictionary<HerbActions, int> counts = new();
-            HashSet<string> retval = new HashSet<string>();
-            foreach(HerbActions action in  ha)
-            {
-                counts.TryAdd(action, 0);
-                counts[action]++;
-                retval.Add(action + ":" + counts[action]);
-            }
-            return retval;
         }
 
         public override CardData GetData(State state)
@@ -407,21 +429,7 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
-                    browseAction = new ADelegateAction() { onBegin = (instance, g, s, c) =>
-                    {
-                        if (instance.selectedCard == null) return;
-                        HerbCard herb = instance.selectedCard as HerbCard;
-                        HashSet<HerbActions> actions = new HashSet<HerbActions>(herb.SerializedActions);
-                        int removalIndex = (int)(s.rngActions.NextUint() % actions.Count);
-                        actions.Remove(actions.ToList()[removalIndex]);
-
-                        HerbCard_Tea tea = new HerbCard_Tea();
-                        tea.SerializedActions = new(herb.SerializedActions);
-                        tea.SerializedActions.AddRange(actions);
-                        tea.name =  herb.name.Split(' ')[0] + " Tea";
-                        tea.revealed = true;
-                        c.QueueImmediate(new AAddCard() { card = tea, destination = Enum.Parse<CardDestination>("Hand")});
-                    }}
+                    browseAction = new ABrewTea()
                 }
             };
         }
@@ -441,17 +449,16 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                    browseAction = new ADelegateAction() { onBegin = (instance, g, s, c) =>
+                    browseAction = new AQueueImmediateOtherActions()
                     {
-                        if (instance.selectedCard == null) return;
-                        c.Queue(new AExhaustOtherCard() { uuid = instance.selectedCard.uuid });
-                        c.Queue(new ADelegateAction() { onBegin = (instance2, g2, s2, c2) =>
+                        actions = new()
                         {
-                            s2.RemoveCardFromWhereverItIs(instance.selectedCard.uuid);
-                            c2.SendCardToHand(s, instance.selectedCard);
-                        }});
-                        c.Queue(new AExhaustOtherCard() { uuid = instance.selectedCard.uuid });
-                    }}
+                            new AExhaustSelectedCard(),
+                            new ARemoveSelectedCardFromWhereverItIs(),
+                            new ASendSelectedCardToHand(),
+                            new AExhaustSelectedCard(),
+                        }
+                    }
                 },
             };
         }

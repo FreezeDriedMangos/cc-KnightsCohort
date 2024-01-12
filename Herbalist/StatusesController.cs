@@ -39,7 +39,7 @@ namespace KnightsCohort.Herbalist
 
         static bool blindnessEnabled = false;
 
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         [HarmonyPatch(typeof(Card), nameof(Card.Render))]
         public static void Blindness_EnableDisable(G g, Vec? posOverride = null, State? fakeState = null, bool ignoreAnim = false, bool ignoreHover = false, bool hideFace = false, bool hilight = false, bool showRarity = false, bool autoFocus = false, UIKey? keyOverride = null, OnMouseDown? onMouseDown = null, OnMouseDownRight? onMouseDownRight = null, OnInputPhase? onInputPhase = null, double? overrideWidth = null, UIKey? leftHint = null, UIKey? rightHint = null, UIKey? upHint = null, UIKey? downHint = null, int? renderAutopilot = null, bool? forceIsInteractible = null, bool reportTextBoxesForLocTest = false, bool isInCombatHand = false)
         {
@@ -71,11 +71,12 @@ namespace KnightsCohort.Herbalist
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(Card), nameof(Card.GetData))]
-        public static void Blindness_CardNamePatch(Card __instance, ref CardData __result)
+        [HarmonyPatch(typeof(Card), nameof(Card.GetDataWithOverrides))]
+        public static void Blindness_CardArtPatch(Card __instance, ref CardData __result, State state)
         {
             // TODO: make a generic card art "password hidden; eye with a / over it" for this, rather than OwnerMissing
-            if (blindnessEnabled) __result.art = Enum.Parse<Spr>("cards_OwnerMissing");
+            if (blindnessEnabled) __result.art = (Spr)MainManifest.sprites["cards/blindness"].Id; //Enum.Parse<Spr>("cards_OwnerMissing");
+            if (blindnessEnabled) __result.description = null;
         }
 
         // TODO: enemy blindness effect
