@@ -154,6 +154,12 @@ namespace KnightsCohort.Knight
             //}
         }
 
+        public static G g;
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(G), nameof(G.Render))]
+        public static void CaptureG(G __instance, double deltaTime) { if (g == null) g = __instance; }
+
         //
         // Vow of Adamancy & Left/Right
         //
@@ -183,8 +189,8 @@ namespace KnightsCohort.Knight
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrainCardActions))]
         public static void HarmonyPostfix_VowOfAdamancy(Combat __instance, G g)
         {
-            bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
-            if (!actionJustEnded) return;
+            //bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
+            //if (!actionJustEnded) return;
 
             if (previousX != g.state.ship.x)
             {
@@ -230,13 +236,15 @@ namespace KnightsCohort.Knight
             if (cardIndex == handSize-1)
             {
                 // we've played the rightmost card
-                GetAndClear(s.ship, "vowOfLeft");
+                var oldStacks = GetAndClear(s.ship, "vowOfLeft");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_left"].Id);
             }
 
             if (cardIndex == 0)
             {
                 // we've played the leftmost card
-                GetAndClear(s.ship, "vowOfRight");
+                var oldStacks = GetAndClear(s.ship, "vowOfRight");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_right"].Id);
             }
         }
 
@@ -274,9 +282,11 @@ namespace KnightsCohort.Knight
             bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
             if (!actionJustEnded) return;
 
-            if (__instance.currentCardAction is AAttack)
+            if (__instance.currentCardAction is AAttack aattack && !aattack.targetPlayer && !aattack.fromDroneX.HasValue)
             {
                 attackedThisTurn = true;
+                int oldStacks = GetAndClear(g.state.ship, "vowOfMercy");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_mercy"].Id);
             }
         }
 
@@ -285,18 +295,12 @@ namespace KnightsCohort.Knight
         //
 
         static HashSet<Deck> cardColorsPlayedThisTurn = new();
-        static bool hasBrokenTeamworkVow = false;
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
         public static void HarmonyPostfix_VowOfTeamwork_Cleanup(G g, State s, Combat c)
         {
-            if (hasBrokenTeamworkVow) // check to see if we missed breaking the vow
-            {
-                GetAndClear(s.ship, "vowOfTeamwork");
-            }
             cardColorsPlayedThisTurn.Clear();
-            hasBrokenTeamworkVow = false;
         }
 
         [HarmonyPostfix]
@@ -308,20 +312,17 @@ namespace KnightsCohort.Knight
             var deck = card.GetMeta().deck;
             if (!NewRunOptions.allChars.Contains(deck)) return; // don't prevent player from playing trash or things like Spent Casings from that one custom ship
 
-            if (cardColorsPlayedThisTurn.Contains(deck) || hasBrokenTeamworkVow) // check to see if we've just broken the vow or if we already have
+            if (cardColorsPlayedThisTurn.Contains(deck)) // check to see if we've just broken the vow or if we already have
             {
                 var teamworkStacks = GetAndClear(s.ship, "vowOfTeamwork");
                 if (teamworkStacks > 0)
                 {
-                    hasBrokenTeamworkVow = false;
+                    LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_teamwork"].Id);
                 }
-                else
-                {
-                    hasBrokenTeamworkVow = true;
-                }
+                cardColorsPlayedThisTurn.Clear();
             }
 
-            cardColorsPlayedThisTurn.Add(deck);
+            if (s.ship.Get((Status)MainManifest.statuses["vowOfTeamwork"].Id) > 0) cardColorsPlayedThisTurn.Add(deck);
         }
 
         //
@@ -355,7 +356,8 @@ namespace KnightsCohort.Knight
             int diff = n - __instance.Get(status);
             if (diff <= 0) return true;
 
-            GetAndClear(__instance, "vowOfAction");
+            int oldStacks = GetAndClear(g.state.ship, "vowOfAction");
+            if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_action"].Id);
 
             return true;
         }
@@ -387,15 +389,18 @@ namespace KnightsCohort.Knight
             // we can't just use card.GetCurrentCost, since Combat.TryPlayCard clears the discount the card may have had before this patch is run
             if (originalCardCost == 0)
             {
-                GetAndClear(s.ship, "vowOfPoverty");
+                int oldStacks = GetAndClear(g.state.ship, "vowOfPoverty");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_poverty"].Id);
             }
             else if (originalCardCost == 1)
             {
-                GetAndClear(s.ship, "vowOfMiddlingIncome");
+                int oldStacks = GetAndClear(g.state.ship, "vowOfMiddlingIncome");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_middling_income"].Id);
             }
             else if (originalCardCost == 2)
             {
-                GetAndClear(s.ship, "vowOfAffluence");
+                int oldStacks = GetAndClear(g.state.ship, "vowOfAffluence");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_affluence"].Id);
             }
         }
 
@@ -409,11 +414,13 @@ namespace KnightsCohort.Knight
         {
             if (c.energy < 1)
             {
-                GetAndClear(s.ship, "vowOfRest");
+                int oldStacks = GetAndClear(g.state.ship, "vowOfRest");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_rest"].Id);
             }
             if (c.energy < 2)
             {
-                GetAndClear(s.ship, "vowOfMegaRest");
+                int oldStacks = GetAndClear(g.state.ship, "vowOfMegaRest");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_mega_rest"].Id);
             }
         }
 
