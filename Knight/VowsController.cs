@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +57,7 @@ namespace KnightsCohort.Knight
             {
                 return null;
             }
-            int? num = aattack.GetFromX(s, c);
+            int? num = Bannerlady.Banner.AAttackGetFromX(aattack, s, c);
             RaycastResult raycastResult = aattack.fromDroneX.HasValue 
                 ? CombatUtils.RaycastGlobal(c, targetShip, fromDrone: true, aattack.fromDroneX.Value) 
                 : (num.HasValue ? CombatUtils.RaycastFromShipLocal(s, c, num.Value, aattack.targetPlayer) : null);
@@ -103,6 +104,56 @@ namespace KnightsCohort.Knight
             GetAndDecrement(__instance, "vowOfCourage");
         }
 
+        public static void LostVowEffect(G g, Rect shipRect, Spr vowSpr)
+        {
+            // make vow icon appear
+            PFX.combatAlpha.Add(new Particle
+            {
+                pos = new Vec(shipRect.x, shipRect.y) + new Vec(shipRect.w * 0.5, shipRect.h * 0.2),
+                lifetime = 1,
+                size = 10,
+                color = new Color(1.0, 1.0, 1.0, 0.7),
+                dragCoef = 1.0,
+                dragVel = new Vec(0.0, -10.0),
+                sprite = vowSpr
+            });
+
+            // spark effect
+            for (int i = 0; i < 10; i++)
+            {
+                PFX.combatSparks.MakeSparkBounds(shipRect, Mutil.NextRand(), Mutil.NextRand(), 0.0);
+            }
+
+            //smoke particles
+            //for (int j = 0; j < 20; j++)
+            //{
+            //    double size = 3.0 + Mutil.NextRand() * 8.0;
+            //    Vec pos = new Vec(shipRect.x, shipRect.y) + new Vec(shipRect.w * Mutil.NextRand(), shipRect.h * Mutil.NextRand());
+            //    PFX.combatAlpha.Add(new Particle
+            //    {
+            //        pos = pos,
+            //        lifetime = 2.0 * Mutil.NextRand(),
+            //        size = size,
+            //        color = new Color(1.0, 1.0, 1.0, 0.2),
+            //        dragCoef = 1.0,
+            //        dragVel = new Vec(0.0, -10.0)
+            //    });
+            //}
+            //for (int k = 0; k < 3; k++)
+            //{
+            //    double size2 = 3.0 + Mutil.NextRand() * 3.0;
+            //    Vec pos2 = new Vec(shipRect.x, shipRect.y) + new Vec(shipRect.w * Mutil.NextRand(), shipRect.h * Mutil.NextRand());
+            //    PFX.combatExplosion.Add(new Particle
+            //    {
+            //        pos = pos2,
+            //        lifetime = 2.0 * Mutil.NextRand(),
+            //        size = size2,
+            //        dragCoef = 1.0,
+            //        dragVel = new Vec(0.0, -10.0)
+            //    });
+            //}
+        }
+
         //
         // Vow of Adamancy & Left/Right
         //
@@ -111,9 +162,21 @@ namespace KnightsCohort.Knight
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
-        public static void HarmonyPostfix_VowOfAdamancy_Cleanup(G g, State s, Combat c)
+        public static void HarmonyPostfix_VowOfAdamancy_Setup(G g, State s, Combat c)
         {
-            previousX = 0; // cleanup for second combat
+            previousX = s.ship.x;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.Set))]
+        public static void HarmonyPostfix_VowOfAdamancy_SetupCleanup(Ship __instance, Status status, int n)
+        {
+            if (status != (Status)MainManifest.statuses["vowOfAdamancy"].Id) return;
+            if (__instance.Get((Status)MainManifest.statuses["vowOfAdamancy"].Id) != 0) return;
+            if (!__instance.isPlayerShip) return;
+
+            // if we're gaining vow of adamancy for the first time right now, reset the ship's tracked position
+            previousX = __instance.x;
         }
 
         [HarmonyPostfix]
@@ -125,20 +188,24 @@ namespace KnightsCohort.Knight
 
             if (previousX != g.state.ship.x)
             {
+                // we've moved in general
                 previousX = g.state.ship.x;
-                GetAndClear(g.state.ship, "vowOfAdamancy"); 
+                var oldStacks = GetAndClear(g.state.ship, "vowOfAdamancy");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_adamancy"].Id);
             }
 
             if (previousX < g.state.ship.x)
             {
                 // we've moved right
-                GetAndClear(g.state.ship, "vowOfLeft");
+                var oldStacks = GetAndClear(g.state.ship, "vowOfLeft");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_left"].Id);
             }
 
             if (previousX > g.state.ship.x)
             {
                 // we've moved left
-                GetAndClear(g.state.ship, "vowOfRight");
+                var oldStacks = GetAndClear(g.state.ship, "vowOfRight");
+                if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_right"].Id);
             }
         }
 
