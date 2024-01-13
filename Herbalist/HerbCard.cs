@@ -273,7 +273,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Leaf"; }
-        protected virtual bool IsRaw => true;
+        protected override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -299,7 +299,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Bark"; }
-        protected virtual bool IsRaw => true;
+        protected override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -326,7 +326,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Root"; }
-        protected virtual bool IsRaw => true;
+        protected override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -359,7 +359,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Seed"; }
-        protected virtual bool IsRaw => true;
+        protected override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -399,7 +399,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Shroom"; }
-        protected virtual bool IsRaw => true;
+        protected override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
