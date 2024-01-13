@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,7 @@ namespace KnightsCohort.Herbalist
         protected virtual List<HerbActions> GenerateSerializedActions(State s) { return new(); }
         protected virtual string GetTypeName() { return "INVALID"; }
         protected virtual List<HerbActions> possibleOptions => new();
+        protected virtual bool IsRaw => false;
 
         public List<HerbActions> PotentialActions = new();
 
@@ -56,6 +58,8 @@ namespace KnightsCohort.Herbalist
             c.SerializedActions = c.GenerateSerializedActions(s);
             c.name = GenerateFakeLatinWord(s) + " " + c.GetTypeName();
             c.PotentialActions = c.possibleOptions;
+            c.revealed = true; // TODO: remove this debug code
+
             return (HerbCard)c;
         }
 
@@ -109,7 +113,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.ENGINESTALL:       return new AStatus() { status = Enum.Parse<Status>("engineStall"),                 statusAmount =  count, targetPlayer = true };
                 case HerbActions.ENGINELOCK:        return new AStatus() { status = Enum.Parse<Status>("lockdown"),                    statusAmount =  count, targetPlayer = true };
                 case HerbActions.PAYBACK:           return new AStatus() { status = Enum.Parse<Status>("payback"),                     statusAmount =  count, targetPlayer = true };
-                case HerbActions.FLUX:              return new AStatus() { status = Enum.Parse<Status>("libra"),                     statusAmount =  count, targetPlayer = true };
+                case HerbActions.FLUX:              return new AStatus() { status = Enum.Parse<Status>("libra"),                       statusAmount =  count, targetPlayer = true };
 
                 case HerbActions.INSTANTMOVE_LEFT:  return new AMove() { dir = -count, targetPlayer = true };
                 case HerbActions.INSTANTMOVE_RIGHT: return new AMove() { dir =  count, targetPlayer = true };
@@ -157,7 +161,7 @@ namespace KnightsCohort.Herbalist
             throw new Exception("Unknown herb action passed: " + serialized);
         }
 
-        public static List<CardAction> ParseSerializedActions(List<HerbActions> SerializedActions)
+        public static Dictionary<HerbActions, int> CountSerializedActions(List<HerbActions> SerializedActions)
         {
             Dictionary<HerbActions, int> actionCounts = new();
             foreach (var serializedAction in SerializedActions)
@@ -165,6 +169,12 @@ namespace KnightsCohort.Herbalist
                 if (!actionCounts.ContainsKey(serializedAction)) actionCounts[serializedAction] = 0;
                 actionCounts[serializedAction]++;
             }
+            return actionCounts;
+        }
+
+        public static List<CardAction> ParseSerializedActions(List<HerbActions> SerializedActions)
+        {
+            Dictionary<HerbActions, int> actionCounts = CountSerializedActions(SerializedActions);
             return actionCounts.Keys.Select(ha => ParseSerializedAction(ha, actionCounts[ha])).ToList();
         }
 
@@ -227,6 +237,17 @@ namespace KnightsCohort.Herbalist
 
             return false;
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void DrawAfterPlayIfHerb(Combat __instance, bool __result, State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            // TODO: make this an artifact and have Halla start with it
+            if (__result && card is HerbCard herb)// && herb.IsRaw)
+            {
+                __instance.Queue(new ADrawCard() { count = 1 });
+            }
+        }
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -238,7 +259,7 @@ namespace KnightsCohort.Herbalist
             HerbActions.OVERDRIVE,
             HerbActions.DAZED,
             //HerbActions.BLINDNESS,
-            HerbActions.NEGATIVE_OXIDATION,
+            HerbActions.STUNCHARGE,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
@@ -252,6 +273,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Leaf"; }
+        protected virtual bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -259,11 +281,12 @@ namespace KnightsCohort.Herbalist
     {
         public static List<HerbActions> options = new()
         {
-            HerbActions.STUNCHARGE,
             HerbActions.AUTODODGE_RIGHT,
             HerbActions.ENGINESTALL,
-            HerbActions.REMOVE_CORRODE,
-            HerbActions.OXIDATION,
+            HerbActions.TEMPSHIELD,
+            HerbActions.TEMPSHIELD,
+            HerbActions.NEGATIVE_OXIDATION,
+            HerbActions.NEGATIVE_OXIDATION,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
         };
@@ -276,6 +299,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Bark"; }
+        protected virtual bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -302,6 +326,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Root"; }
+        protected virtual bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -334,6 +359,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Seed"; }
+        protected virtual bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[0], dontOffer = true)]
@@ -352,12 +378,28 @@ namespace KnightsCohort.Herbalist
         protected override List<HerbActions> possibleOptions => options;
         protected override List<HerbActions> GenerateSerializedActions(State s)
         {
+            // shrooms can only generate 1 positive effect max
+            HashSet<HerbActions> groupCappedToOne = new() { HerbActions.HEAL, HerbActions.POWERDRIVE, HerbActions.PAYBACK };
+
             Rand rng = s.rngActions;
-            if (rng.Next() < 0.5) return new() { options.KnightRandom(rng), options.KnightRandom(rng), };
-            else return new() { options.KnightRandom(rng), options.KnightRandom(rng), options.KnightRandom(rng), };
+            int count = 3; // rng.Next() < 0.5 ? 3 : 4;
+            List<HerbActions> workingOptions = new(options);
+            List<HerbActions> retval = new();
+            for(int i = 0; i < count; i++)
+            {
+                var action = workingOptions.KnightRandom(rng);
+                retval.Add(action);
+                if (groupCappedToOne.Contains(action))
+                {
+                    workingOptions = workingOptions.Where(a => !groupCappedToOne.Contains(a)).ToList();
+                }
+            }
+
+            return retval;
         }
 
         protected override string GetTypeName() { return "Shroom"; }
+        protected virtual bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]

@@ -19,6 +19,7 @@ namespace KnightsCohort.Herbalist
             };
         }
 
+        // TODO: this doesn't work
         public static HerbCard GenerateRandomHerbCard(State s)
         {
             //if (s.map.markers[s.map.currentLocation].contents is MapBattle mapBattle) mapBattle.battleType

@@ -96,7 +96,7 @@ namespace KnightsCohort.Bannerlady.Cards
                             (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
                             (Spr)MainManifest.sprites["icons/honor_cost"].Id
                         ),
-                        amount: 2
+                        amount: 1
                     ),
                     MainManifest.KokoroApi.Actions.MakeStop(out stopId)
                 ),
@@ -493,10 +493,26 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            int honor = s.ship.Get((Status)MainManifest.statuses["honor"].Id);
             return new()
             {
-               new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
-               new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = s.ship.Get((Status)MainManifest.statuses["honor"].Id), xHint = 1, targetPlayer = true },
+                new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
+                MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost
+                    (
+                        MainManifest.KokoroApi.ActionCosts.StatusResource
+                        (
+                            (Status)MainManifest.statuses["honor"].Id,
+                            Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                        ),
+                        amount: 2
+                    ),
+                    // TODO: make this status disabled if the cost isn't met
+                    new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = honor, xHint = 1, targetPlayer = true, disabled = honor < 2 }
+                ),
             };
         }
         public override CardData GetData(State state)

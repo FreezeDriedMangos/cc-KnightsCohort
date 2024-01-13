@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KnightsCohort.Knight
+namespace KnightsCohort.Knight.Cards
 {
     [HarmonyPatch]
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
@@ -20,13 +20,13 @@ namespace KnightsCohort.Knight
             return new()
             {
                 new AReadyRiposte() { card = this, ready = true },
-                new AAttack() { damage = GetDmg(s, 2) },
+                new AAttack() { damage = GetDmg(s, 1) },
                 new AReadyRiposte() { card = this, ready = false },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = 1, description = $"Attack for {GetDmg(state, 1)}. Attack again for {GetDmg(state, RiposteDamage)} if the hit part intends to attack." };
         }
 
         public class AReadyRiposte : CardAction

@@ -190,7 +190,7 @@ namespace KnightsCohort
             {
                 new ExternalCard(namePrefix + "Fighting Chance", typeof(FightingChance), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Offhand Weapon", typeof(OffhandWeapon), sprites["card_default_knight"], decks["knight"]),
-                new ExternalCard(namePrefix + "Claymore", typeof(Claymore), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Factory Direct™", typeof(Claymore), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Footwork", typeof(Footwork), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Unmoving Faith", typeof(UnmovingFaith), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Fix Your Form", typeof(FixYourForm), sprites["card_default_knight"], decks["knight"]),
@@ -287,7 +287,8 @@ namespace KnightsCohort
         public void LoadManifest(IDeckRegistry registry)
         {
             var knightColor = 0;
-            unchecked { knightColor = (int)0xffbe9821; }
+            //unchecked { knightColor = (int)0xffbe9821; }
+            unchecked { knightColor = (int)0xffdc6d37; }
 
             decks["knight"] = new ExternalDeck(
                 Name + ".deck.Knight",
@@ -342,7 +343,7 @@ namespace KnightsCohort
                 Name + ".Knight",
                 decks["knight"],
                 sprites["char_frame_knight"],
-                new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.OffhandWeapon) },
+                new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.RiposteCard) },
                 new Type[0],
                 animations["knight.neutral"],
                 animations["knight.mini"]

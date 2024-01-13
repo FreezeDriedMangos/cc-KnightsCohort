@@ -17,12 +17,28 @@ namespace KnightsCohort
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrainCardActions))]
         public static void HarmonyPostfix_HonorableWinCheck(Combat __instance, G g)
         {
-            bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
-            if (!actionJustEnded) return;
+            //bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
+            //if (!actionJustEnded) return;
+
+            // TODO: this breaks when the enemy increases your honor through an on hit effect, such as the martyr banner or vow of courage
+
+            if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0) return;
+            if (__instance.otherShip.hull <= 0) return;
 
             if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) >= __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield")))
             {
-                // TODO: don't do this for certain fights, like Soggins
+                if (g.state.map.IsFinalZone()) // this check doesn't work
+                {
+                    // bosses just die
+                    __instance.QueueImmediate(new List<CardAction>()
+                    {
+                        new ADelay() { time = 0.0, timer = 0.3 },
+                        new AHurt() { targetPlayer = false, hurtAmount = __instance.otherShip.hullMax+10, hurtShieldsFirst = false }
+                    });
+                }
+                else if (__instance.otherShip.ai is SogginsEvent) {
+                    return; // don't resolve the soggins event with honor
+                }
 
                 __instance.Queue(new AMidCombatDialogue
                 {
@@ -31,7 +47,7 @@ namespace KnightsCohort
                 __instance.Queue(new ADelay
                 {
                     time = 0.0,
-                    timer = 0.1
+                    timer = 0.7
                 });
                 __instance.Queue(new AEscape
                 {
@@ -94,17 +110,24 @@ namespace KnightsCohort
                 vec4.x -= Math.Round(vec.x / 2.0);
                 Box box = g.Push(new UIKey(UK.healthBar, 1, keyPrefix), new Rect(vec4.x, vec4.y, vec2.x, num7 + 3));
                 Vec v = box.rect.xy;
-                
+
+                var t = Math.Min(1, Math.Max(0.7, Math.Abs(3*(g.state.time % 1) - 0.1)));
                 for (int j = 0; j < hullHonor; j++)
                 {
-                    DrawChunk(j, num7, HONOR_COLOR, j < hull - 1);
+                    //var t = Math.Max(0, Math.Sin(3*g.state.time + j));
+                    var color = Color.Lerp(Colors.healthBarHealth, HONOR_COLOR, t);
+                    DrawChunk(j, num7, color, j < hull - 1);
                 }
                 for (int k = 0; k < shieldHonor; k++)
                 {
-                    DrawChunk(__instance.hullMax + k, num8, HONOR_COLOR, k < maxShield - 1 && k < num - 1);
+                    //var t = Math.Max(0, Math.Sin(3*g.state.time + k + __instance.hullMax));
+                    var color = Color.Lerp(Colors.healthBarShield, HONOR_COLOR, t);
+                    DrawChunk(__instance.hullMax + k, num8, color, k < maxShield - 1 && k < num - 1);
                 }
                 for (int l = 0; l < tempShieldHonor; l++)
                 {
+                    //var t = Math.Max(0, Math.Sin(3*g.state.time + l + __instance.hullMax + maxShield));
+                    var color = Color.Lerp(Colors.healthBarShield, HONOR_COLOR, t);
                     DrawChunk(__instance.hullMax + maxShield + l, num8, HONOR_COLOR, l < num2 - 1 && l < num2 - 1);
                 }
                 g.Pop();

@@ -15,6 +15,7 @@ namespace KnightsCohort.actions
 
         public override void Begin(G g, State s, Combat c)
         {
+            actions.ForEach(a => a.selectedCard = selectedCard);
             c.QueueImmediate(actions);
         }
     }
@@ -39,16 +40,27 @@ namespace KnightsCohort.actions
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null) return;
-            HerbCard herb = selectedCard as HerbCard;
-            HashSet<HerbActions> actions = new HashSet<HerbActions>(herb.SerializedActions);
-            int removalIndex = (int)(s.rngActions.NextUint() % actions.Count);
-            actions.Remove(actions.ToList()[removalIndex]);
+            if (selectedCard is not HerbCard herb) return;
 
+            // choose an action type to remove
+            HashSet<HerbActions> actions = new HashSet<HerbActions>(herb.SerializedActions);
+            int removalIndex = (int)(Math.Abs(s.rngActions.NextInt()) % actions.Count);
+            var removeAction = actions.ToList()[removalIndex];
+
+            // build action counts for the tea card
+            var actionCounts = HerbCard.CountSerializedActions(herb.SerializedActions);
+            actionCounts.Remove(removeAction);
+            actionCounts.Keys.ToList().ForEach(a => actionCounts[a]++);
+
+            // make tea card
             HerbCard_Tea tea = new HerbCard_Tea();
-            tea.SerializedActions = new(herb.SerializedActions);
-            tea.SerializedActions.AddRange(actions);
+            tea.SerializedActions = new();
+            foreach (var kvp in actionCounts) for (int i = 0; i < kvp.Value; i++) tea.SerializedActions.Add(kvp.Key);
             tea.name = herb.name.Split(' ')[0] + " Tea";
             tea.revealed = true;
+
+            // remove the herb and add the tea
+            s.RemoveCardFromWhereverItIs(selectedCard.uuid);
             c.QueueImmediate(new AAddCard() { card = tea, destination = Enum.Parse<CardDestination>("Hand") });
         }
     }

@@ -57,7 +57,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = 1, exhaust = true };
         }
     }
 
@@ -221,11 +221,30 @@ namespace KnightsCohort.Herbalist.Cards
         }
     }
 
+    [HarmonyPatch]
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class Forage : Card
     {
+        private static bool isDuringTryPlay = false;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void TrackPlaying(State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            isDuringTryPlay = true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void StopTrackingPlaying(State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            isDuringTryPlay = false;
+        }
+
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (isDuringTryPlay) { return new(); } // don't run the rng if it's not needed
+
             return new()
             {
                 new AAddCard() { card = Util.GenerateRandomHerbCard(s) }
@@ -233,7 +252,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = "Permanently gain a random herb card." };
+            return new() { cost = 1, exhaust = true, description = "Permanently gain a random herb card." };
         }
     }
 
@@ -323,7 +342,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B }, dontOffer = true)]
     public class QuestReward : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -428,7 +447,7 @@ namespace KnightsCohort.Herbalist.Cards
             {
                 new AHerbCardSelect()
                 {
-                    browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
+                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
                     browseAction = new ABrewTea()
                 }
             };
@@ -464,7 +483,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = "Select an herb in hand. Exhaust it twice." };
+            return new() { cost = 1, exhaust = true, description = "Select an herb in hand. Exhaust it twice." };
         }
     }
 }

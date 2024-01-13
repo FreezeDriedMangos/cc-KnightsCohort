@@ -74,12 +74,10 @@ namespace KnightsCohort.Herbalist
         [HarmonyPatch(typeof(Card), nameof(Card.GetDataWithOverrides))]
         public static void Blindness_CardArtPatch(Card __instance, ref CardData __result, State state)
         {
-            // TODO: make a generic card art "password hidden; eye with a / over it" for this, rather than OwnerMissing
-            if (blindnessEnabled) __result.art = (Spr)MainManifest.sprites["cards/blindness"].Id; //Enum.Parse<Spr>("cards_OwnerMissing");
+            if (blindnessEnabled) __result.art = (Spr)MainManifest.sprites["cards/blindness"].Id;
             if (blindnessEnabled) __result.description = null;
         }
 
-        // TODO: enemy blindness effect
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AIHelpers), nameof(AIHelpers.MoveToAimAt))]
         public static void Blindness_EnemyPatch(List<CardAction> __result, State s, Ship movingShip, Ship targetShip, int alignPartLocalX, int maxMove = 99, bool movesFast = false, bool? attackWeakPoints = null, bool avoidAsteroids = false, bool avoidMines = true)

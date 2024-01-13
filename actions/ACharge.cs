@@ -12,11 +12,16 @@ namespace KnightsCohort.actions
         protected virtual string NonDirectionalSprite => "icons/charge";
         protected virtual string DirectionalSprite => "icons/charge_directional";
 
+        public virtual int GetDir(State s, Combat c)
+        {
+            // TODO: calculate this from the middle part of each ship, not the leftmost (what ship.x represents)
+            var totalDist = c.otherShip.x - s.ship.x;
+            return Math.Min(distance, Math.Abs(totalDist)) * Math.Sign(totalDist);
+        }
+
         public override void Begin(G g, State s, Combat c)
         {
-            var totalDist = c.otherShip.x - s.ship.x;
-
-            c.QueueImmediate(new AMove() { dir = Math.Min(distance, Math.Abs(totalDist)) * Math.Sign(totalDist), targetPlayer = true });
+            c.QueueImmediate(new AMove() { dir = GetDir(s, c), targetPlayer = true });
         }
 
         public override Icon? GetIcon(State s)
@@ -24,10 +29,10 @@ namespace KnightsCohort.actions
             // if (s.route is Combat c && ((s.routeOverride == null && c.routeOverride == null) || c.eyeballPeek))
             if (s.route is Combat c)
             {
-                var totalDist = c.otherShip.x - s.ship.x;
-                if (totalDist == 0) return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, distance, Colors.textMain);
-                if (totalDist < 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, distance, Colors.textMain);
-                if (totalDist > 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite+"_right"].Id, distance, Colors.textMain);
+                var dir = GetDir(s, c);
+                if (dir == 0) return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, dir, Colors.textMain);
+                if (dir < 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, -dir, Colors.textMain);
+                if (dir > 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite+"_right"].Id, dir, Colors.textMain);
             }
 
             return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, distance, Colors.textMain);
@@ -56,7 +61,7 @@ namespace KnightsCohort.actions
             // if (s.route is Combat c && ((s.routeOverride == null && c.routeOverride == null) || c.eyeballPeek))
             if (s.route is Combat c)
             {
-                var totalDist = c.otherShip.x - s.ship.x;
+                var totalDist = s.ship.x - c.otherShip.x;
                 if (totalDist < 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, distance, Colors.textMain);
                 else               return new Icon((Spr)MainManifest.sprites[DirectionalSprite + "_right"].Id, distance, Colors.textMain);
             }

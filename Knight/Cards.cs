@@ -289,12 +289,13 @@ namespace KnightsCohort.Knight.Cards
         public override List<CardAction> GetActions(State s, Combat c)
         {
             int shield = s.ship.Get(Enum.Parse<Status>("shield"));
-            int direction = flipped ? -1 : 1;
+            int direction = flipped ? 1 : -1;
 
             return new()
             {
                 new AVariableHint() { status = Enum.Parse<Status>("shield") },
-                new AAttack() { damage = GetDmg(s, shield), xHint = 1, moveEnemy = direction*shield },
+                new AAttack() { damage = GetDmg(s, shield), xHint = 1 },
+                new AMove() { dir = direction*shield, xHint = 1, targetPlayer = false },
                 new AStatus() { status = Enum.Parse<Status>("shield"), mode = Enum.Parse<AStatusMode>("Set"), statusAmount = 0, targetPlayer = true }
             };
         }
