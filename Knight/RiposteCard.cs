@@ -13,29 +13,32 @@ namespace KnightsCohort.Knight.Cards
     public class RiposteCard : Card
     {
         public static bool RiposteReady = false;
+        public static bool RiposteTwice = false;
         public static int RiposteDamage = 2;
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
             return new()
             {
-                new AReadyRiposte() { card = this, ready = true },
-                new AAttack() { damage = GetDmg(s, 1) },
+                new AReadyRiposte() { card = this, ready = true, twice = upgrade == Upgrade.B },
+                new AAttack() { damage = GetDmg(s, upgrade == Upgrade.A ? 2 : 1) },
                 new AReadyRiposte() { card = this, ready = false },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = $"Attack for {GetDmg(state, 1)}. Attack again for {GetDmg(state, RiposteDamage)} if the hit part intends to attack." };
+            return new() { cost = 1, description = $"Attack for {GetDmg(state, upgrade == Upgrade.A ? 2 : 1)}. Attack again for {GetDmg(state, RiposteDamage)}{(upgrade == Upgrade.B ? $" and again for {GetDmg(state, RiposteDamage)}" : "")} if the hit part intends to attack." };
         }
 
         public class AReadyRiposte : CardAction
         {
             public Card card;
             public bool ready = true;
+            public bool twice = false;
             public override void Begin(G g, State s, Combat c)
             {
                 RiposteCard.RiposteReady = ready;
+                RiposteCard.RiposteTwice = twice;
                 RiposteCard.RiposteDamage = card?.GetDmg(s, 2) ?? 2;
             }
             public override Icon? GetIcon(State s) { return null; }
@@ -61,7 +64,7 @@ namespace KnightsCohort.Knight.Cards
                 {
                     damage = RiposteDamage,
                     fromX = __instance.fromX,
-                    multiCannonVolley = true // don't trigger another volley
+                    multiCannonVolley = true // don't trigger another volley, so that only attacking parts are hit twice
                 });
             }
         }

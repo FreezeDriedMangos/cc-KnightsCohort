@@ -132,6 +132,7 @@ namespace KnightsCohort
                 "midrow/tattered_banner_of_war",
                 "midrow/tattered_banner_of_martyr",
                 "midrow/tattered_banner_of_pirate",
+                "midrow/tattered_banner_of_mercy",
                 "midrow/arrow",
                 "midrow/broadhead_arrow",
 
@@ -153,6 +154,7 @@ namespace KnightsCohort
                 "icons/tattered_banner_war",
                 "icons/tattered_banner_martyr",
                 "icons/tattered_banner_pirate",
+                "icons/tattered_banner_mercy",
                 "icons/arrow",
                 "icons/broadhead_arrow",
                 "icons/evade_cost",
@@ -162,6 +164,7 @@ namespace KnightsCohort
 
                 "icons/dazed",
                 "icons/blindness",
+                "icons/paranoia",
                 "icons/herb_bundle",
                 "icons/herb_bundle_add_oxidize",
                 "icons/herb_search",
@@ -241,6 +244,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Lifted Burdens", typeof(LiftedBurdens), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Rally", typeof(BannerladyRally), sprites["card_default_bannerlady"], decks["bannerlady"]),
                 new ExternalCard(namePrefix + "Sharp Eyes", typeof(SharpEyes), sprites["card_default_bannerlady"], decks["bannerlady"]),
+                new ExternalCard(namePrefix + "Cavalry Charge", typeof(CavalryCharge), sprites["card_default_bannerlady"], decks["bannerlady"]),
 
 
 
@@ -273,6 +277,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Call on Debts", typeof(CallOnDebts), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Brew Tea", typeof(BrewTea), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Fire and Smoke", typeof(FireAndSmoke), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Change Ingredients", typeof(ChangeIngredients), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -531,7 +536,7 @@ namespace KnightsCohort
             status = "vowOfMegaRest";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mega_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain {{0}} honor at the start of your turn. If end your turn with less than 2 energy, lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain 2x{{0}} honor at the start of your turn. If end your turn with less than 2 energy, lose all stacks of this vow.");
 
             status = "vowOfPoverty";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_poverty"], false);
@@ -568,6 +573,11 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/blindness"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Blindness", $"Card titles and actions do not render. On opponent, causes random movement. Lose one stack at the start of your turn.");
+
+            status = "paranoia";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/paranoia"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Paranoia", $"On the start of your turn, lose one stack of paranoia. If you are the player, gain one Abyssal Visions in hand. If you are the enemy, randomly cancel one intent.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)

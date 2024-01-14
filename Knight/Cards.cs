@@ -17,11 +17,15 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
-               new AStatus() { status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = 1, targetPlayer = true },
+               new AStatus() { status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = (upgrade == Upgrade.B ? 2 : 1), targetPlayer = true },
                new AStatus() { status = Enum.Parse<Status>("tempShield"), statusAmount = 2, targetPlayer = true },
             };
+
+            if (upgrade == Upgrade.A) retval.Add(new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -34,6 +38,28 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                   new ASpawn()
+                   {
+                       thing = new Dagger
+                       {
+                           targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0
+                       }
+                   },
+                   new AMove() { targetPlayer = true, dir = 1 },
+                   new ASpawn()
+                   {
+                       thing = new Dagger
+                       {
+                           targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0
+                       }
+                   },
+                };
+            }
+
             return new()
             {
                new ASpawn()
@@ -43,7 +69,7 @@ namespace KnightsCohort.Knight.Cards
                        targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0
                    }
                },
-               new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 1, targetPlayer = true },
+               new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = upgrade == Upgrade.A ? 2 : 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -57,16 +83,31 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                new ASpawn()
                {
                    thing = new Sword
                    {
-                       targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0
+                       targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0,
+                       bubbleShield = upgrade == Upgrade.A
                    }
                }
             };
+
+            if (upgrade == Upgrade.B)
+            {
+                retval.Insert(0, new ASpawn()
+                {
+                    thing = new Dagger
+                    {
+                        targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0
+                    }
+                });
+                retval.Insert(1, new ADroneMove() { dir = 1 });
+            }
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -79,15 +120,19 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true },
                new AStatus() { status = Enum.Parse<Status>("tempShield"), statusAmount = 2, targetPlayer = true },
             };
+
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = upgrade == Upgrade.A ? 1 : 2 };
         }
     }
 
@@ -96,10 +141,16 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            int vowStacks = upgrade == Upgrade.B ? 2 : 1;
+            List<CardAction> retval = new()
             {
-               new AStatus() { status = (Status)MainManifest.statuses["vowOfAdamancy"].Id, statusAmount = 1, targetPlayer = true },
+               new AStatus() { status = (Status)MainManifest.statuses["vowOfAdamancy"].Id, statusAmount = vowStacks, targetPlayer = true },
             };
+            
+            if (upgrade == Upgrade.A) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 2, status = Enum.Parse<Status>("shield") });
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 0, status = Enum.Parse<Status>("evade"), mode = AStatusMode.Set });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -112,10 +163,23 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            int overdrive = upgrade switch
+            {
+                Upgrade.None => 2,
+                Upgrade.A => 1,
+                Upgrade.B => 3,
+            };
+            int honor = upgrade switch
+            {
+                Upgrade.None => 2,
+                Upgrade.A => 2,
+                Upgrade.B => 3,
+            };
+
             return new()
             {
-               new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 2, targetPlayer = false },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 2, targetPlayer = true },
+               new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = overdrive, targetPlayer = false },
+               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = honor, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -129,7 +193,7 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                new ASpawn()
                {
@@ -140,10 +204,14 @@ namespace KnightsCohort.Knight.Cards
                    }
                }
             };
+
+            if (upgrade == Upgrade.B) retval.Insert(0, new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 2, targetPlayer = true });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3 };
+            return new() { cost = upgrade == Upgrade.A ? 2 : 3 };
         }
     }
 
@@ -239,14 +307,17 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfRest"].Id, statusAmount = 1, targetPlayer = true },
             };
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 1, status = (Status)MainManifest.statuses["vowOfMegaRest"].Id });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true };
+            return new() { cost = 1, exhaust = (upgrade == Upgrade.A ? false : true) };
         }
     }
 
@@ -271,15 +342,19 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                new AStatus() { status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 2, targetPlayer = true },
-               new AEndTurn()
             };
+
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = 1, targetPlayer = true });
+            if (upgrade != Upgrade.A) retval.Add(new AEndTurn());
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = 2, exhaust = upgrade == Upgrade.A ? true : false };
         }
     }
 
@@ -291,17 +366,20 @@ namespace KnightsCohort.Knight.Cards
             int shield = s.ship.Get(Enum.Parse<Status>("shield"));
             int direction = flipped ? 1 : -1;
 
-            return new()
+            List<CardAction> retval = new()
             {
                 new AVariableHint() { status = Enum.Parse<Status>("shield") },
                 new AAttack() { damage = GetDmg(s, shield), xHint = 1 },
                 new AMove() { dir = direction*shield, xHint = 1, targetPlayer = false },
-                new AStatus() { status = Enum.Parse<Status>("shield"), mode = Enum.Parse<AStatusMode>("Set"), statusAmount = 0, targetPlayer = true }
             };
+
+            if (upgrade != Upgrade.A) retval.Add(new AStatus() { status = Enum.Parse<Status>("shield"), mode = Enum.Parse<AStatusMode>("Set"), statusAmount = 0, targetPlayer = true });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = 2, flippable = upgrade == Upgrade.B };
         }
     }
 
@@ -310,7 +388,17 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                    new AStatus() { status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1, targetPlayer = true }
+                };
+            }
+
             bool disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0;
+            int cost = upgrade == Upgrade.B ? 2 : 1;
+            int vow = upgrade == Upgrade.B ? 2 : 1;
             return new()
             {
                 MainManifest.KokoroApi.ActionCosts.Make
@@ -324,9 +412,9 @@ namespace KnightsCohort.Knight.Cards
                             (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
                             (Spr)MainManifest.sprites["icons/honor_cost"].Id
                         ),
-                        amount: 1
+                        amount: cost
                     ),
-                    new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 1, targetPlayer = true }
+                    new AStatus() { disabled = disabled, status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = vow, targetPlayer = true }
                 ),
             };
         }
@@ -341,10 +429,14 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["vowOfLeft"].Id, statusAmount = 1, targetPlayer = true },
+                new AStatus() { status = (Status)MainManifest.statuses[upgrade == Upgrade.A ? "vowOfRight" : "vowOfLeft"].Id, statusAmount = 1, targetPlayer = true },
             };
+
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { status = (Status)MainManifest.statuses["vowOfRight"].Id, statusAmount = 1, targetPlayer = true });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -405,15 +497,20 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                 new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
                 new AStatus() { status = Enum.Parse<Status>("shield") }
             };
+
+            if (upgrade == Upgrade.A) retval.Add(new AStatus() { status = Enum.Parse<Status>("tempShield"), statusAmount = 2, targetPlayer = true });
+            if (upgrade == Upgrade.B) retval.Insert(0, new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = "Move opponent ship to align with your ship." };
+            return new() { cost = 2 };
         }
     }
 }

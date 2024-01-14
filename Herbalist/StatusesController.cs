@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KnightsCohort.actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,38 @@ namespace KnightsCohort.Herbalist
     [HarmonyPatch]
     public class StatusesController
     {
+        //
+        // Paranoia
+        //
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AEnemyTurnAfter), nameof(AEnemyTurnAfter.Begin))]
+        public static void EnemyParanoia(G g, State s, Combat c)
+        {
+            if (c.otherShip.Get((Status)MainManifest.statuses["paranoia"].Id) <= 0) return;
+            
+            c.QueueImmediate(new List<CardAction>()
+            {
+                new ADelay() { time = 0.0, timer = 0.5 },
+                new ANullRandomIntent_Paranoia(),
+                new AStatus() { status = (Status)MainManifest.statuses["paranoia"].Id, targetPlayer = false, statusAmount = -1 },
+            });
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
+        public static void PlayerParanoia(Ship __instance, State s, Combat c)
+        {
+            if (!__instance.isPlayerShip) return;
+            if (__instance.Get((Status)MainManifest.statuses["paranoia"].Id) <= 0) return;
+            c.QueueImmediate(new List<CardAction>()
+            {
+                // TODO: [REQUIRES NICKEL] instead of adding an AbyssalVisions, give the player a random crew-member-missing status
+                new AAddCard() { card = new AbyssalVisions(), destination = CardDestination.Hand },
+                new AStatus() { status = (Status)MainManifest.statuses["paranoia"].Id, targetPlayer = true, statusAmount = -1 },
+            });
+        }
+
         //
         // Dazed
         //

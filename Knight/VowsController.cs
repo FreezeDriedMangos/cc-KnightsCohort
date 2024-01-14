@@ -356,8 +356,8 @@ namespace KnightsCohort.Knight
             int diff = n - __instance.Get(status);
             if (diff <= 0) return true;
 
-            int oldStacks = GetAndClear(g.state.ship, "vowOfAction");
-            if (oldStacks > 0) LostVowEffect(g, g.state.ship.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_action"].Id);
+            int oldStacks = GetAndClear(__instance, "vowOfAction");
+            if (oldStacks > 0) LostVowEffect(g, __instance.GetShipRect(), (Spr)MainManifest.sprites["icons/vow_of_action"].Id);
 
             return true;
         }

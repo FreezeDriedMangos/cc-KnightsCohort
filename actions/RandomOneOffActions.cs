@@ -1,4 +1,5 @@
 ﻿using FMOD;
+using FSPRO;
 using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
 using System;
@@ -98,11 +99,81 @@ namespace KnightsCohort.actions
     }
     public class AQueueImmediateSelectedCardActions : CardAction
     {
-
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null) return;
             c.QueueImmediate(selectedCard.GetActionsOverridden(s, c));
         }
     }
+
+    public class ADiscardAllHerbsInHand : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            var herbs = c.hand.Where(card => card is HerbCard).ToList();
+            foreach (var herb in herbs) c.SendCardToDiscard(s, herb);
+        }
+    }
+
+    public class ADrawHerbCard : CardAction
+    {
+        public int amount;
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            bool flag = false;
+            int num = 0;
+            for (int i = 0; i < amount; i++)
+            {
+                if (c.hand.Count >= 10)
+                {
+                    c.PulseFullHandWarning();
+                    break;
+                }
+                if (s.deck.Count == 0)
+                {
+                    foreach (Card item in c.discard)
+                    {
+                        s.SendCardToDeck(item, doAnimation: true);
+                    }
+                    c.discard.Clear();
+                    s.ShuffleDeck(isMidCombat: true);
+                    if (s.deck.Count() == 0)
+                    {
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    Audio.Play(Event.CardHandling);
+                    flag = true;
+                }
+
+                bool drawn = false;
+                for (int j = 0; j < s.deck.Count; j++)
+                {
+                    if (s.deck[j] is not HerbCard) continue;
+                    c.DrawCardIdx(s, j).waitBeforeMoving = (double)i * 0.09;
+                    drawn = true;
+                    break;
+                }
+                if (!drawn) break;
+                num++;
+            }
+            foreach (Artifact item2 in s.EnumerateAllArtifacts())
+            {
+                item2.OnDrawCard(s, c, num);
+            }
+        }
+    }
+
+    public class ANullRandomIntent_Paranoia : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            var parts = c.otherShip.parts.Where(p => p.intent != null).ToList();
+            parts.KnightRandom(s.rngActions).intent = null;
+        }
+    }
+
 }

@@ -24,6 +24,7 @@ namespace KnightsCohort
 
             if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0) return;
             if (__instance.otherShip.hull <= 0) return;
+            if (g.state.ship.hull <= 0) return;
 
             if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) >= __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield")))
             {

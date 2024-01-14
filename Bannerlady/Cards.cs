@@ -13,10 +13,21 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                   new ASpawn() { thing = new TatteredWarBanner() },
+                   new ADroneMove() { dir = 1 },
+                   new ASpawn() { thing = new TatteredWarBanner() },
+                   new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = 1, targetPlayer = true }
+                };
+            }
+
             return new()
             {
-               new ASpawn() { thing = new TatteredWarBanner() },
-               new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true }
+                new ASpawn() { thing = new TatteredWarBanner() },
+                new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = upgrade == Upgrade.A ? 3 :2, targetPlayer = true }
             };
         }
         public override CardData GetData(State state)
@@ -49,8 +60,8 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-               new ASpawn() { thing = new MercyBanner() },
-               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true }
+               new ASpawn() { thing = upgrade == Upgrade.A ? new TatteredMercyBanner() : new MercyBanner() },
+               new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true }
             };
         }
         public override CardData GetData(State state)
@@ -81,7 +92,42 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+
             Guid stopId;
+
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                    new ASpawn() { thing = new TatteredMartyrBanner() },
+                };
+            }
+
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                    new ASpawn() { thing = new MartyrBanner() },
+                    new ASpawn() { thing = new MartyrBanner(), offset = 1 },
+                    MainManifest.KokoroApi.ActionCosts.Make
+                    (
+                        MainManifest.KokoroApi.ActionCosts.Cost
+                        (
+                            MainManifest.KokoroApi.ActionCosts.StatusResource
+                            (
+                                (Status)MainManifest.statuses["honor"].Id,
+                                Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                                (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                                (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                            ),
+                            amount: 1
+                        ),
+                        MainManifest.KokoroApi.Actions.MakeStop(out stopId)
+                    ),
+                    MainManifest.KokoroApi.Actions.MakeStopped(stopId, new AHurt(){ hurtAmount = 2, targetPlayer = true })
+                };
+            }
+
             return new()
             {
                 new ASpawn() { thing = new MartyrBanner() },
@@ -117,9 +163,8 @@ namespace KnightsCohort.Bannerlady.Cards
             return new()
             {
                new ASpawn() { thing = new MercyBanner() },
-               new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true },
-               //new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 2, targetPlayer = true }
-               new ARetreat() { distance = 2 }
+               new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = upgrade == Upgrade.B ? 4 : 2, targetPlayer = true },
+               new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) }
             };
         }
         public override CardData GetData(State state)
@@ -135,10 +180,10 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-                new ACharge() { distance = 1 },
-                new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 1, targetPlayer = true },
-                new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
-                new ACharge() { distance = 1 },
+                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.None ? 1 : 2, s, c) },
+                new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = upgrade == Upgrade.A ? 2 : 1, targetPlayer = true },
+                new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1), targetPlayer = false },
+                new ACharge() { dir = ACharge.GetDir(1, s, c) },
             };
         }
         public override CardData GetData(State state)
@@ -213,7 +258,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3, exhaust = true };
+            return new() { cost = upgrade == Upgrade.A ? 2 : 3, exhaust = upgrade == Upgrade.B ? false : true };
         }
     }
 
@@ -245,7 +290,7 @@ namespace KnightsCohort.Bannerlady.Cards
             return new()
             {
                new AAttack() { damage = GetDmg(s, 1) },
-               new ARetreat() { distance = 2 },
+               new ARetreat() { dir = ARetreat.GetDir(2, s, c) },
             };
         }
         public override CardData GetData(State state)
@@ -277,13 +322,13 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-               new ASpawn() { thing = new PirateBanner() },
-               new ARetreat() { distance = 2 }
+               new ASpawn() { thing = upgrade == Upgrade.A ? new TatteredPirateBanner() : new PirateBanner() },
+               new ARetreat() { dir = ARetreat.GetDir(2, s, c) }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true };
+            return new() { cost = 1, exhaust = upgrade == Upgrade.B ? false : true };
         }
     }
 
@@ -294,12 +339,12 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-               new AStatus() { status = (Status)MainManifest.statuses["shieldOfFaith"].Id, targetPlayer = true, statusAmount = 1 },
+               new AStatus() { status = (Status)MainManifest.statuses["shieldOfFaith"].Id, targetPlayer = true, statusAmount = upgrade == Upgrade.B ? 2 : 1 },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = upgrade == Upgrade.A ? 1 : 2 };
         }
     }
 
@@ -324,10 +369,20 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                   new ASpawn() { thing = new BannerOfShielding() },
+                   new ACharge() { dir = ACharge.GetDir(1, s, c) },
+                   new ASpawn() { thing = new BannerOfShielding() },
+                };
+            }
+
             return new()
             {
                new ASpawn() { thing = new BannerOfShielding() },
-               new ARetreat() { distance = 1 },
+               new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 3 : 1, s, c) },
             };
         }
         public override CardData GetData(State state)
@@ -348,24 +403,30 @@ namespace KnightsCohort.Bannerlady.Cards
                 if (kvp.Value is not Banner) continue;
                 outgoingAttacks.Add(new AAttack()
                 {
-                    damage = 1,
+                    damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1),
                     fromDroneX = kvp.Key,
                     targetPlayer = false
                 });
                 incomingAttacks.Add(new AAttack()
                 {
-                    damage = 1,
+                    damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1),
                     fromDroneX = kvp.Key,
                     targetPlayer = true
                 });
             }
 
-            outgoingAttacks.AddRange(incomingAttacks);
+            if (upgrade != Upgrade.A) outgoingAttacks.AddRange(incomingAttacks);
             return outgoingAttacks;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3, description = "From every banner, launch a 1 damage attack towards the enemy and towards you." };
+            return new() { cost = 3, description = upgrade switch
+                {
+                    Upgrade.None => $"From every banner, launch a {GetDmg(state, 1)} damage attack towards the enemy and towards you.",
+                    Upgrade.A => $"From every banner, launch a {GetDmg(state, 1)} damage attack towards the enemy.",
+                    Upgrade.B => $"From every banner, launch a {GetDmg(state, 2)} damage attack towards the enemy and towards you.",
+                }
+            };
         }
     }
 
@@ -374,15 +435,17 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.B) return new() { new AStatus() { status = Enum.Parse<Status>("autododgeLeft"), targetPlayer = true, statusAmount = 1 } };
+
             return new()
             {
                new AStatus() { status = Enum.Parse<Status>("shield"), targetPlayer = true, statusAmount = 2 },
-               new AStatus() { status = Enum.Parse<Status>("autododgeRight"), targetPlayer = true, statusAmount = 1 },
+               new AStatus() { status = Enum.Parse<Status>("autododgeRight"), targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 2 : 1 },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = 2, exhaust = upgrade == Upgrade.B ? true : false };
         }
     }
 
@@ -391,6 +454,33 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.B)
+            {
+                int cost = 3;
+                bool disable = s.ship.Get((Status)MainManifest.statuses["honor"].Id) < cost;
+                Guid continueId;
+                return new()
+                {
+                    MainManifest.KokoroApi.ActionCosts.Make
+                    (
+                        MainManifest.KokoroApi.ActionCosts.Cost
+                        (
+                            MainManifest.KokoroApi.ActionCosts.StatusResource
+                            (
+                                (Status)MainManifest.statuses["honor"].Id,
+                                Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                                (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                                (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                            ),
+                            amount: cost
+                        ),
+                        MainManifest.KokoroApi.Actions.MakeContinue(out continueId)
+                    ),
+                    MainManifest.KokoroApi.Actions.MakeContinued(continueId, new ADrawCard() { disabled = disable, count = 3 }),
+                    MainManifest.KokoroApi.Actions.MakeContinued(continueId, new AStatus() { disabled = disable, status = Enum.Parse<Status>("drawNextTurn"), targetPlayer = true, statusAmount = 3 })
+                };
+            }
+
             return new()
             {
                 MainManifest.KokoroApi.ActionCosts.Make
@@ -412,7 +502,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1 };
         }
     }
 
@@ -421,12 +511,17 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
-                new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
-                new ACharge() { distance = 2 },
+                new ACharge() { dir = ACharge.GetDir(2, s, c) },
                 new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
             };
+
+            retval.Insert(upgrade == Upgrade.A ? 2 : 0, new AAttack() { damage = GetDmg(s, 1), targetPlayer = false });
+
+            if (upgrade == Upgrade.B) retval.Insert(0, new ACharge() { dir = ACharge.GetDir(2, s, c) });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -439,6 +534,9 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            int costs = upgrade == Upgrade.A ? 2 : 1;
+            int gives = upgrade == Upgrade.A ? 1 : 2;
+
             CardAction upper =
                 MainManifest.KokoroApi.ActionCosts.Make
                 (
@@ -451,9 +549,9 @@ namespace KnightsCohort.Bannerlady.Cards
                             (Spr)MainManifest.sprites["icons/droneshift_cost_unsatisfied"].Id!.Value, 
                             (Spr)MainManifest.sprites["icons/droneshift_cost"].Id!.Value
                         ),
-                        amount: 1
+                        amount: costs
                     ),
-                    new AStatus() { disabled = this.flipped, status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true }
+                    new AStatus() { disabled = this.flipped, status = Enum.Parse<Status>("evade"), statusAmount = gives, targetPlayer = true }
                 );
             upper.disabled = this.flipped;
 
@@ -469,22 +567,30 @@ namespace KnightsCohort.Bannerlady.Cards
                             (Spr)MainManifest.sprites["icons/evade_cost_unsatisfied"].Id!.Value,
                             (Spr)MainManifest.sprites["icons/evade_cost"].Id!.Value
                         ),
-                        amount: 1
+                        amount: costs
                     ),
-                    new AStatus() { disabled = !this.flipped, status = Enum.Parse<Status>("droneShift"), statusAmount = 2, targetPlayer = true }
+                    new AStatus() { disabled = !this.flipped, status = Enum.Parse<Status>("droneShift"), statusAmount = gives, targetPlayer = true }
                 );
             lower.disabled = !this.flipped;
 
-            return new()
+            List<CardAction> retval = new()
             {
                 upper,
                 new ADummyAction(),
                 lower,
             };
+
+            if (upgrade == Upgrade.B)
+            {
+                retval.Add(new AStatus() { disabled = !this.flipped, status = Enum.Parse<Status>("droneShift"), statusAmount = 1, targetPlayer = true });
+                retval.Insert(1, new AStatus() { disabled = this.flipped, status = Enum.Parse<Status>("evade"), statusAmount = 1, targetPlayer = true });
+            }
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, infinite = true, floppable = true };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1, infinite = true, floppable = true };
         }
     }
 
@@ -494,6 +600,14 @@ namespace KnightsCohort.Bannerlady.Cards
         public override List<CardAction> GetActions(State s, Combat c)
         {
             int honor = s.ship.Get((Status)MainManifest.statuses["honor"].Id);
+            int cost = upgrade switch
+            {
+                Upgrade.None => 2,
+                Upgrade.A => 1,
+                Upgrade.B => 4,
+            };
+            int multiplier = upgrade == Upgrade.B ? 2 : 1;
+
             return new()
             {
                 new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
@@ -508,10 +622,9 @@ namespace KnightsCohort.Bannerlady.Cards
                             (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
                             (Spr)MainManifest.sprites["icons/honor_cost"].Id
                         ),
-                        amount: 2
+                        amount: cost
                     ),
-                    // TODO: make this status disabled if the cost isn't met
-                    new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = honor, xHint = 1, targetPlayer = true, disabled = honor < 2 }
+                    new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = multiplier*honor, xHint = multiplier, targetPlayer = true, disabled = honor < cost }
                 ),
             };
         }
@@ -561,6 +674,24 @@ namespace KnightsCohort.Bannerlady.Cards
             if (distance < 0) hint = $"(Left {-distance})";
 
             return new() { cost = cost, description = $"{descr} {hint}." };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class CavalryCharge : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new ACharge() { dir = ACharge.GetDir(2, s, c) },
+                new AAttack() { damage = GetDmg(s, 1) },
+                new ARetreat() { dir = ARetreat.GetDir(2, s, c) }
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 2 };
         }
     }
 }

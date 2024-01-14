@@ -114,6 +114,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.ENGINELOCK:        return new AStatus() { status = Enum.Parse<Status>("lockdown"),                    statusAmount =  count, targetPlayer = true };
                 case HerbActions.PAYBACK:           return new AStatus() { status = Enum.Parse<Status>("payback"),                     statusAmount =  count, targetPlayer = true };
                 case HerbActions.FLUX:              return new AStatus() { status = Enum.Parse<Status>("libra"),                       statusAmount =  count, targetPlayer = true };
+                case HerbActions.PARANOIA:          return new AStatus() { status = (Status)MainManifest.statuses["paranoia"].Id,      statusAmount =  count, targetPlayer = true };
 
                 case HerbActions.INSTANTMOVE_LEFT:  return new AMove() { dir = -count, targetPlayer = true };
                 case HerbActions.INSTANTMOVE_RIGHT: return new AMove() { dir =  count, targetPlayer = true };
@@ -149,6 +150,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.ENGINELOCK:        return "Engine Lock";
                 case HerbActions.PAYBACK:           return "Payback";
                 case HerbActions.FLUX:              return "Flux";
+                case HerbActions.PARANOIA:          return "Paranoia";
 
                 case HerbActions.INSTANTMOVE_LEFT:  return "Instant Move";
                 case HerbActions.INSTANTMOVE_RIGHT: return "Instant Move";
@@ -259,6 +261,7 @@ namespace KnightsCohort.Herbalist
             HerbActions.OVERDRIVE,
             HerbActions.DAZED,
             //HerbActions.BLINDNESS,
+            HerbActions.PARANOIA,
             HerbActions.STUNCHARGE,
             HerbActions.OXIDATION,
             HerbActions.OXIDATION,
@@ -308,8 +311,6 @@ namespace KnightsCohort.Herbalist
         public static List<HerbActions> options = new()
         {
             HerbActions.SHIELD,
-            HerbActions.SHIELD,
-            HerbActions.TEMPSHIELD,
             HerbActions.TEMPSHIELD,
             HerbActions.TEMPSHIELD,
             HerbActions.BLINDNESS,
@@ -372,6 +373,7 @@ namespace KnightsCohort.Herbalist
             HerbActions.HEAT,
             HerbActions.POWERDRIVE,
             HerbActions.BLINDNESS,
+            HerbActions.PARANOIA,
             HerbActions.PAYBACK,
             HerbActions.ENGINELOCK,
         };

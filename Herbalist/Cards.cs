@@ -18,9 +18,10 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            List<Card> selected = upgrade == Upgrade.A ? new() : new() { new HerbCard() { SerializedActions = new() { HerbActions.OXIDATION } } };
             return new()
             {
-               new ACombineHerbs() { amount = 2, selected = new() { new HerbCard() { SerializedActions = new() { HerbActions.OXIDATION } } } },
+               new ACombineHerbs() { amount = upgrade == Upgrade.B ? 3 : 2, selected = selected },
                new ATooltipDummy() { tooltips = new(), icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle_add_oxidize"].Id, 1, Colors.textMain) } }
             };
         }
@@ -39,7 +40,7 @@ namespace KnightsCohort.Herbalist.Cards
             {
                 new AHerbCardSelect()
                 {
-                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                    browseSource = Enum.Parse<CardBrowse.Source>(upgrade == Upgrade.B ? "Deck" : "Hand"),
                     browseAction = new AExhaustSelectedCard()
                 },
                 new ATooltipDummy()
@@ -57,7 +58,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = upgrade == Upgrade.None ? true : false };
         }
     }
 
@@ -199,7 +200,7 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
                 new AHerbCardSelect()
                 {
@@ -209,11 +210,29 @@ namespace KnightsCohort.Herbalist.Cards
                         actions = new()
                         {
                             new ARemoveSelectedCardFromWhereverItIs(),
-                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true }
+                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.None ? 1 : 2, targetPlayer = true }
                         }
                     }
                 }
             };
+
+            if (upgrade == Upgrade.B)
+            {
+                retval.Add(new AHerbCardSelect()
+                {
+                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                    browseAction = new AQueueImmediateOtherActions()
+                    {
+                        actions = new()
+                        {
+                            new ARemoveSelectedCardFromWhereverItIs(),
+                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.None ? 1 : 2, targetPlayer = true }
+                        }
+                    }
+                });
+            }
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -261,26 +280,52 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> onSelectActions = new()
+            {
+                new AQueueImmediateSelectedCardActions(),
+                new AQueueImmediateSelectedCardActions(),
+                new ARemoveSelectedCardFromWhereverItIs()
+            };
+
+            if (upgrade == Upgrade.A)
+            {
+                onSelectActions.Insert(0, new AQueueImmediateSelectedCardActions());
+            }
+
+            List<CardAction> retval = new()
             {
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
                     browseAction = new AQueueImmediateOtherActions()
                     {
-                        actions = new()
-                        {
-                            new AQueueImmediateSelectedCardActions(),
-                            new AQueueImmediateSelectedCardActions(),
-                            new ARemoveSelectedCardFromWhereverItIs()
-                        }
+                        actions = onSelectActions
                     }
                 }
             };
+
+            if (upgrade == Upgrade.B)
+            {
+                retval.Add(new AHerbCardSelect()
+                {
+                    browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
+                    browseAction = new AQueueImmediateOtherActions()
+                    {
+                        actions = onSelectActions
+                    }
+                });
+            }
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = "Permanently remove 1 herb card from your deck. Play its effects twice." };
+            return new() { cost = 1, description = upgrade switch
+            {
+                Upgrade.None => "Permanently remove 1 herb card from your deck. Play its effects twice." ,
+                Upgrade.A => "Permanently remove 1 herb card from your deck. Play its effects three times." ,
+                Upgrade.B => "Permanently remove 2 herb cards from your deck. Play their effects twice." ,
+            }};
         }
     }
 
@@ -379,6 +424,21 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                    new ATooltipDummy() { icons = new() {
+                        new Icon(Enum.Parse<Spr>("icons_x"), null, Colors.textMain),
+                        new Icon((Spr)MainManifest.sprites["icons/equal_sign"].Id, null, Colors.textMain),
+                        new Icon(Enum.Parse<Spr>("icons_outgoing"), null, Colors.textMain),
+                        new Icon(Enum.Parse<Spr>("icons_corrode"), null, Colors.textMain),
+                    } },
+                    new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = c.otherShip.Get(Enum.Parse<Status>("corrode")), xHint = 1 },
+                    new AStatus() { status = Enum.Parse<Status>("corrode"), statusAmount = 0, mode = AStatusMode.Set, targetPlayer = false }
+                };
+            }
+
             return new()
             {
                 MainManifest.KokoroApi.ActionCosts.Make
@@ -394,7 +454,7 @@ namespace KnightsCohort.Herbalist.Cards
                         ),
                         amount: 1
                     ),
-                    new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = 2 }
+                    new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 3 : 2 }
                 )
             };
         }
@@ -409,6 +469,50 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.A)
+            {
+                var spendCorrodeAction = MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost
+                    (
+                        MainManifest.KokoroApi.ActionCosts.StatusResource
+                        (
+                            Enum.Parse<Status>("corrode"),
+                            Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                            (Spr)MainManifest.sprites["icons/CorrodeCostUnsatisfied"].Id,
+                            (Spr)MainManifest.sprites["icons/CorrodeCostSatisfied"].Id
+                        ),
+                        amount: 1
+                    ),
+                    new ADummyAction()
+                );
+                spendCorrodeAction.disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) < 1 || s.ship.Get((Status)Enum.Parse<Status>("corrode")) < 1;
+
+                var spendHonorToSpendCorrodeAction = MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost
+                    (
+                        MainManifest.KokoroApi.ActionCosts.StatusResource
+                        (
+                            (Status)MainManifest.statuses["honor"].Id,
+                            Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                        ),
+                        amount: 1
+                    ),
+                    spendCorrodeAction
+                );
+                spendHonorToSpendCorrodeAction.disabled = spendCorrodeAction.disabled;
+
+                return new()
+                {
+                    new AStatus() { status = (Status)MainManifest.KokoroApi.OxidationStatus.Id, targetPlayer = true, statusAmount = -4 },
+                    spendHonorToSpendCorrodeAction
+                };
+
+            }
+
             Guid continueId;
 
             return new()
@@ -428,19 +532,22 @@ namespace KnightsCohort.Herbalist.Cards
                     ),
                     MainManifest.KokoroApi.Actions.MakeContinue(out continueId)
                 ),
-                MainManifest.KokoroApi.Actions.MakeContinued(continueId, new AStatus() { status = Enum.Parse<Status>("corrode"), targetPlayer = true, statusAmount = -1 }),
+                MainManifest.KokoroApi.Actions.MakeContinued(continueId, new AStatus() { status = Enum.Parse<Status>("corrode"), targetPlayer = true, statusAmount = upgrade == Upgrade.B ? -2 : -1 }),
                 MainManifest.KokoroApi.Actions.MakeContinued(continueId, new AStatus() { status = (Status)MainManifest.KokoroApi.OxidationStatus.Id, targetPlayer = true, statusAmount = -7 })
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = upgrade == Upgrade.B ? 0 : 1 };
         }
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class BrewTea : Card
     {
+        // TODO: for upgrade B, use Shockah's code (don't forget to thank him in the mod post! also thank rft for design help on halla, and everyone in the design sheet for help designing ratzo and bannerlady)
+        // https://github.com/Shockah/Cobalt-Core-Mods/blob/dev/dracula/Dracula/Cards/BloodTapCard.cs
+        // https://github.com/Shockah/Cobalt-Core-Mods/blob/dev/dracula/Dracula/ActionChoiceRoute.cs
         public override List<CardAction> GetActions(State s, Combat c)
         {
             return new()
@@ -484,6 +591,24 @@ namespace KnightsCohort.Herbalist.Cards
         public override CardData GetData(State state)
         {
             return new() { cost = 1, exhaust = true, description = "Select an herb in hand. Exhaust it twice." };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class ChangeIngredients : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            var count = c.hand.Where(card => card is HerbCard).Count();
+            return new()
+            {
+                new ADiscardAllHerbsInHand(),
+                new ADrawHerbCard() { amount = count }
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = upgrade == Upgrade.B ? false : true, description = "Discard all herbs in hand. Draw that many herbs." };
         }
     }
 }
