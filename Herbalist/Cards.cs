@@ -22,10 +22,15 @@ namespace KnightsCohort.Herbalist.Cards
         public override List<CardAction> GetActions(State s, Combat c)
         {
             List<Card> selected = upgrade == Upgrade.A ? new() : new() { new HerbCard() { SerializedActions = new() { HerbActions.OXIDATION } } };
+            int amount = upgrade == Upgrade.B ? 3 : 2;
+
             return new()
             {
-               new ACombineHerbs() { amount = upgrade == Upgrade.B ? 3 : 2, selected = selected },
-               new ATooltipDummy() { tooltips = new(), icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle_add_oxidize"].Id, 1, Colors.textMain) } }
+               new ACombineHerbs() { amount = amount, selected = selected },
+               new ATooltipDummy() { 
+                   tooltips = new() { new TTGlossary(MainManifest.glossary["herbsearch"].Head, amount, "Deck"), new TTText() { text = "Combine selected cards and add the result to your <c=keyword>Hand</c>." }, new TTGlossary(MainManifest.glossary["herboxidize"].Head, 1), MainManifest.KokoroApi.GetOxidationStatusTooltip(s, s.ship) }, 
+                   icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle_add_oxidize"].Id, 1, Colors.textMain) } 
+               }
             };
         }
         public override CardData GetData(State state)
@@ -48,12 +53,12 @@ namespace KnightsCohort.Herbalist.Cards
                 },
                 new ATooltipDummy()
                 {
-                    tooltips = new() {},
+                    tooltips = new() { new TTGlossary(MainManifest.glossary["exhaustSelected"].Head) },
                     icons = new() 
                     {
                         // todo: change to icons/herb_search
                         new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, null, Colors.textMain),
-                        new Icon(Enum.Parse<Spr>("icons_exhaust"), null, Colors.textMain),
+                        new Icon((Spr)MainManifest.sprites["icons/exhaust_selected_card"].Id, null, Colors.textMain),
                     }
                 },
                 new ADummyAction(),

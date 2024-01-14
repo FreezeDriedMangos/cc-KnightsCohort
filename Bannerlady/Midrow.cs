@@ -20,6 +20,13 @@ namespace KnightsCohort.Bannerlady.Midrow
                 c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true });
             }
         }
+
+        public override List<Tooltip> GetTooltips()
+        {
+            var tooltips = base.GetTooltips();
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannerwar"].Head, 1));
+            return tooltips;
+        }
     }
 
     public class TatteredWarBanner : WarBanner
@@ -41,6 +48,13 @@ namespace KnightsCohort.Bannerlady.Midrow
                 c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -1, targetPlayer = true });
             }
         }
+
+        public override List<Tooltip> GetTooltips()
+        {
+            var tooltips = base.GetTooltips();
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannermercy"].Head, 1));
+            return tooltips;
+        }
     }
 
     public class MartyrBanner : Banner
@@ -60,6 +74,13 @@ namespace KnightsCohort.Bannerlady.Midrow
                 c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true });
             }
         }
+
+        public override List<Tooltip> GetTooltips()
+        {
+            var tooltips = base.GetTooltips();
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannermartyr"].Head, 1));
+            return tooltips;
+        }
     }
 
     public class BannerOfShielding : Banner
@@ -75,6 +96,13 @@ namespace KnightsCohort.Bannerlady.Midrow
                 targetPlayer = wasPlayer,
                 statusAmount = 1,
             });
+        }
+
+        public override List<Tooltip> GetTooltips()
+        {
+            var tooltips = base.GetTooltips();
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannershielding"].Head, 1));
+            return tooltips;
         }
     }
 
@@ -94,6 +122,13 @@ namespace KnightsCohort.Bannerlady.Midrow
                     statusAmount = 1,
                 }
             };
+        }
+
+        public override List<Tooltip> GetTooltips()
+        {
+            var tooltips = base.GetTooltips();
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannerpirate"].Head, 1));
+            return tooltips;
         }
     }
 
@@ -156,7 +191,7 @@ namespace KnightsCohort.Bannerlady.Midrow
 
             if (base.bubbleShield)
             {
-                tooltips.Add(new TTGlossary("midrow.bubbleShield"));
+                tooltips.Insert(0, new TTGlossary("midrow.bubbleShield"));
             }
             return tooltips;
         }

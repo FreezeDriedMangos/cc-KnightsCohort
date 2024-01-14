@@ -11,6 +11,7 @@ using KnightsCohort.Knight.Cards;
 using Microsoft.Extensions.Logging;
 using shockah;
 using Shockah.Kokoro;
+using static CobaltCoreModding.Definitions.ExternalItems.ExternalGlossary;
 
 namespace KnightsCohort
 {
@@ -144,6 +145,8 @@ namespace KnightsCohort
                 "icons/retreat_directional_right",
                 "icons/flurry",
                 "icons/shieldOfFaith",
+                "icons/banner_tattered",
+                "icons/banner_untattered",
                 "icons/banner_mercy",
                 "icons/banner_martyr",
                 "icons/banner_war",
@@ -170,6 +173,13 @@ namespace KnightsCohort
                 "icons/herb_search",
                 "icons/CorrodeCostSatisfied",
                 "icons/CorrodeCostUnsatisfied",
+                "icons/exhaust_selected_card",
+
+                "artifacts/field_journal",
+                "artifacts/herb_bag",
+                "artifacts/Mushroom_Friend",
+                "artifacts/peace_dove",
+                "artifacts/holy_grail",
 
                 "cards/blindness",
             };
@@ -323,7 +333,7 @@ namespace KnightsCohort
             decks["herbalist"] = new ExternalDeck(
                 Name + ".deck.Herbalist",
                 System.Drawing.Color.FromArgb(knightColor),
-                System.Drawing.Color.White,
+                System.Drawing.Color.Black,
                 sprites["card_default_herbalist"],
                 sprites["frame_herbalist"],
                 null
@@ -335,7 +345,7 @@ namespace KnightsCohort
             decks["herbs"] = new ExternalDeck(
                 Name + ".deck.Herbs",
                 System.Drawing.Color.FromArgb(knightColor),
-                System.Drawing.Color.White,
+                System.Drawing.Color.Black,
                 sprites["card_default_herbalist"],
                 sprites["frame_herb"],
                 null
@@ -384,14 +394,14 @@ namespace KnightsCohort
                 decks["herbalist"],
                 sprites["char_frame_herbalist"],
                 new Type[] { typeof(Herbalist.Cards.MortarAndPestle), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.LeafPack) },
-                new Type[0],
+                new Type[] { typeof(Herbalist.Artifacts.HerbBag) },
                 animations["herbalist.neutral"],
                 animations["herbalist.mini"]
             );
 
             characters["herbalist"].AddNameLocalisation("Dame Halla");
             // TODO: write the description
-            characters["herbalist"].AddDescLocalisation("<c=be9821>Dame Halla</c>\nThe Herbalist, Dame Halla! <c=keyword>herbs</c> and <c=keyword>honor</c>.");
+            characters["herbalist"].AddDescLocalisation("<c=be9821>Dame Halla</c>\nThe Herbalist, Dame Halla! <c=keyword>instant movement</c>, <c=keyword>banners</c>, and <c=keyword>honor</c>.");
 
             if (!registry.RegisterCharacter(characters["herbalist"])) throw new Exception("Dame Halla is lost! Could not register Dame Halla!");
         }
@@ -434,6 +444,10 @@ namespace KnightsCohort
 
         public void LoadManifest(IGlossaryRegisty registry)
         {
+            //
+            // knight
+            //
+
             RegisterGlossaryEntry(registry, "missileDagger", sprites["icons/missile_dagger"],
                 "DAGGER",
                 "This missile is going to deal <c=damage>{0}</c> damage."
@@ -446,6 +460,10 @@ namespace KnightsCohort
                 "EXCALIBUR",
                 "This missile is going to deal damage equal to the origin ship's honor."
             );
+
+            //
+            // bannerlady
+            //
 
             RegisterGlossaryEntry(registry, "missileArrow", sprites["icons/arrow"],
                 "ARROW",
@@ -465,10 +483,72 @@ namespace KnightsCohort
                 "RETREAT",
                 "Move your ship's center {0} away from the enemy ship's center."
             );
+
+            RegisterGlossaryEntry(registry, "retreat", sprites["icons/retreat"],
+                "RETREAT",
+                "Move your ship's center {0} away from the enemy ship's center."
+            );
+
+            // banners
+            RegisterGlossaryEntry(registry, "tattered", sprites["icons/banner_tattered"],
+                "<c=midrow>TATTERED BANNER</c>",
+                "This object will be destroyed when a shot passes through it.",
+                GlossayType.midrow
+            );
+            RegisterGlossaryEntry(registry, "untattered", sprites["icons/banner_untattered"],
+                "BANNER",
+                "Shots will pass through this midrow object.",
+                GlossayType.midrow
+            );
+
+            RegisterGlossaryEntry(registry, "bannermercy", sprites["icons/banner_mercy"],
+                "BANNER OF MERCY",
+                "Lose {0} <c=keyword>honor</c> when one of your shots passes through this object.",
+                GlossayType.midrow
+            );
+            RegisterGlossaryEntry(registry, "bannerwar", sprites["icons/banner_war"],
+                "BANNER OF WAR",
+                "Gain {0} <c=keyword>honor</c> when one of your shots passes through this object.",
+                GlossayType.midrow
+            );
+            RegisterGlossaryEntry(registry, "bannermartyr", sprites["icons/banner_martyr"],
+                "MARTYR'S BANNER",
+                "Gain {0} <c=keyword>honor</c> when you are hit by a shot that passes through this object.",
+                GlossayType.midrow
+            );
+            RegisterGlossaryEntry(registry, "bannerpirate", sprites["icons/banner_pirate"],
+                "PIRATE BANNER",
+                "Gain {0} honor when this object is destroyed.",
+                GlossayType.midrow
+            );
+            RegisterGlossaryEntry(registry, "bannershielding", sprites["icons/banner_shielding"],
+                "BANNER OF SHIELDING",
+                "Gain {0} temp shield when one of your shots passes through this object.",
+                GlossayType.midrow
+            );
+
+            //
+            // herbalist
+            //
+
+            RegisterGlossaryEntry(registry, "herbsearch", sprites["icons/herb_bundle"],
+                "HERB SEARCH",
+                "Select {0} herb card(s) from your {1}."
+            );
+
+            RegisterGlossaryEntry(registry, "herboxidize", sprites["icons/herb_bundle_add_oxidize"],
+                "TOXICITY",
+                "Add {0} oxidize to the final herb."
+            );
+
+            RegisterGlossaryEntry(registry, "exhaustSelected", sprites["icons/exhaust_selected_card"],
+                "EXHAUST SELECTED CARD",
+                "Exhaust the selected card."
+            );
         }
-        private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description)
+        private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description, GlossayType type = GlossayType.action)
         {
-            var entry = new ExternalGlossary(Name + ".Glossary." + itemName, itemName, false, ExternalGlossary.GlossayType.action, sprite);
+            var entry = new ExternalGlossary(Name + ".Glossary." + itemName, itemName, false, type, sprite);
             entry.AddLocalisation("en", displayName, description);
             registry.RegisterGlossary(entry);
             glossary[itemName] = entry;
@@ -583,9 +663,35 @@ namespace KnightsCohort
 
         public void LoadManifest(IArtifactRegistry registry)
         {
-            //var antiqueMotor = new ExternalArtifact(Name + ".Artifacts.Antique_Motor", typeof(AntiqueMotor), sprites["icons/Antique_Motor"], ownerDeck: deck);
-            //antiqueMotor.AddLocalisation("ANTIQUE MOTOR", "Gain 1 extra <c=energy>ENERGY</c> every turn. <c=downside>Gain 1</c> <c=status>FUEL LEAK</c> <c=downside>on the first turn</c>.");
-            //registry.RegisterArtifact(antiqueMotor);
+            ExternalArtifact artifact;
+
+            //
+            // Knight
+            //
+
+            artifact = new ExternalArtifact(Name + ".Artifacts.PeaceDove", typeof(Knight.Artifacts.PeaceDove), sprites["artifacts/peace_dove"], ownerDeck: decks["knight"]);
+            artifact.AddLocalisation("PEACE DOVE", "At the start of each turn, gain <c=keyword>1 Vow of Mercy</c>.");
+            registry.RegisterArtifact(artifact);
+
+            artifact = new ExternalArtifact(Name + ".Artifacts.HolyGrail", typeof(Knight.Artifacts.HolyGrail), sprites["artifacts/holy_grail"], ownerDeck: decks["knight"]);
+            artifact.AddLocalisation("HOLY GRAIL", "<c=keyword>Vows</c> can now stack up to a max of <c=keyword>3</c>.");
+            if (!registry.RegisterArtifact(artifact)) Logger.LogCritical("Holy Grail artifact did not register");
+
+            //
+            // Bannerlady
+            //
+
+            //
+            // Herbalist
+            //
+
+            artifact = new ExternalArtifact(Name + ".Artifacts.HerbBag", typeof(Herbalist.Artifacts.HerbBag), sprites["artifacts/herb_bag"], ownerDeck: decks["herbalist"]);
+            artifact.AddLocalisation("HERB BAG", "Whenever you play an <c=keyword>herb card</c>, draw a card.");
+            registry.RegisterArtifact(artifact);
+            
+            artifact = new ExternalArtifact(Name + ".Artifacts.FieldJournal", typeof(Herbalist.Artifacts.FieldJournal), sprites["artifacts/field_journal"], ownerDeck: decks["herbalist"]);
+            artifact.AddLocalisation("FIELD JOURNAL", "<c=keyword>Herb cards</c> are revealed by default.");
+            registry.RegisterArtifact(artifact);
 
         }
 

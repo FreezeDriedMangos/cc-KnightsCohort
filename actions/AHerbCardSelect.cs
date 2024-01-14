@@ -15,6 +15,15 @@ namespace KnightsCohort.actions
     {
         public List<Card> omit = new();
 
+
+        public override List<Tooltip> GetTooltips(State s)
+        {
+            return new()
+            {
+                new TTGlossary(MainManifest.glossary["herbsearch"].Head, 1, browseSource)
+            };
+        }
+
         public override Route? BeginWithRoute(G g, State s, Combat c)
         {
             HerbCardBrowse cardBrowse = new HerbCardBrowse

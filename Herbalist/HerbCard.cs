@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KnightsCohort.Herbalist.Artifacts;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace KnightsCohort.Herbalist
             c.SerializedActions = c.GenerateSerializedActions(s);
             c.name = GenerateFakeLatinWord(s) + " " + c.GetTypeName();
             c.PotentialActions = c.possibleOptions;
-            c.revealed = true; // TODO: remove this debug code
+            c.revealed = s.EnumerateAllArtifacts().Where(a => a is FieldJournal).Any();
 
             return (HerbCard)c;
         }
@@ -247,6 +248,9 @@ namespace KnightsCohort.Herbalist
             // TODO: make this an artifact and have Halla start with it
             if (__result && card is HerbCard herb)// && herb.IsRaw)
             {
+                bool hasHerbBag = s.EnumerateAllArtifacts().Where(a => a is HerbBag).Any();
+                if (!hasHerbBag) return;
+
                 __instance.Queue(new ADrawCard() { count = 1 });
             }
         }

@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using KnightsCohort.Herbalist.Artifacts;
+using KnightsCohort.Knight.Artifacts;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -80,8 +82,11 @@ namespace KnightsCohort.Knight
         public static bool HarmonyPrefix_VowLimits(Ship __instance, Status status, ref int n)
         {
             if (!StatusIsVow(status)) return true;
-            if (n > 2) n = 2;
+
+            var max = g!=null && g.state.EnumerateAllArtifacts().Where(a => a is HolyGrail).Any() ? 3 : 2;
+            if (n > max) n = max;
             if (n < 0) n = 0;
+
             return true;
         }
 
@@ -156,7 +161,7 @@ namespace KnightsCohort.Knight
 
         public static G g;
 
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         [HarmonyPatch(typeof(G), nameof(G.Render))]
         public static void CaptureG(G __instance, double deltaTime) { if (g == null) g = __instance; }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+﻿using KnightsCohort.Knight.Artifacts;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shockah.Kokoro;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,15 @@ namespace KnightsCohort.Knight
 
         public (IReadOnlyList<Color> Colors, int? BarTickWidth) OverrideStatusRendering(State state, Combat combat, Ship ship, Status status, int amount)
         {
-            return (new Color[] 
-            { 
-                amount >= 1 ? Colors.cheevoGold : Colors.disabledIconTint,
-                amount >= 2 ? Colors.cheevoGold : new Color("57411f")
-            }, null);
+            int max = state.EnumerateAllArtifacts().Where(a => a is HolyGrail).Any() ? 3 : 2;
+
+            var colors = new Color[max];
+            for (int i = 1; i <= max; i++)
+            {
+                colors[i-1] = amount >= i ? Colors.cheevoGold : new Color("57411f");
+            }
+
+            return (colors, null);
         }
     }
 }

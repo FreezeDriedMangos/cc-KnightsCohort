@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using KnightsCohort.Bannerlady.Midrow;
+using KnightsCohort.Knight;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +17,25 @@ namespace KnightsCohort.Bannerlady
         public static readonly double BANNER_ANIMATION_SPEED = 7;
 
         public virtual bool Tattered() { return false; }
+
+        public override bool Invincible()
+        {
+            return VowsController.g.state.ship.Get((Status)MainManifest.statuses["shieldOfFaith"].Id) > 0;
+        }
+
+        public override List<Tooltip> GetTooltips()
+        {
+            List<Tooltip> tooltips = new List<Tooltip>();
+            if (Tattered()) tooltips.Add(new TTGlossary(MainManifest.glossary["tattered"].Head));
+            else tooltips.Add(new TTGlossary(MainManifest.glossary["untattered"].Head));
+
+            if (base.bubbleShield)
+            {
+                tooltips.Add(new TTGlossary("midrow.bubbleShield"));
+            }
+            return tooltips;
+        }
+
 
         public static int? AAttackGetFromX(AAttack a, State s, Combat c)
         {
@@ -39,6 +59,8 @@ namespace KnightsCohort.Bannerlady
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrawIntentLinesForPart))]
         public static void DrawIntentLinesForAttacksThroughBanners_Setup(Combat __instance, Ship shipSource, Ship shipTarget, int i, Part part, Vec v)
         {
+            if (VowsController.g.state.ship.Get((Status)MainManifest.statuses["shieldOfFaith"].Id) > 0) return;
+
             bool isAttack = part.intent is IntentAttack || (part.hilight && part.type == PType.cannon);
             if (!isAttack) return;
             int x = shipSource.x + i;
@@ -116,6 +138,8 @@ namespace KnightsCohort.Bannerlady
         {
             if (c.stuff.ContainsKey(worldX) && c.stuff[worldX] is Banner)
             {
+                if (VowsController.g.state.ship.Get((Status)MainManifest.statuses["shieldOfFaith"].Id) > 0) return;
+
                 __result.hitShip = target.HasNonEmptyPartAtWorldX(worldX);
                 __result.hitDrone = false;
             }
