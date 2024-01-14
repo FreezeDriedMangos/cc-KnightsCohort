@@ -1,16 +1,49 @@
 ﻿using HarmonyLib;
 using KnightsCohort.actions;
+using KnightsCohort.Knight;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static CardBrowse;
 
 namespace KnightsCohort.Herbalist
 {
     [HarmonyPatch]
     public class StatusesController
     {
+        //
+        // Temp Sherb
+        //
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AAttack), nameof(AAttack.Begin))]
+        private static void DoSherbEffect(AAttack __instance, G g, State s, Combat c)
+        {
+            Ship ship = (__instance.targetPlayer ? c.otherShip : s.ship);
+            if (ship.Get((Status)MainManifest.statuses["tempSherb"].Id) <= 0) return;
+
+            c.QueueImmediate(new AStatus
+            {
+                targetPlayer = !__instance.targetPlayer,
+                status = Status.tempShield,
+                statusAmount = 1
+            });
+        }
+
+        //
+        // Herberdrive
+        //
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Card), nameof(Card.GetDmg))]
+        public static void GetDmgHerberdrive(ref int __result, State s, int baseDamage, bool targetPlayer = false)
+        {
+            if (s.ship.Get((Status)MainManifest.statuses["herberdrive"].Id) <= 0) return;
+            __result++;
+        }
+
         //
         // Paranoia
         //
@@ -64,6 +97,8 @@ namespace KnightsCohort.Herbalist
         {
             Knight.VowsController.GetAndDecrement(__instance, "dazed");
             Knight.VowsController.GetAndDecrement(__instance, "blindness");
+            Knight.VowsController.GetAndDecrement(__instance, "herberdrive");
+            Knight.VowsController.GetAndDecrement(__instance, "tempSherb");
         }
 
         //

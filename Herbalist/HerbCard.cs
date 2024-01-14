@@ -99,7 +99,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.OXIDATION:         return new AStatus() { status = (Status)MainManifest.KokoroApi.OxidationStatus.Id, statusAmount =  count, targetPlayer = true };
                 case HerbActions.NEGATIVE_OXIDATION:return new AStatus() { status = (Status)MainManifest.KokoroApi.OxidationStatus.Id, statusAmount = -count, targetPlayer = true };
                 case HerbActions.TEMPSHIELD:        return new AStatus() { status = Enum.Parse<Status>("tempShield"),                  statusAmount =  count, targetPlayer = true };
-                case HerbActions.OVERDRIVE:         return new AStatus() { status = Enum.Parse<Status>("overdrive"),                   statusAmount =  count, targetPlayer = true };
+                case HerbActions.OVERDRIVE:         return new AStatus() { status = (Status)MainManifest.statuses["herberdrive"].Id,   statusAmount =  count, targetPlayer = true };
                 case HerbActions.DAZED:             return new AStatus() { status = (Status)MainManifest.statuses["dazed"].Id,         statusAmount =  count, targetPlayer = true };
                 case HerbActions.BLINDNESS:         return new AStatus() { status = (Status)MainManifest.statuses["blindness"].Id,     statusAmount =  count, targetPlayer = true };
                 case HerbActions.STUNCHARGE:        return new AStatus() { status = Enum.Parse<Status>("stunCharge"),                  statusAmount =  count, targetPlayer = true };
@@ -114,7 +114,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.ENGINESTALL:       return new AStatus() { status = Enum.Parse<Status>("engineStall"),                 statusAmount =  count, targetPlayer = true };
                 case HerbActions.ENGINELOCK:        return new AStatus() { status = Enum.Parse<Status>("lockdown"),                    statusAmount =  count, targetPlayer = true };
                 case HerbActions.PAYBACK:           return new AStatus() { status = Enum.Parse<Status>("payback"),                     statusAmount =  count, targetPlayer = true };
-                case HerbActions.FLUX:              return new AStatus() { status = Enum.Parse<Status>("libra"),                       statusAmount =  count, targetPlayer = true };
+                case HerbActions.FLUX:              return new AStatus() { status = (Status)MainManifest.statuses["tempSherb"].Id,     statusAmount =  count, targetPlayer = true };
                 case HerbActions.PARANOIA:          return new AStatus() { status = (Status)MainManifest.statuses["paranoia"].Id,      statusAmount =  count, targetPlayer = true };
 
                 case HerbActions.INSTANTMOVE_LEFT:  return new AMove() { dir = -count, targetPlayer = true };
@@ -135,7 +135,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.OXIDATION:         return "Oxidation";
                 case HerbActions.NEGATIVE_OXIDATION:return "Reduce Oxidation";
                 case HerbActions.TEMPSHIELD:        return "Temp Shield";
-                case HerbActions.OVERDRIVE:         return "Overdrive";
+                case HerbActions.OVERDRIVE:         return "Herberdrive";
                 case HerbActions.DAZED:             return "Dazed";
                 case HerbActions.BLINDNESS:         return "Blindness";
                 case HerbActions.STUNCHARGE:        return "Stun Charge";
@@ -150,7 +150,7 @@ namespace KnightsCohort.Herbalist
                 case HerbActions.ENGINESTALL:       return "Engine Stall";
                 case HerbActions.ENGINELOCK:        return "Engine Lock";
                 case HerbActions.PAYBACK:           return "Payback";
-                case HerbActions.FLUX:              return "Flux";
+                case HerbActions.FLUX:              return "Temp Sherb";
                 case HerbActions.PARANOIA:          return "Paranoia";
 
                 case HerbActions.INSTANTMOVE_LEFT:  return "Instant Move";

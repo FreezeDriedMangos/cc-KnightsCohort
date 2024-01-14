@@ -11,6 +11,7 @@ using KnightsCohort.Knight.Cards;
 using Microsoft.Extensions.Logging;
 using shockah;
 using Shockah.Kokoro;
+using System.Runtime.CompilerServices;
 using static CobaltCoreModding.Definitions.ExternalItems.ExternalGlossary;
 
 namespace KnightsCohort
@@ -174,6 +175,9 @@ namespace KnightsCohort
                 "icons/CorrodeCostSatisfied",
                 "icons/CorrodeCostUnsatisfied",
                 "icons/exhaust_selected_card",
+                "icons/herberdrive",
+                "icons/temp_sherb",
+
 
                 "artifacts/field_journal",
                 "artifacts/herb_bag",
@@ -659,6 +663,16 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/paranoia"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Paranoia", $"On the start of your turn, lose one stack of paranoia. If you are the player, gain one Abyssal Visions in hand. If you are the enemy, randomly cancel one intent.");
+
+            status = "herberdrive";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/herberdrive"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Herberdrive", $"Shots do <c=redd>1</c> more damage. On the start of your turn, lose one stack of herberdrive.");
+
+            status = "tempSherb";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/temp_sherb"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Temp Sherb", $"Every shot you take grants you <c=keyword>1 temp shield</c>. On the start of your turn, lose one stack of temp sherb.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)
@@ -690,7 +704,7 @@ namespace KnightsCohort
             registry.RegisterArtifact(artifact);
             
             artifact = new ExternalArtifact(Name + ".Artifacts.FieldJournal", typeof(Herbalist.Artifacts.FieldJournal), sprites["artifacts/field_journal"], ownerDeck: decks["herbalist"]);
-            artifact.AddLocalisation("FIELD JOURNAL", "<c=keyword>Herb cards</c> are revealed by default.");
+            artifact.AddLocalisation("FIELD JOURNAL", "<c=keyword>Herb cards</c> are revealed on pickup.");
             registry.RegisterArtifact(artifact);
 
         }

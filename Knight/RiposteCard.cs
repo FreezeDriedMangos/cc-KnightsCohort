@@ -72,6 +72,16 @@ namespace KnightsCohort.Knight.Cards
                     fromX = __instance.fromX,
                     multiCannonVolley = true // don't trigger another volley, so that only attacking parts are hit twice
                 });
+
+                if (RiposteTwice)
+                {
+                    c.Queue(new AAttack()
+                    {
+                        damage = RiposteDamage,
+                        fromX = __instance.fromX,
+                        multiCannonVolley = true // don't trigger another volley, so that only attacking parts are hit twice
+                    });
+                }
             }
         }
     }
