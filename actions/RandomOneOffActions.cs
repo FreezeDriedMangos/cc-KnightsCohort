@@ -38,7 +38,6 @@ namespace KnightsCohort.actions
         }
     }
 
-
     public class ABrewChoiceTea : CardAction
     {
         public List<List<CardAction>>? Choices;
@@ -173,10 +172,59 @@ namespace KnightsCohort.actions
         }
     }
 
+
+    public class AEvaluateQuestSubmissionWithRequirementRemoval : CardAction
+    {
+        public List<List<CardAction>>? Choices;
+        public List<HerbActions> requirements;
+        public int uuid;
+
+        public List<List<CardAction>> GetChoices(State s, Combat c)
+        {
+            HashSet<HerbActions> herbActions = new HashSet<HerbActions>(requirements);
+            Dictionary<HerbActions, int> herbActionCounts = HerbCard.CountSerializedActions(requirements);
+            List<List<CardAction>> retval = new();
+            foreach (var action in herbActions)
+            {
+                retval.Add(new() { new AEvaluateQuestSubmissionWithOmission() 
+                { 
+                    requirements = requirements.Where(r => r != action).ToList(), 
+                    omit = action, 
+                    iconCount = herbActionCounts[action],
+                    uuid = uuid,
+                    selectedCard = selectedCard
+                }});
+            }
+            return retval;
+        }
+
+        public override Route? BeginWithRoute(G g, State s, Combat c) => new ActionChoiceRoute
+        {
+            Title = "effect to remove",
+            Choices = Choices ?? GetChoices(s, c)
+        };
+
+        public override List<Tooltip> GetTooltips(State s)
+        {
+            return new();
+        }
+    }
+
+    public class AEvaluateQuestSubmissionWithOmission : AEvaluateQuestSubmission
+    {
+        public HerbActions omit;
+        public int iconCount;
+        public override Icon? GetIcon(State s)
+        {
+            return HerbCard.ParseSerializedAction(omit, iconCount).GetIcon(s);
+        }
+    }
+
     public class AEvaluateQuestSubmission : CardAction
     {
         public List<HerbActions> requirements;
         public int uuid;
+        public bool supersetCountsAsPerfect;
         public static HashSet<string> SetizeSerializedHerbActions(List<HerbActions> ha)
         {
             Dictionary<HerbActions, int> counts = new();
@@ -197,7 +245,7 @@ namespace KnightsCohort.actions
             var submittedActions = SetizeSerializedHerbActions((selectedCard as HerbCard).SerializedActions);
 
             bool allRequirementsMet = submittedActions.Fast_AllAreIn(goalActions);
-            bool requirementsPerfectlyMet = submittedActions.Count == goalActions.Count;
+            bool requirementsPerfectlyMet = supersetCountsAsPerfect || submittedActions.Count == goalActions.Count;
 
             if (allRequirementsMet && requirementsPerfectlyMet) { c.QueueImmediate(new AAddCard() { card = new EpicQuestReward(), amount = 1, destination = Enum.Parse<CardDestination>("Hand") }); }
             else if (allRequirementsMet) { c.QueueImmediate(new AAddCard() { card = new QuestReward(), amount = 1, destination = Enum.Parse<CardDestination>("Hand") }); }

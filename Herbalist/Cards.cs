@@ -365,14 +365,23 @@ namespace KnightsCohort.Herbalist.Cards
             var uuid = this.uuid;
             List<CardAction> actions = new()
             {
+                new ATooltipDummy() { tooltips = new()
+                {
+                    new TTText() { text = upgrade switch {
+                        Upgrade.None => "On play, select an herb card in your deck. If this herb card has every action shown on this QUEST card, add a <c=card>Quest Reward</c> to your deck permanently. If the submitted card has no extra actions, gain an <c=card>Epic Quest Reward</c> instead.",
+                        Upgrade.A    => "On play, select an herb card in your deck, and then remove a requirement of your choice from this QUEST. If the selected herb card has every action shown on this QUEST card (minus the one you chose to remove), add a <c=card>Quest Reward</c> to your deck permanently. If the submitted card has no extra actions, gain an <c=card>Epic Quest Reward</c> instead.",
+                        Upgrade.B    => "On play, select an herb card in your deck. If this herb card has every action shown on this QUEST card, add an <c=card>Epic Quest Reward</c> to your deck permanently.",
+                    }},
+                    new TTText() { text = "The selected herb card will be removed from your deck PERMANENTLY."},
+                    new TTCard() { card = new QuestReward() },
+                    new TTCard() { card = new EpicQuestReward() },
+                }},
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
-                    browseAction = new AEvaluateQuestSubmission()
-                    {
-                        requirements = requirements,
-                        uuid = uuid
-                    }
+                    browseAction = upgrade == Upgrade.A 
+                        ? new AEvaluateQuestSubmissionWithRequirementRemoval() { requirements = requirements, uuid = uuid }
+                        : new AEvaluateQuestSubmission() { supersetCountsAsPerfect = upgrade == Upgrade.B, requirements = requirements, uuid = uuid }
                 }
             };
 
@@ -382,13 +391,25 @@ namespace KnightsCohort.Herbalist.Cards
                 actions.Add(ATooltipDummy.BuildStandIn(action, s));
             }
             actions.Add(new ADummyAction());
+            if (upgrade != Upgrade.A) actions.Add(new ADummyAction());
+
+            if (upgrade == Upgrade.A) actions.Add(new ADummyAction());
 
             return actions;
         }
 
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            // TODO: why does this not detect when I'm in the upgrade screen???
+            if (state.route is CardBrowse b)// && b.mode == CardBrowse.Mode.UpgradeCard)
+            {
+                switch (upgrade)
+                {
+                    case Upgrade.A: return new() { cost = 0, singleUse = true, description = "Remove one requirement of your choice on submission" };
+                    case Upgrade.B: return new() { cost = 0, singleUse = true, description = "Gain Epic Quest Reward even if your submission doesn't perfectly match the quest requirements" };
+                }
+            }
+            return new() { cost = 0, singleUse = true };
         }
 
         [HarmonyPostfix]
