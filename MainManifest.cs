@@ -278,6 +278,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Brew Tea", typeof(BrewTea), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Fire and Smoke", typeof(FireAndSmoke), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Change Ingredients", typeof(ChangeIngredients), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Cultivate", typeof(Cultivate), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)

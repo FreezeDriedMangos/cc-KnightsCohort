@@ -682,4 +682,33 @@ namespace KnightsCohort.Herbalist.Cards
             return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = upgrade == Upgrade.B ? false : true, description = "Discard all herbs in hand. Draw that many herbs." };
         }
     }
+
+
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Cultivate : Card
+    {
+        // TODO: for upgrade B, use Shockah's code (don't forget to thank him in the mod post! also thank rft for design help on halla, and everyone in the design sheet for help designing ratzo and bannerlady)
+        // https://github.com/Shockah/Cobalt-Core-Mods/blob/dev/dracula/Dracula/Cards/BloodTapCard.cs
+        // https://github.com/Shockah/Cobalt-Core-Mods/blob/dev/dracula/Dracula/ActionChoiceRoute.cs
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new AHerbCardSelect()
+                {
+                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                    browseAction = new ACultivate()
+                }
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new()
+            {
+                cost = 2,
+                exhaust = upgrade != Upgrade.B,
+                description = upgrade == Upgrade.A ? "Choose herb in deck. Double an action of your choice." : "Choose herb in hand. Double an action of your choice."
+            };
+        }
+    }
 }

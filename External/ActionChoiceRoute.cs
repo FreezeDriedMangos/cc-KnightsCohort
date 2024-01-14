@@ -14,8 +14,6 @@ internal sealed class ActionChoiceRoute : Route
 
 	public List<List<CardAction>> Choices = new();
 
-	public Card? selectedCard;
-
 	public override bool GetShowOverworldPanels()
 		=> true;
 
@@ -97,10 +95,7 @@ internal sealed class ActionChoiceRoute : Route
 			return;
 		combat.Queue(new ADelay());
 		foreach (var action in actions)
-		{
-			action.selectedCard = selectedCard;
 			combat.Queue(action);
-		}
 		g.CloseRoute(this);
 	}
 }

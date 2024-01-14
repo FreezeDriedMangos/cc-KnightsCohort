@@ -48,10 +48,13 @@ namespace KnightsCohort.actions
             if (selectedCard is not HerbCard herb) return new();
 
             HashSet<HerbActions> herbActions = new HashSet<HerbActions>(herb.SerializedActions);
+            Dictionary<HerbActions, int> herbActionCounts = HerbCard.CountSerializedActions(herb.SerializedActions);
             List<List<CardAction>> retval = new();
             foreach (var action in herbActions)
             {
-                retval.Add(new() { new ABrewTea() { chosenRemoval = action } });
+                var cardaction = new ABrewTea() { chosenRemoval = action, iconCount = herbActionCounts[action] };
+                cardaction.selectedCard = selectedCard;
+                retval.Add(new() { cardaction });
             }
             return retval;
         }
@@ -59,8 +62,7 @@ namespace KnightsCohort.actions
         public override Route? BeginWithRoute(G g, State s, Combat c) => new ActionChoiceRoute
         {
             Title = "effect to remove",
-            Choices = Choices ?? GetChoices(s, c),
-            selectedCard = selectedCard
+            Choices = Choices ?? GetChoices(s, c)
         };
 
         public override List<Tooltip> GetTooltips(State s)
@@ -73,11 +75,12 @@ namespace KnightsCohort.actions
     {
         public int increaseAmount = 1;
         public HerbActions? chosenRemoval = null;
+        public int iconCount;
 
         public override Icon? GetIcon(State s)
         {
             if (chosenRemoval == null) return null;
-            return HerbCard.ParseSerializedAction((HerbActions)chosenRemoval).GetIcon(s);
+            return HerbCard.ParseSerializedAction((HerbActions)chosenRemoval, iconCount).GetIcon(s);
         }
 
         public override void Begin(G g, State s, Combat c)
@@ -106,6 +109,70 @@ namespace KnightsCohort.actions
             c.QueueImmediate(new AAddCard() { card = tea, destination = Enum.Parse<CardDestination>("Hand") });
         }
     }
+
+    public class ACultivate : CardAction
+    {
+        public List<List<CardAction>>? Choices;
+
+        public List<List<CardAction>> GetChoices(State s, Combat c)
+        {
+            if (selectedCard is not HerbCard herb) return new();
+
+            HashSet<HerbActions> herbActions = new HashSet<HerbActions>(herb.SerializedActions);
+            Dictionary<HerbActions, int> herbActionCounts = HerbCard.CountSerializedActions(herb.SerializedActions);
+            List<List<CardAction>> retval = new();
+            foreach (var action in herbActions)
+            {
+                var cardaction = new ADouble() { chosenDouble = action, iconCount = herbActionCounts[action] };
+                cardaction.selectedCard = selectedCard;
+                retval.Add(new() { cardaction });
+            }
+            return retval;
+        }
+
+        public override Route? BeginWithRoute(G g, State s, Combat c) => new ActionChoiceRoute
+        {
+            Title = "effect to double",
+            Choices = Choices ?? GetChoices(s, c)
+        };
+
+        public override List<Tooltip> GetTooltips(State s)
+        {
+            return new();
+        }
+    }
+    public class ADouble : CardAction
+    {
+        public HerbActions chosenDouble;
+        public int iconCount;
+
+        public override Icon? GetIcon(State s)
+        {
+            return HerbCard.ParseSerializedAction(chosenDouble, iconCount).GetIcon(s);
+        }
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null) return;
+            if (selectedCard is not HerbCard herb) return;
+
+            // build action counts for the tea card
+            var actionCounts = HerbCard.CountSerializedActions(herb.SerializedActions);
+            actionCounts[chosenDouble] *= 2;
+
+            // make cultivar card
+            HerbCard newHerb = new HerbCard();
+            newHerb.SerializedActions = new();
+            foreach (var kvp in actionCounts) for (int i = 0; i < kvp.Value; i++) newHerb.SerializedActions.Add(kvp.Key);
+            newHerb.name = herb.name.Split(' ')[0] + " Cultivar";
+            newHerb.revealed = true;
+
+            // remove the herb and add the cultivar
+            s.RemoveCardFromWhereverItIs(selectedCard.uuid);
+            c.QueueImmediate(new AAddCard() { card = newHerb, destination = Enum.Parse<CardDestination>("Hand") });
+        }
+    }
+
     public class AEvaluateQuestSubmission : CardAction
     {
         public List<HerbActions> requirements;
