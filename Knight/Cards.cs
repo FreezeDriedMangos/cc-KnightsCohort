@@ -19,7 +19,7 @@ namespace KnightsCohort.Knight.Cards
         {
             List<CardAction> retval = new()
             {
-               new AStatus() { status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = (upgrade == Upgrade.B ? 2 : 1), targetPlayer = true },
+               new AStatus() { disabled = VowsController.attackedThisTurn, status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = (upgrade == Upgrade.B ? 2 : 1), targetPlayer = true },
                new AStatus() { status = Enum.Parse<Status>("tempShield"), statusAmount = 2, targetPlayer = true },
             };
 
@@ -359,7 +359,7 @@ namespace KnightsCohort.Knight.Cards
                new AStatus() { status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 2, targetPlayer = true },
             };
 
-            if (upgrade == Upgrade.B) retval.Add(new AStatus() { status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = 1, targetPlayer = true });
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { disabled = VowsController.attackedThisTurn, status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = 1, targetPlayer = true });
             if (upgrade != Upgrade.A) retval.Add(new AEndTurn());
 
             return retval;

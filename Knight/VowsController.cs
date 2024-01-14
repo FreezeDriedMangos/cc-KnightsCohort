@@ -257,7 +257,7 @@ namespace KnightsCohort.Knight
         // Vow of Mercy
         //
 
-        static bool attackedThisTurn = false;
+        public static bool attackedThisTurn = false;
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AEnemyTurn), nameof(AEnemyTurn.Begin))]
@@ -271,7 +271,7 @@ namespace KnightsCohort.Knight
         [HarmonyPatch(typeof(AAfterPlayerTurn), nameof(AAfterPlayerTurn.Begin))]
         public static void HarmonyPostfix_VowOfMercy_Concequences(G g, State s, Combat c)
         {
-            var mercyVow = GetAndDecrement(g.state.ship, "vowOfMercy");
+            var mercyVow = GetAndClear(g.state.ship, "vowOfMercy");
             if (!attackedThisTurn)
             {
                 AddHonor(g.state.ship, VOW_OF_MERCY_HONOR * mercyVow);

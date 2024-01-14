@@ -576,7 +576,7 @@ namespace KnightsCohort
             status = "vowOfMercy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mercy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Mercy", $"At the end of your turn, if you have not attacked this turn, gain {VowsController.VOW_OF_MERCY_HONOR} honor. Lose 1 Vow of Mercy.");
+            statuses[status].AddLocalisation("Vow of Mercy", $"At the end of your turn, lose all stacks of this vow. If you have not attacked this turn, gain {{0}} honor.");
 
             status = "vowOfAdamancy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_adamancy"], false);
