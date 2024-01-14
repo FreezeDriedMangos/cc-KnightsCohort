@@ -2,11 +2,14 @@
 using KnightsCohort.actions;
 using KnightsCohort.Knight;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Xna.Framework.Input;
+using Shockah.Dracula;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -264,6 +267,15 @@ namespace KnightsCohort.Herbalist.Cards
         {
             if (!isDuringTryPlay) { return new(); } // don't run the rng if it's not needed
 
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                    new AAddCard() { card = Util.GenerateRandomHerbCard(s) },
+                    new AAddCard() { card = Util.GenerateRandomHerbCard(s) }
+                };
+            }
+
             return new()
             {
                 new AAddCard() { card = Util.GenerateRandomHerbCard(s) }
@@ -271,7 +283,11 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true, description = "Permanently gain a random herb card." };
+            return new() { cost = 1, exhaust = upgrade != Upgrade.B, 
+                description = upgrade == Upgrade.B 
+                ? "Permanently gain 2 random herb cards."
+                : "Permanently gain a random herb card." 
+            };
         }
     }
 
@@ -552,18 +568,39 @@ namespace KnightsCohort.Herbalist.Cards
         // https://github.com/Shockah/Cobalt-Core-Mods/blob/dev/dracula/Dracula/ActionChoiceRoute.cs
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                    new AHerbCardSelect()
+                    {
+                        browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                        browseAction = new ABrewChoiceTea()
+                    }
+                };
+            }
+
             return new()
             {
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
                     browseAction = new ABrewTea()
+                    {
+                        increaseAmount = upgrade == Upgrade.B ? 2 : 1
+                    }
                 }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = "Select an herb in hand. Increase every effect by 1 and then remove one at random." };
+            return new() { cost = 1, exhaust = true, 
+                description = upgrade switch {
+                    Upgrade.None => "Choose herb in hand. Increase every effect by 1, remove one at random.",
+                    Upgrade.A => "Choose herb in hand. Increase every effect by 1, remove one of your choice.",
+                    Upgrade.B => "Choose herb in hand. Increase every effect by 2, remove one at random.",
+                }
+            };
         }
     }
 
@@ -572,6 +609,37 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            List<CardAction> actions = upgrade switch
+            {
+                Upgrade.None => new()
+                {
+                    new AExhaustSelectedCard(),
+                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new ASendSelectedCardToHand(),
+                    new AExhaustSelectedCard(),
+                },
+                Upgrade.A => new()
+                {
+                    new AExhaustSelectedCard(),
+                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new ASendSelectedCardToHand(),
+                    new AExhaustSelectedCard(),
+                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new ASendSelectedCardToHand(),
+                },
+                Upgrade.B => new()
+                {
+                    new AExhaustSelectedCard(),
+                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new ASendSelectedCardToHand(),
+                    new AExhaustSelectedCard(),
+                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new ASendSelectedCardToHand(),
+                    new AExhaustSelectedCard(),
+                    new ARemoveSelectedCardFromWhereverItIs(),
+                }
+            };
+
             return new()
             {
                 new AHerbCardSelect()
@@ -579,20 +647,21 @@ namespace KnightsCohort.Herbalist.Cards
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
                     browseAction = new AQueueImmediateOtherActions()
                     {
-                        actions = new()
-                        {
-                            new AExhaustSelectedCard(),
-                            new ARemoveSelectedCardFromWhereverItIs(),
-                            new ASendSelectedCardToHand(),
-                            new AExhaustSelectedCard(),
-                        }
+                        actions = actions
                     }
                 },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true, description = "Select an herb in hand. Exhaust it twice." };
+            return new() { cost = 1, exhaust = upgrade == Upgrade.A,
+                description = upgrade switch
+                {
+                    Upgrade.None => "Select an herb in hand. Exhaust it twice.",
+                    Upgrade.A => "Select an herb in hand. Exhaust it twice, then return to hand.",
+                    Upgrade.B => "Select an herb in hand. Exhaust it three times, then remove from deck."
+                }
+            };
         }
     }
 

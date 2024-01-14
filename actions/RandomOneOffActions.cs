@@ -2,6 +2,7 @@
 using FSPRO;
 using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
+using Shockah.Dracula;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,8 +37,49 @@ namespace KnightsCohort.actions
             c.SendCardToHand(s, selectedCard);
         }
     }
+
+
+    public class ABrewChoiceTea : CardAction
+    {
+        public List<List<CardAction>>? Choices;
+
+        public List<List<CardAction>> GetChoices(State s, Combat c)
+        {
+            if (selectedCard is not HerbCard herb) return new();
+
+            HashSet<HerbActions> herbActions = new HashSet<HerbActions>(herb.SerializedActions);
+            List<List<CardAction>> retval = new();
+            foreach (var action in herbActions)
+            {
+                retval.Add(new() { new ABrewTea() { chosenRemoval = action } });
+            }
+            return retval;
+        }
+
+        public override Route? BeginWithRoute(G g, State s, Combat c) => new ActionChoiceRoute
+        {
+            Title = "effect to remove",
+            Choices = Choices ?? GetChoices(s, c),
+            selectedCard = selectedCard
+        };
+
+        public override List<Tooltip> GetTooltips(State s)
+        {
+            return new();
+        }
+    }
+
     public class ABrewTea : CardAction
     {
+        public int increaseAmount = 1;
+        public HerbActions? chosenRemoval = null;
+
+        public override Icon? GetIcon(State s)
+        {
+            if (chosenRemoval == null) return null;
+            return HerbCard.ParseSerializedAction((HerbActions)chosenRemoval).GetIcon(s);
+        }
+
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null) return;
@@ -45,13 +87,12 @@ namespace KnightsCohort.actions
 
             // choose an action type to remove
             HashSet<HerbActions> actions = new HashSet<HerbActions>(herb.SerializedActions);
-            int removalIndex = (int)(Math.Abs(s.rngActions.NextInt()) % actions.Count);
-            var removeAction = actions.ToList()[removalIndex];
+            var removeAction = chosenRemoval ?? actions.ToList()[Math.Abs(s.rngActions.NextInt()) % actions.Count];
 
             // build action counts for the tea card
             var actionCounts = HerbCard.CountSerializedActions(herb.SerializedActions);
+            actionCounts.Keys.ToList().ForEach(a => actionCounts[a] += increaseAmount);
             actionCounts.Remove(removeAction);
-            actionCounts.Keys.ToList().ForEach(a => actionCounts[a]++);
 
             // make tea card
             HerbCard_Tea tea = new HerbCard_Tea();
