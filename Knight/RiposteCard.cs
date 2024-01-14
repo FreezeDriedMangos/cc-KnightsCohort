@@ -18,28 +18,34 @@ namespace KnightsCohort.Knight.Cards
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            var riposteDamage = upgrade == Upgrade.A ? 1 : 2;
             return new()
             {
-                new AReadyRiposte() { card = this, ready = true, twice = upgrade == Upgrade.B },
-                new AAttack() { damage = GetDmg(s, upgrade == Upgrade.A ? 2 : 1) },
-                new AReadyRiposte() { card = this, ready = false },
+                new AReadyRiposte() { ready = true, twice = upgrade == Upgrade.A, dmg = GetDmg(s, riposteDamage) },
+                new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1) },
+                new AReadyRiposte() { ready = false },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description = $"Attack for {GetDmg(state, upgrade == Upgrade.A ? 2 : 1)}. Attack again for {GetDmg(state, RiposteDamage)}{(upgrade == Upgrade.B ? $" and again for {GetDmg(state, RiposteDamage)}" : "")} if the hit part intends to attack." };
+            var riposteDamage = upgrade == Upgrade.A ? 1 : 2;
+            return new() { cost = 1, 
+                description = upgrade == Upgrade.A
+                ? $"Attack for {GetDmg(state, 1)}, then twice for {GetDmg(state, riposteDamage)} if the hit part intends to attack."
+                : $"Attack for {GetDmg(state, upgrade == Upgrade.B ? 2 : 1)}, then again for {GetDmg(state, riposteDamage)} if the hit part intends to attack."
+            };
         }
 
         public class AReadyRiposte : CardAction
         {
-            public Card card;
             public bool ready = true;
             public bool twice = false;
+            public int dmg = 1;
             public override void Begin(G g, State s, Combat c)
             {
                 RiposteCard.RiposteReady = ready;
                 RiposteCard.RiposteTwice = twice;
-                RiposteCard.RiposteDamage = card?.GetDmg(s, 2) ?? 2;
+                RiposteCard.RiposteDamage = dmg;
             }
             public override Icon? GetIcon(State s) { return null; }
         }

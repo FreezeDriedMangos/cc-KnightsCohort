@@ -231,12 +231,20 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
-               new ASpawn() { thing = new MercyBanner(), offset = -1 },
+               new ASpawn() { thing = upgrade == Upgrade.A ? new TatteredMercyBanner() : new MercyBanner(), offset = -1 },
                new ASpawn() { thing = new WarBanner() },
-               new ASpawn() { thing = new MercyBanner(), offset = 1 },
+               new ASpawn() { thing = upgrade == Upgrade.A ? new TatteredMercyBanner() : new MercyBanner(), offset = 1 },
             };
+
+            if (upgrade == Upgrade.B)
+            {
+                retval.Insert(0, new ASpawn() { thing = new TatteredWarBanner(), offset = -2 });
+                retval.Add(new ASpawn() { thing = new TatteredWarBanner(), offset = 2 });
+            }
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
@@ -271,14 +279,14 @@ namespace KnightsCohort.Bannerlady.Cards
             {
                new ASpawn() { thing = new TatteredWarBanner(), offset = -2 },
                new ASpawn() { thing = new TatteredWarBanner(), offset = -1 },
-               new ASpawn() { thing = new TatteredWarBanner(), offset = 0 },
+               new ASpawn() { thing = upgrade == Upgrade.B ? new WarBanner() : new TatteredWarBanner(), offset = 0 },
                new ASpawn() { thing = new TatteredWarBanner(), offset = 1 },
                new ASpawn() { thing = new TatteredWarBanner(), offset = 2 },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3 };
+            return new() { cost = upgrade == Upgrade.A ? 2 : 3 };
         }
     }
 
@@ -289,8 +297,8 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-               new AAttack() { damage = GetDmg(s, 1) },
-               new ARetreat() { dir = ARetreat.GetDir(2, s, c) },
+               new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1) },
+               new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 3 : 2, s, c) },
             };
         }
         public override CardData GetData(State state)
@@ -353,14 +361,19 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
-               new ASpawn() { thing = new WarBanner() },
+               new ASpawn() { thing = new WarBanner(), offset = -1 },
+               new ASpawn() { thing = new WarBanner(), offset = 1 },
             };
+
+            if (upgrade == Upgrade.B) retval.Insert(1, new ASpawn() { thing = new BannerOfShielding() });
+
+            return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = upgrade == Upgrade.A ? 1 : 2, exhaust = true };
         }
     }
 
@@ -659,21 +672,22 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            string descr = "Align leftmost active cannon with nearest midrow object";
-            int cost = 1;
-            if (state.route is not Combat) return new() { cost = cost, description = $"{descr}." };
+            string descr = "Align leftmost cannon with nearest midrow";
+            int cost = upgrade == Upgrade.A ? 0 : 1;
+            bool retain = upgrade == Upgrade.B;
+            if (state.route is not Combat) return new() { cost = cost, description = $"{descr}.", retain = retain };
 
 
             int? distance = GetDistance(state);
             if (distance == null)
             {
-                return new() { cost = cost, description = $"<c=3f3f3f>{descr}.</c>" };
+                return new() { cost = cost, description = $"<c=3f3f3f>{descr}.</c>", retain = retain };
             }
 
             string hint = $"(Right {distance})";
             if (distance < 0) hint = $"(Left {-distance})";
 
-            return new() { cost = cost, description = $"{descr} {hint}." };
+            return new() { cost = cost, description = $"{descr} {hint}.", retain = retain };
         }
     }
 
@@ -682,12 +696,14 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            List<CardAction> retval = new()
             {
-                new ACharge() { dir = ACharge.GetDir(2, s, c) },
+                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) },
                 new AAttack() { damage = GetDmg(s, 1) },
-                new ARetreat() { dir = ARetreat.GetDir(2, s, c) }
+                new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) }
             };
+            if (upgrade == Upgrade.B) retval.Insert(1, new AAttack() { damage = GetDmg(s, 1) });
+            return retval;
         }
         public override CardData GetData(State state)
         {

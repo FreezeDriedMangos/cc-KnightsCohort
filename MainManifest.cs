@@ -209,7 +209,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Shield Bash", typeof(ShieldBash), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Free Hit", typeof(FreeHit), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Handicap", typeof(Handicap), sprites["card_default_knight"], decks["knight"]),
-                new ExternalCard(namePrefix + "Oathbreaker", typeof(Oathbreaker), sprites["card_default_knight"], decks["knight"]),
+                //new ExternalCard(namePrefix + "Oathbreaker", typeof(Oathbreaker), sprites["card_default_knight"], decks["knight"]), // NEEDS A REWORK
                 new ExternalCard(namePrefix + "Friendly Duel", typeof(FriendlyDuel), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Challenge", typeof(Challenge), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Shield of Honor", typeof(ShieldOfHonor), sprites["card_default_knight"], decks["knight"]),
