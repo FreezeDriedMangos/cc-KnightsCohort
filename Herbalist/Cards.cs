@@ -262,7 +262,7 @@ namespace KnightsCohort.Herbalist.Cards
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            if (isDuringTryPlay) { return new(); } // don't run the rng if it's not needed
+            if (!isDuringTryPlay) { return new(); } // don't run the rng if it's not needed
 
             return new()
             {
@@ -334,6 +334,8 @@ namespace KnightsCohort.Herbalist.Cards
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class QUEST : Card
     {
+        // TODO: add description tooltips explaining how quests work - regular rewards and epic rewards and all that
+
         public List<HerbActions> requirements;
         public override List<CardAction> GetActions(State s, Combat c)
         {

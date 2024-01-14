@@ -19,40 +19,18 @@ namespace KnightsCohort.Herbalist
             };
         }
 
-        // TODO: this doesn't work
         public static HerbCard GenerateRandomHerbCard(State s)
         {
-            //if (s.map.markers[s.map.currentLocation].contents is MapBattle mapBattle) mapBattle.battleType
             Rarity rarity = CardReward_GetRandomRarity(s.rngCardOfferings, Enum.Parse<BattleType>("Normal"));
 
-            List<Card> offerableCards = DB.releasedCards.Where(delegate (Card c)
+            List<HerbCard> offerableCards = rarity switch
             {
-                CardMeta meta = c.GetMeta();
-                if (meta.rarity != rarity)
-                {
-                    return false;
-                }
-                if (meta.deck != (Deck)MainManifest.decks["herbs"].Id)
-                {
-                    return false;
-                }
-                if (meta.dontOffer)
-                {
-                    return false;
-                }
-                if (meta.unreleased)
-                {
-                    return false;
-                }
-                return true;
-            }).ToList();
+                Rarity.common => new() { new HerbCard_Leaf(), new HerbCard_Bark() },
+                Rarity.uncommon => new() { new HerbCard_Seed(), new HerbCard_Root() },
+                Rarity.rare => new() { new HerbCard_Shroom() },
+            };
 
-            if (offerableCards.Count <= 0) return new();
-
-            var offeredCard = offerableCards.KnightRandom(s.rngCardOfferings);
-            Card card = (Card)Activator.CreateInstance(offeredCard.GetType());
-
-            return HerbCard.Generate(s, card as HerbCard);
+            return HerbCard.Generate(s, offerableCards.KnightRandom(s.rngCardOfferings));
         }
     }
 }
