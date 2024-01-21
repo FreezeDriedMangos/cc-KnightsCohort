@@ -15,7 +15,8 @@ namespace KnightsCohort.actions
 
         public override Icon? GetIcon(State s)
         {
-            return new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, amount, Colors.textMain);
+            //return new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, amount, Colors.textMain);
+            return null;
         }
 
         public override void Begin(G g, State s, Combat c)

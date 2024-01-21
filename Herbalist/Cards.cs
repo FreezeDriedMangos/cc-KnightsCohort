@@ -30,13 +30,13 @@ namespace KnightsCohort.Herbalist.Cards
                new ATooltipDummy() {
                    disabled = flipped,
                    tooltips = new() { new TTGlossary(MainManifest.glossary["herbsearch"].Head, amount, "Deck"), new TTGlossary(MainManifest.glossary[upgrade == Upgrade.A ? "combineHerbs" : "combineHerbsToxic"].Head, 1), MainManifest.KokoroApi.GetOxidationStatusTooltip(s, s.ship) }, 
-                   icons = new() { new Icon((Spr)MainManifest.sprites[upgrade == Upgrade.A ? "icons/mortar_and_pestle" : "icons/mortar_and_pestle_toxic"].Id, upgrade == Upgrade.A ? null : 1, flipped ? Colors.disabledText : Colors.textMain) } 
+                   icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, amount, flipped ? Colors.disabledText : Colors.textMain), new Icon((Spr)MainManifest.sprites[upgrade == Upgrade.A ? "icons/mortar_and_pestle" : "icons/mortar_and_pestle_toxic"].Id, upgrade == Upgrade.A ? null : 1, flipped ? Colors.disabledText : Colors.textMain) } 
                },
-               //new ADummyAction(),
+
                new AHerbCardSelect()
                {
                    disabled = !flipped,
-                   browseSource = Enum.Parse<CardBrowse.Source>("ExhaustPile"),
+                   browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
                    browseAction = new AQueueImmediateOtherActions()
                    {
                        actions = new() { new ARemoveSelectedCardFromWhereverItIs(), new ASendSelectedCardToHand() }
@@ -44,13 +44,11 @@ namespace KnightsCohort.Herbalist.Cards
                },
                new ATooltipDummy() {
                    disabled = !flipped,
-                   icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, 1, flipped ? Colors.textMain : Colors.disabledText) }
+                   tooltips = new() { new TTGlossary(MainManifest.glossary["moveCard"].Head, Enum.Parse<CardBrowse.Source>("Deck"), Enum.Parse<CardBrowse.Source>("Hand")) },
+                   icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, 1, flipped ? Colors.textMain : Colors.disabledText), new Icon((Spr)MainManifest.sprites["icons/move_card"].Id, null, Colors.textMain), new Icon(Enum.Parse<Spr>("icons_dest_hand"), null, Colors.textMain), }
                },
-               new ATooltipDummy() {
-                   disabled = !flipped,
-                   tooltips = new() { new TTGlossary(MainManifest.glossary["moveCard"].Head, Enum.Parse<CardBrowse.Source>("ExhaustPile"), Enum.Parse<CardBrowse.Source>("Hand")) },
-                   icons = new() { new Icon(Enum.Parse<Spr>("icons_exhaust"), null, Colors.textMain), new Icon((Spr)MainManifest.sprites["icons/move_card"].Id, null, Colors.textMain), new Icon(Enum.Parse<Spr>("icons_dest_hand"), null, Colors.textMain), }
-               },
+
+               new ADummyAction(),
             };
         }
         public override CardData GetData(State state)
@@ -69,16 +67,33 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>(upgrade == Upgrade.B ? "Deck" : "Hand"),
-                    browseAction = new AExhaustSelectedCard()
-                },
-                new ATooltipDummy()
-                {
-                    tooltips = new() { new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head), },
-                    icons = new() 
+                    browseAction = new AQueueImmediateOtherActions()
                     {
-                        // todo: change to icons/herb_search
-                        new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, null, Colors.textMain),
-                        new Icon((Spr)MainManifest.sprites["icons/exhaust_selected_card"].Id, null, Colors.textMain),
+                        actions = new()
+                        {
+                            new ARemoveSelectedCardFromWhereverItIs(),
+                            new ASendSelectedCardToDiscard(),
+                            new AApplySelectedHerbToEnemy(),
+                        }
+                    }
+                },
+                //new ATooltipDummy()
+                //{
+                //    tooltips = new() { new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head), },
+                //    icons = new() 
+                //    {
+                //        // todo: change to icons/herb_search
+                //        new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, null, Colors.textMain),
+                //        new Icon((Spr)MainManifest.sprites["icons/exhaust_selected_card"].Id, null, Colors.textMain),
+                //    }
+                //},
+                new ATooltipDummy() { 
+                    tooltips = new (){ new TTGlossary(MainManifest.glossary["burnHerb"].Head) },
+                    icons = new()
+                    {
+                        new Icon((Spr)MainManifest.sprites[upgrade == Upgrade.B ? "icons/herb_bundle" : "icons/herb_in_hand"].Id, 1, Colors.textMain),
+                        new Icon((Spr)MainManifest.sprites["icons/burn_herb"].Id, null, Colors.textMain),
+                        //new Icon(Enum.Parse<Spr>("icons_outgoing"), null, Colors.textMain),
                     }
                 },
                 new ADummyAction(),
@@ -86,7 +101,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = upgrade == Upgrade.None ? true : false };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = upgrade == Upgrade.None ? true : false, };
         }
     }
 
@@ -658,30 +673,25 @@ namespace KnightsCohort.Herbalist.Cards
             {
                 Upgrade.None => new()
                 {
-                    new AExhaustSelectedCard(),
                     new ARemoveSelectedCardFromWhereverItIs(),
-                    new ASendSelectedCardToHand(),
-                    new AExhaustSelectedCard(),
+                    new ASendSelectedCardToDiscard(),
+                    new AApplySelectedHerbToEnemy(),
+                    new AApplySelectedHerbToEnemy(),
                 },
                 Upgrade.A => new()
                 {
-                    new AExhaustSelectedCard(),
                     new ARemoveSelectedCardFromWhereverItIs(),
-                    new ASendSelectedCardToHand(),
-                    new AExhaustSelectedCard(),
-                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new ASendSelectedCardToDiscard(),
+                    new AApplySelectedHerbToEnemy(),
+                    new AApplySelectedHerbToEnemy(),
                     new ASendSelectedCardToHand(),
                 },
                 Upgrade.B => new()
                 {
-                    new AExhaustSelectedCard(),
                     new ARemoveSelectedCardFromWhereverItIs(),
-                    new ASendSelectedCardToHand(),
-                    new AExhaustSelectedCard(),
-                    new ARemoveSelectedCardFromWhereverItIs(),
-                    new ASendSelectedCardToHand(),
-                    new AExhaustSelectedCard(),
-                    new ARemoveSelectedCardFromWhereverItIs(),
+                    new AApplySelectedHerbToEnemy(),
+                    new AApplySelectedHerbToEnemy(),
+                    new AApplySelectedHerbToEnemy(),
                 }
             };
 
@@ -695,7 +705,15 @@ namespace KnightsCohort.Herbalist.Cards
                         actions = actions
                     }
                 },
-                new ATooltipDummy() { tooltips = new (){ new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head) } }
+                new ATooltipDummy() { 
+                    tooltips = new (){ new TTGlossary(MainManifest.glossary["burnHerb"].Head) },
+                    icons = new()
+                    {
+                        new Icon((Spr)MainManifest.sprites["icons/herb_in_hand"].Id, 1, Colors.textMain),
+                        new Icon((Spr)MainManifest.sprites["icons/burn_herb"].Id, 2, Colors.textMain),
+                    }
+                }
+                //new ATooltipDummy() { tooltips = new (){ new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head) } }
             };
         }
         public override CardData GetData(State state)
@@ -703,9 +721,9 @@ namespace KnightsCohort.Herbalist.Cards
             return new() { cost = 1, exhaust = upgrade == Upgrade.A,
                 description = upgrade switch
                 {
-                    Upgrade.None => "Select an herb in hand. Exhaust it twice.",
-                    Upgrade.A => "Select an herb in hand. Exhaust it twice, then return to hand.",
-                    Upgrade.B => "Select an herb in hand. Exhaust it three times, then remove from deck."
+                    Upgrade.None => "Select an herb in hand. Apply its effects to the enemy twice.",
+                    Upgrade.A => "Select an herb in hand. Apply its effects to the enemy twice, then return to hand.",
+                    Upgrade.B => "Select an herb in hand. Apply its effects to the enemy three times, then remove from deck."
                 }
             };
         }

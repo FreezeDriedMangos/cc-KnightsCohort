@@ -37,6 +37,32 @@ namespace KnightsCohort.actions
             c.SendCardToHand(s, selectedCard);
         }
     }
+    public class ASendSelectedCardToDiscard : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null) return;
+            c.SendCardToDiscard(s, selectedCard);
+        }
+    }
+
+    public class AApplySelectedHerbToEnemy : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null || selectedCard is not HerbCard herb) return;
+            var actions = herb.GetActionsOverridden(s, c);
+            foreach (var action in actions)
+            {
+                if (action is AStatus astatus) astatus.targetPlayer = !astatus.targetPlayer;
+                if (action is AMove amove) amove.targetPlayer = !amove.targetPlayer;
+                if (action is AHeal aheal) aheal.targetPlayer = !aheal.targetPlayer;
+                if (action is AHurt ahurt) ahurt.targetPlayer = !ahurt.targetPlayer;
+
+                c.Queue(Mutil.DeepCopy(action));
+            }
+        }
+    }
 
     public class ABrewChoiceTea : CardAction
     {

@@ -198,17 +198,17 @@ namespace KnightsCohort.Herbalist
 
         public void OnExhausted(State s, Combat c)
         {
-            revealed = true;
-            var actions = this.GetActionsOverridden(s, c);
-            foreach (var action in actions)
-            {
-                if (action is AStatus astatus) astatus.targetPlayer = !astatus.targetPlayer;
-                if (action is AMove amove) amove.targetPlayer = !amove.targetPlayer;
-                if (action is AHeal aheal) aheal.targetPlayer = !aheal.targetPlayer;
-                if (action is AHurt ahurt) ahurt.targetPlayer = !ahurt.targetPlayer;
+            //revealed = true;
+            //var actions = this.GetActionsOverridden(s, c);
+            //foreach (var action in actions)
+            //{
+            //    if (action is AStatus astatus) astatus.targetPlayer = !astatus.targetPlayer;
+            //    if (action is AMove amove) amove.targetPlayer = !amove.targetPlayer;
+            //    if (action is AHeal aheal) aheal.targetPlayer = !aheal.targetPlayer;
+            //    if (action is AHurt ahurt) ahurt.targetPlayer = !ahurt.targetPlayer;
 
-                c.Queue(Mutil.DeepCopy(action));
-            }
+            //    c.Queue(Mutil.DeepCopy(action));
+            //}
         }
 
         [HarmonyPrefix]
@@ -220,8 +220,6 @@ namespace KnightsCohort.Herbalist
 
             var tooltips = new List<Tooltip>()
             {
-                new TTGlossary(MainManifest.glossary["herbExhaust"].Head),
-                new TTDivider(),
                 new TTText() { text = $"The actions on this card will be permanently revealed after playing, exhausting, or combining." },
                 new TTDivider(),
                 new TTText() { text = $"This herb card has 2-3 of the following actions, with potential repeats: " }

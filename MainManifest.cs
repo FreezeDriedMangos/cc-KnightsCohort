@@ -181,6 +181,8 @@ namespace KnightsCohort
                 "icons/mortar_and_pestle_toxic",
                 "icons/exhaust_herb",
                 "icons/move_card",
+                "icons/burn_herb",
+                "icons/herb_in_hand",
 
 
                 "artifacts/field_journal",
@@ -572,6 +574,11 @@ namespace KnightsCohort
             RegisterGlossaryEntry(registry, "moveCard", sprites["icons/move_card"],
                 "MOVE SELECTED CARD",
                 "Move selected card from {0} to {1}."
+            );
+
+            RegisterGlossaryEntry(registry, "burnHerb", sprites["icons/burn_herb"],
+                "APPLY HERB TO ENEMY",
+                "Apply the selected herb's actions to the enemy. Discard the herb."
             );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description, GlossayType type = GlossayType.action)
