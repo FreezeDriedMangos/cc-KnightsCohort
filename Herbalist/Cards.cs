@@ -101,7 +101,7 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = upgrade == Upgrade.None ? true : false, };
+            return new() { cost = 1, retain = upgrade == Upgrade.A };
         }
     }
 
