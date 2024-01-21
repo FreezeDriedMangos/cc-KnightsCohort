@@ -177,6 +177,10 @@ namespace KnightsCohort
                 "icons/exhaust_selected_card",
                 "icons/herberdrive",
                 "icons/temp_sherb",
+                "icons/mortar_and_pestle",
+                "icons/mortar_and_pestle_toxic",
+                "icons/exhaust_herb",
+                "icons/move_card",
 
 
                 "artifacts/field_journal",
@@ -549,6 +553,26 @@ namespace KnightsCohort
                 "EXHAUST SELECTED CARD",
                 "Exhaust the selected card."
             );
+
+            RegisterGlossaryEntry(registry, "combineHerbs", sprites["icons/mortar_and_pestle"],
+                "COMBINE HERBS",
+                "Combine the selected herbs into one herb card. Add the new herb card to your hand."
+            );
+
+            RegisterGlossaryEntry(registry, "combineHerbsToxic", sprites["icons/mortar_and_pestle_toxic"],
+                "COMBINE HERBS (TOXIC)",
+                "Combine the selected herbs into one herb card and add {0} oxidize. Add the new herb card to your hand."
+            );
+
+            RegisterGlossaryEntry(registry, "herbExhaust", sprites["icons/exhaust_herb"],
+                "HERB EXHAUST EFFECT",
+                "On exhaust, an herb's actions apply to the opponent instead of you."
+            );
+
+            RegisterGlossaryEntry(registry, "moveCard", sprites["icons/move_card"],
+                "MOVE SELECTED CARD",
+                "Move selected card from {0} to {1}."
+            );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description, GlossayType type = GlossayType.action)
         {
@@ -616,12 +640,12 @@ namespace KnightsCohort
             status = "vowOfRest";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Rest", $"Gain {{0}} honor at the start of your turn. If end your turn with less than 1 energy, lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Rest", $"Gain {{0}} honor at the start of your turn. If you end your turn with less than 1 energy, lose all stacks of this vow.");
             
             status = "vowOfMegaRest";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mega_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain 2x{{0}} honor at the start of your turn. If end your turn with less than 2 energy, lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain 2x{{0}} honor at the start of your turn. If you end your turn with less than 2 energy, lose all stacks of this vow.");
 
             status = "vowOfPoverty";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_poverty"], false);

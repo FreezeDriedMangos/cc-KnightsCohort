@@ -26,16 +26,36 @@ namespace KnightsCohort.Herbalist.Cards
 
             return new()
             {
-               new ACombineHerbs() { amount = amount, selected = selected },
-               new ATooltipDummy() { 
-                   tooltips = new() { new TTGlossary(MainManifest.glossary["herbsearch"].Head, amount, "Deck"), new TTText() { text = "Combine selected cards and add the result to your <c=keyword>Hand</c>." }, new TTGlossary(MainManifest.glossary["herboxidize"].Head, 1), MainManifest.KokoroApi.GetOxidationStatusTooltip(s, s.ship) }, 
-                   icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle_add_oxidize"].Id, 1, Colors.textMain) } 
-               }
+               new ACombineHerbs() { disabled = flipped, amount = amount, selected = selected },
+               new ATooltipDummy() {
+                   disabled = flipped,
+                   tooltips = new() { new TTGlossary(MainManifest.glossary["herbsearch"].Head, amount, "Deck"), new TTGlossary(MainManifest.glossary[upgrade == Upgrade.A ? "combineHerbs" : "combineHerbsToxic"].Head, 1), MainManifest.KokoroApi.GetOxidationStatusTooltip(s, s.ship) }, 
+                   icons = new() { new Icon((Spr)MainManifest.sprites[upgrade == Upgrade.A ? "icons/mortar_and_pestle" : "icons/mortar_and_pestle_toxic"].Id, upgrade == Upgrade.A ? null : 1, flipped ? Colors.disabledText : Colors.textMain) } 
+               },
+               //new ADummyAction(),
+               new AHerbCardSelect()
+               {
+                   disabled = !flipped,
+                   browseSource = Enum.Parse<CardBrowse.Source>("ExhaustPile"),
+                   browseAction = new AQueueImmediateOtherActions()
+                   {
+                       actions = new() { new ARemoveSelectedCardFromWhereverItIs(), new ASendSelectedCardToHand() }
+                   }
+               },
+               new ATooltipDummy() {
+                   disabled = !flipped,
+                   icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, 1, flipped ? Colors.textMain : Colors.disabledText) }
+               },
+               new ATooltipDummy() {
+                   disabled = !flipped,
+                   tooltips = new() { new TTGlossary(MainManifest.glossary["moveCard"].Head, Enum.Parse<CardBrowse.Source>("ExhaustPile"), Enum.Parse<CardBrowse.Source>("Hand")) },
+                   icons = new() { new Icon(Enum.Parse<Spr>("icons_exhaust"), null, Colors.textMain), new Icon((Spr)MainManifest.sprites["icons/move_card"].Id, null, Colors.textMain), new Icon(Enum.Parse<Spr>("icons_dest_hand"), null, Colors.textMain), }
+               },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = 1, floppable = true };
         }
     }
 
@@ -53,7 +73,7 @@ namespace KnightsCohort.Herbalist.Cards
                 },
                 new ATooltipDummy()
                 {
-                    tooltips = new() { new TTGlossary(MainManifest.glossary["exhaustSelected"].Head) },
+                    tooltips = new() { new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head), },
                     icons = new() 
                     {
                         // todo: change to icons/herb_search
@@ -355,8 +375,6 @@ namespace KnightsCohort.Herbalist.Cards
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class QUEST : Card
     {
-        // TODO: add description tooltips explaining how quests work - regular rewards and epic rewards and all that
-
         public List<HerbActions> requirements;
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -406,7 +424,8 @@ namespace KnightsCohort.Herbalist.Cards
         public override CardData GetData(State state)
         {
             // TODO: why does this not detect when I'm in the upgrade screen???
-            if (state.route is CardBrowse b)// && b.mode == CardBrowse.Mode.UpgradeCard)
+            //if (state.route is CardBrowse b)// && b.mode == CardBrowse.Mode.UpgradeCard)
+            if (state.route is CardReward c && c.ugpradePreview is not null)
             {
                 switch (upgrade)
                 {
@@ -676,6 +695,7 @@ namespace KnightsCohort.Herbalist.Cards
                         actions = actions
                     }
                 },
+                new ATooltipDummy() { tooltips = new (){ new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head) } }
             };
         }
         public override CardData GetData(State state)

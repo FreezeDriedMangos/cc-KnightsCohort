@@ -220,6 +220,8 @@ namespace KnightsCohort.Herbalist
 
             var tooltips = new List<Tooltip>()
             {
+                new TTGlossary(MainManifest.glossary["herbExhaust"].Head),
+                new TTDivider(),
                 new TTText() { text = $"The actions on this card will be permanently revealed after playing, exhausting, or combining." },
                 new TTDivider(),
                 new TTText() { text = $"This herb card has 2-3 of the following actions, with potential repeats: " }
