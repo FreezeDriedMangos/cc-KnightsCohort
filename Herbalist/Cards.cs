@@ -247,7 +247,7 @@ namespace KnightsCohort.Herbalist.Cards
             {
                 new AHerbCardSelect()
                 {
-                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                    browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
                     browseAction = new AQueueImmediateOtherActions()
                     {
                         actions = new()
@@ -263,7 +263,7 @@ namespace KnightsCohort.Herbalist.Cards
             {
                 retval.Add(new AHerbCardSelect()
                 {
-                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                    browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
                     browseAction = new AQueueImmediateOtherActions()
                     {
                         actions = new()

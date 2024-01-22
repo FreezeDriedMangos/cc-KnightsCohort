@@ -1,0 +1,18 @@
+{
+  "EntryPointAssembly": "KnightsCohort.dll",
+  "UniqueName": "clay.KnightsCohort",
+  "Version": "0.3.0",
+  "RequiredApiVersion": "0.4.0",
+  "Dependencies": [
+    {
+      "UniqueName": "Nickel.Legacy",
+      "Version": "0.4.0",
+      "IsRequired": true
+    },
+    {
+      "UniqueName": "Shockah.Kokoro",
+      "IsRequired": true
+    }
+  ],
+  "ModType": "Nickel.Legacy"
+}
