@@ -256,7 +256,7 @@ namespace KnightsCohort.Herbalist
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Leaf : HerbCard
     {
         public static List<HerbActions> options => new()
@@ -283,7 +283,7 @@ namespace KnightsCohort.Herbalist
         protected override bool IsRaw => true;
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Bark : HerbCard
     {
         public static List<HerbActions> options = new()
@@ -309,7 +309,7 @@ namespace KnightsCohort.Herbalist
         protected override bool IsRaw => true;
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Root : HerbCard
     {
         public static List<HerbActions> options = new()
@@ -334,7 +334,7 @@ namespace KnightsCohort.Herbalist
         protected override bool IsRaw => true;
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Seed : HerbCard
     {
         public static List<HerbActions> options = new()
@@ -367,7 +367,7 @@ namespace KnightsCohort.Herbalist
         protected override bool IsRaw => true;
     }
 
-    [CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Shroom : HerbCard
     {
         public static List<HerbActions> options = new()
@@ -408,14 +408,14 @@ namespace KnightsCohort.Herbalist
         protected override bool IsRaw => true;
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Poultice : HerbCard
     {
         public HerbCard_Poultice() { name = ""; }
         protected override string GetTypeName() { return "Poultice"; }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true)]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
     public class HerbCard_Tea : HerbCard
     {
         public HerbCard_Tea() { name = ""; }
