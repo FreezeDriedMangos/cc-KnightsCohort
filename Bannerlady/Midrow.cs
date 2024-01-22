@@ -10,6 +10,7 @@ namespace KnightsCohort.Bannerlady.Midrow
 {
     public class WarBanner : Banner
     {
+        public static readonly int HONOR = 2;
         public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/banner_of_war"].Id; }
         public override Spr? GetIcon() { return (Spr)MainManifest.sprites["icons/banner_war"].Id; }
 
@@ -17,14 +18,14 @@ namespace KnightsCohort.Bannerlady.Midrow
         {
             if (wasPlayer)
             {
-                c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true });
+                c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = HONOR, targetPlayer = true });
             }
         }
 
         public override List<Tooltip> GetTooltips()
         {
             var tooltips = base.GetTooltips();
-            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannerwar"].Head, 1));
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannerwar"].Head, HONOR));
             return tooltips;
         }
     }
