@@ -12,6 +12,38 @@ namespace KnightsCohort
     public static class HonorController
     {
         public static Color HONOR_COLOR = new Color("c5c5c5");
+        public static Color GHOST_HONOR_COLOR = Colors.healthBarGhost; //new Color("f0e892");
+        public static Color GHOST_LOST_HONOR_COLOR = new Color("8f34eb");
+
+        private static int ghostHonor = 0;
+        private static double ghostHonorTimer = 0;
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.Update))]
+        public static void HarmonyPostfix_GhostHonorTimerHandler(G g, bool enableParticles = false)
+        {
+            ghostHonorTimer -= g.dt;
+            if (ghostHonorTimer <= 0.0)
+            {
+                ghostHonorTimer = 0;
+                ghostHonor = 0;
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.Set))]
+        public static void HarmonyPostfix_SetGhostHonor(Ship __instance, Status status, int n)
+        {
+            if (status != (Status)MainManifest.statuses["honor"].Id) return;
+            if (!__instance.isPlayerShip) return;
+
+            int delta = n - __instance.Get((Status)MainManifest.statuses["honor"].Id);
+            //if (delta < 0) delta = (int)Math.Floor(delta / 2.0); // I have no clue why this is necessary
+            ghostHonor += delta;
+            ghostHonorTimer = 1;
+
+            // TODO: make the other ship shake???
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrainCardActions))]
@@ -79,11 +111,14 @@ namespace KnightsCohort
         [HarmonyPatch(typeof(Ship), nameof(Ship.RenderHealthBar))]
         public static void HarmonyPostfix_RenderHonorOnOpponentHealthBar(Ship __instance, G g, bool isPreview, string keyPrefix)
         {
+            int ghostHonor = __instance.isPlayerShip ? 0 : HonorController.ghostHonor;
+
             if (g.state.route is Combat c)
             {
                 int honor = __instance.isPlayerShip 
                     ? c.otherShip.Get((Status)MainManifest.statuses["honor"].Id)
                     : g.state.ship.Get((Status)MainManifest.statuses["honor"].Id);
+                if (ghostHonor < 0) honor -= ghostHonor;
 
                 int hull = __instance.hull;
                 int shield = __instance.Get(Enum.Parse<Status>("shield"));
@@ -92,6 +127,8 @@ namespace KnightsCohort
                 int hullHonor = Math.Min(hull, honor);
                 int shieldHonor = Math.Min(shield, honor - hullHonor);
                 int tempShieldHonor = Math.Min(tempShield, honor - hullHonor - shieldHonor); // I don't think honor will care about temp shield, but let's draw it anyway
+
+                if (ghostHonor < 0) honor += ghostHonor;
 
                 int num = shieldHonor;//Get(Status.shield);
                 int num2 = tempShield; //Get(Status.tempShield);
@@ -116,20 +153,32 @@ namespace KnightsCohort
                 for (int j = 0; j < hullHonor; j++)
                 {
                     //var t = Math.Max(0, Math.Sin(3*g.state.time + j));
-                    var color = Color.Lerp(Colors.healthBarHealth, HONOR_COLOR, t);
+                    var color = j >= honor-ghostHonor 
+                        ? GHOST_HONOR_COLOR
+                        : Color.Lerp(Colors.healthBarHealth, HONOR_COLOR, t);
+                    color = j >= honor ? GHOST_LOST_HONOR_COLOR : color;
+
                     DrawChunk(j, num7, color, j < hull - 1);
                 }
                 for (int k = 0; k < shieldHonor; k++)
                 {
                     //var t = Math.Max(0, Math.Sin(3*g.state.time + k + __instance.hullMax));
-                    var color = Color.Lerp(Colors.healthBarShield, HONOR_COLOR, t);
+                    var color = k+hullHonor >= honor - ghostHonor
+                        ? GHOST_HONOR_COLOR
+                        : Color.Lerp(Colors.healthBarShield, HONOR_COLOR, t);
+                    color = k+hullHonor >= honor ? GHOST_LOST_HONOR_COLOR : color;
+
                     DrawChunk(__instance.hullMax + k, num8, color, k < maxShield - 1 && k < num - 1);
                 }
                 for (int l = 0; l < tempShieldHonor; l++)
                 {
                     //var t = Math.Max(0, Math.Sin(3*g.state.time + l + __instance.hullMax + maxShield));
-                    var color = Color.Lerp(Colors.healthBarShield, HONOR_COLOR, t);
-                    DrawChunk(__instance.hullMax + maxShield + l, num8, HONOR_COLOR, l < num2 - 1 && l < num2 - 1);
+                    var color = l+hullHonor+shieldHonor >= honor - ghostHonor
+                        ? GHOST_HONOR_COLOR
+                        : Color.Lerp(Colors.healthBarShield, HONOR_COLOR, t);
+                    color = l+hullHonor+shieldHonor >= honor ? GHOST_LOST_HONOR_COLOR : color;
+
+                    DrawChunk(__instance.hullMax + maxShield + l, num8, color, l < num2 - 1 && l < num2 - 1);
                 }
                 g.Pop();
                 void DrawChunk(int i, int height, Color color, bool rightMargin)
