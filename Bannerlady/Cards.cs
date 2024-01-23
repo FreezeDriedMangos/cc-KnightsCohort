@@ -290,7 +290,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class CoveredRetreat : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -323,7 +323,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class FalseFlag : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
