@@ -8,6 +8,7 @@ using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
 using KnightsCohort.Knight;
 using KnightsCohort.Knight.Cards;
+using KnightsCohort.Treasurer.Cards;
 using Microsoft.Extensions.Logging;
 using shockah;
 using Shockah.Kokoro;
@@ -84,6 +85,25 @@ namespace KnightsCohort
                 "frame_bannerlady",
                 "card_default_bannerlady",
                 "char_frame_bannerlady",
+
+                // treasuerer
+                
+                // bannerlady
+                "character/treasurer_neutral_1",
+                "character/treasurer_neutral_2",
+                "character/treasurer_neutral_3",
+                "character/treasurer_neutral_4",
+                "character/treasurer_squint_1",
+                "character/treasurer_squint_2",
+                "character/treasurer_squint_3",
+                "character/treasurer_squint_4",
+                "character/treasurer_gameover",
+                "character/treasurer_mini",
+
+                "frame_treasurer",
+                "card_default_treasurer",
+                "char_frame_treasurer",
+
 
                 // herbalist
                 "character/herbalist_neutral_1",
@@ -222,7 +242,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Cheap Shot", typeof(CheapShot), sprites["card_default_knight"], decks["knight"]),
                 //new ExternalCard(namePrefix + "Honorable Strike", typeof(HonorableStrike), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Riposte", typeof(RiposteCard), sprites["card_default_knight"], decks["knight"]),
-                new ExternalCard(namePrefix + "Financial Advice", typeof(FinancialAdvice), sprites["card_default_knight"], decks["knight"]),
+                //new ExternalCard(namePrefix + "Financial Advice", typeof(FinancialAdvice), sprites["card_default_knight"], decks["knight"]), // TODO: replace this with a new card
                 new ExternalCard(namePrefix + "Knight's Rest", typeof(KnightsRest), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Unrelenting Oath", typeof(UnrelentingOath), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Truce", typeof(Truce), sprites["card_default_knight"], decks["knight"]),
@@ -233,6 +253,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Friendly Duel", typeof(FriendlyDuel), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Challenge", typeof(Challenge), sprites["card_default_knight"], decks["knight"]),
                 new ExternalCard(namePrefix + "Shield of Honor", typeof(ShieldOfHonor), sprites["card_default_knight"], decks["knight"]),
+                new ExternalCard(namePrefix + "Stance Change", typeof(StanceChange), sprites["card_default_knight"], decks["knight"]),
 
 
 
@@ -269,6 +290,10 @@ namespace KnightsCohort
 
 
 
+                new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
+
+
+
 
                 new ExternalCard(namePrefix + "Literally Doesn't Exist", typeof(HerbCard), sprites["card_default_herbalist"], decks["herbs"]),
                 new ExternalCard(namePrefix + "Safe to Drink. Probably.", typeof(HerbCard_Tea), sprites["card_default_herbalist"], decks["herbs"]),
@@ -299,6 +324,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Nocebo", typeof(FireAndSmoke), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Change Ingredients", typeof(ChangeIngredients), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Cultivate", typeof(Cultivate), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Placebo", typeof(Placebo), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -313,7 +339,6 @@ namespace KnightsCohort
         public void LoadManifest(IDeckRegistry registry)
         {
             var knightColor = 0;
-            //unchecked { knightColor = (int)0xffbe9821; }
             unchecked { knightColor = (int)0xffdc6d37; }
 
             decks["knight"] = new ExternalDeck(
@@ -337,6 +362,19 @@ namespace KnightsCohort
                 null
             );
             if (!registry.RegisterDeck(decks["bannerlady"])) throw new Exception("Dame Emily has taken her deck on campaign, cannot proceeed.");
+
+            unchecked { knightColor = (int)0xffbe9821; }
+
+            decks["treasurer"] = new ExternalDeck(
+                Name + ".deck.Treasurer",
+                System.Drawing.Color.FromArgb(knightColor),
+                System.Drawing.Color.Black,
+                sprites["card_default_treasurer"],
+                sprites["frame_treasurer"],
+                null
+            );
+            if (!registry.RegisterDeck(decks["treasurer"])) throw new Exception("Lady Gemscale hid her deck in her hoard, cannot proceeed.");
+
 
             unchecked { knightColor = (int)0xff815a30; }
 
@@ -399,6 +437,23 @@ namespace KnightsCohort
             if (!registry.RegisterCharacter(characters["bannerlady"])) throw new Exception("Dame Emily is lost! Could not register Dame Emily!");
 
 
+            characters["treasurer"] = new ExternalCharacter(
+                Name + ".Treasurer",
+                decks["treasurer"],
+                sprites["char_frame_treasurer"],
+                new Type[] { typeof(Treasurer.Cards.Dragonfire) },
+                new Type[0],
+                animations["treasurer.neutral"],
+                animations["treasurer.mini"]
+            );
+
+            characters["treasurer"].AddNameLocalisation("Lady Ruby");
+            // TODO: write the description
+            characters["treasurer"].AddDescLocalisation("<c=be9821>Lady Ruby</c>\nThe order's treasurer, Lady Ruby! <c=keyword>money</c> and <c=keyword>fire</c>.");
+
+            if (!registry.RegisterCharacter(characters["treasurer"])) throw new Exception("Lady Gemscale's off counting coins! Could not register Lady Gemscale!");
+
+
             characters["herbalist"] = new ExternalCharacter(
                 Name + ".Herbalist",
                 decks["herbalist"],
@@ -429,6 +484,11 @@ namespace KnightsCohort
             animationInfo["bannerlady.squint"] = new ExternalSprite[] { sprites["character/bannerlady_squint_1"], sprites["character/bannerlady_squint_2"], sprites["character/bannerlady_squint_3"], sprites["character/bannerlady_squint_4"] };
             animationInfo["bannerlady.gameover"] = new ExternalSprite[] { sprites["character/bannerlady_gameover"] };
             animationInfo["bannerlady.mini"] = new ExternalSprite[] { sprites["character/bannerlady_mini"] };
+
+            animationInfo["treasurer.neutral"] = new ExternalSprite[] { sprites["character/treasurer_neutral_1"], sprites["character/treasurer_neutral_2"], sprites["character/treasurer_neutral_3"], sprites["character/treasurer_neutral_4"] };
+            animationInfo["treasurer.squint"] = new ExternalSprite[] { sprites["character/treasurer_squint_1"], sprites["character/treasurer_squint_2"], sprites["character/treasurer_squint_3"], sprites["character/treasurer_squint_4"] };
+            animationInfo["treasurer.gameover"] = new ExternalSprite[] { sprites["character/treasurer_gameover"] };
+            animationInfo["treasurer.mini"] = new ExternalSprite[] { sprites["character/treasurer_mini"] };
 
             animationInfo["herbalist.neutral"] = new ExternalSprite[] { sprites["character/herbalist_neutral_1"], sprites["character/herbalist_neutral_2"], sprites["character/herbalist_neutral_3"], sprites["character/herbalist_neutral_4"] };
             animationInfo["herbalist.mini"] = new ExternalSprite[] { sprites["character/herbalist_mini"] };
@@ -678,6 +738,14 @@ namespace KnightsCohort
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/shieldOfFaith"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Shield of Faith", $"Banners block shots. Decrease by 1 at the start of every turn.");
+
+
+
+            status = "gold";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_affluence"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Gold", $"A resource used to activate effects on some cards.");
+
 
 
             status = "dazed";
