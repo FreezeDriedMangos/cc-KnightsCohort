@@ -2,6 +2,7 @@
 using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
+using KnightsCohort.actions;
 using KnightsCohort.Knight.Midrow;
 using Microsoft.Extensions.Logging;
 using System;
@@ -338,13 +339,26 @@ namespace KnightsCohort.Knight.Cards
             {
                 return new()
                 {
+
+                   new AStatus() { status = Enum.Parse<Status>("overdrive"), targetPlayer = true, statusAmount = 2 },
                    new AStatus() { status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = 2, targetPlayer = true },
                    new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = 0, mode = AStatusMode.Set, targetPlayer = true },
                 };
             }
+
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                    new AStatus() { status = Enum.Parse<Status>("overdrive"), targetPlayer = true, statusAmount = 1 },
+                    new AStatus() { status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = 1, targetPlayer = true },
+                };
+            }
+
             return new()
             {
-               new AStatus() { status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = 1, targetPlayer = true },
+                new AStatus() { status = Enum.Parse<Status>("overdrive"), targetPlayer = true, statusAmount = 1 },
+                new AStatus() { status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = 1, targetPlayer = true },
             };
         }
         public override CardData GetData(State state)
@@ -445,18 +459,21 @@ namespace KnightsCohort.Knight.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            Status left = (Status)MainManifest.statuses[flipped ? "vowOfRight" : "vowOfLeft"].Id;
+            Status right = (Status)MainManifest.statuses[flipped ? "vowOfLeft" : "vowOfRight"].Id;
+
             List<CardAction> retval = new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses[upgrade == Upgrade.A ? "vowOfRight" : "vowOfLeft"].Id, statusAmount = 1, targetPlayer = true },
+                new AStatus() { status = left, statusAmount = 1, targetPlayer = true },
             };
 
-            if (upgrade == Upgrade.B) retval.Add(new AStatus() { status = (Status)MainManifest.statuses["vowOfRight"].Id, statusAmount = 1, targetPlayer = true });
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { status = right, statusAmount = 1, targetPlayer = true });
 
             return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true };
+            return new() { cost = 1, exhaust = upgrade == Upgrade.A ? false : true, flippable = upgrade != Upgrade.B };
         }
     }
 
@@ -527,6 +544,29 @@ namespace KnightsCohort.Knight.Cards
         public override CardData GetData(State state)
         {
             return new() { cost = 2 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class StanceChange : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            List<CardAction> retval = new()
+            {
+                new AStatus() { disabled = flipped, status = Enum.Parse<Status>("evade"), statusAmount = upgrade == Upgrade.A ? 2 : 1, targetPlayer = true },
+                new AStatus() { disabled = flipped, status = (Status)MainManifest.statuses["vowOfAction"].Id, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
+                new ARedNumberStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = -1, targetPlayer = true },
+                new AStatus() { disabled = !flipped, status = (Status)MainManifest.statuses["vowOfAdamancy"].Id, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
+                new AStatus() { disabled = !flipped, status = Enum.Parse<Status>("shield"), statusAmount = upgrade == Upgrade.A ? 2 : 1, targetPlayer = true },
+            };
+            
+            
+            return retval;
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, floppable = true };
         }
     }
 }
