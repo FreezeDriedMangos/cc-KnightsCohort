@@ -296,7 +296,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Compassion", typeof(Compassion), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Call on Debts", typeof(CallOnDebts), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Brew Tea", typeof(BrewTea), sprites["card_default_herbalist"], decks["herbalist"]),
-                new ExternalCard(namePrefix + "Fire and Smoke", typeof(FireAndSmoke), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Nocebo", typeof(FireAndSmoke), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Change Ingredients", typeof(ChangeIngredients), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Cultivate", typeof(Cultivate), sprites["card_default_herbalist"], decks["herbalist"]),
             };
@@ -577,8 +577,8 @@ namespace KnightsCohort
             );
 
             RegisterGlossaryEntry(registry, "burnHerb", sprites["icons/burn_herb"],
-                "APPLY HERB TO ENEMY",
-                "Apply the selected herb's actions to the enemy. Discard the herb."
+                "APPLY TO ENEMY",
+                "Apply the selected herb's actions to the enemy {{0}} time(s). Discard the herb."
             );
         }
         private void RegisterGlossaryEntry(IGlossaryRegisty registry, string itemName, ExternalSprite sprite, string displayName, string description, GlossayType type = GlossayType.action)
@@ -612,7 +612,7 @@ namespace KnightsCohort
             status = "vowOfAdamancy";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_adamancy"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Adamancy", $"Gain {{0}} honor at the start of your turn. If you move by any effect, lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Adamancy", $"Gain <c=keyword>2x</c>{{0}} honor at the start of your turn. If you move by any effect, lose all stacks of this vow.");
 
             status = "vowOfTeamwork";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_teamwork"], false);
@@ -627,7 +627,7 @@ namespace KnightsCohort
             status = "vowOfCourage";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_courage"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Courage", $"If you are hit by the opponent's cannons, gain {VowsController.VOW_OF_COURAGE_HONOR} honor for each stack of this vow. Lose 1 stack of this vow at the start of your turn.");
+            statuses[status].AddLocalisation("Vow of Courage", $"If you are hit by the opponent's cannons, gain {{0}} honor. Lose 1 stack of this vow at the start of your turn.");
 
             status = "vowOfLeft";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_left"], false);
@@ -652,7 +652,7 @@ namespace KnightsCohort
             status = "vowOfMegaRest";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_mega_rest"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain 2x{{0}} honor at the start of your turn. If you end your turn with less than 2 energy, lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Mega Rest", $"Gain <c=keyword>3x</c>{{0}} honor at the start of your turn. If you end your turn with less than 2 energy, lose all stacks of this vow.");
 
             status = "vowOfPoverty";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_poverty"], false);
