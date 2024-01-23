@@ -19,17 +19,17 @@ namespace KnightsCohort.Knight.Cards
         {
             List<CardAction> retval = new()
             {
-               new AStatus() { disabled = VowsController.attackedThisTurn, status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = (upgrade == Upgrade.B ? 2 : 1), targetPlayer = true },
+               new AStatus() { disabled = s.route is Combat && VowsController.attackedThisTurn, status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = (upgrade == Upgrade.B ? 2 : 1), targetPlayer = true },
                new AStatus() { status = Enum.Parse<Status>("tempShield"), statusAmount = 2, targetPlayer = true },
             };
 
-            if (upgrade == Upgrade.A) retval.Add(new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true });
+            //if (upgrade == Upgrade.A) retval.Add(new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 2, targetPlayer = true });
 
             return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1 };
         }
     }
 
@@ -359,7 +359,7 @@ namespace KnightsCohort.Knight.Cards
                new AStatus() { status = (Status)MainManifest.statuses["vowOfCourage"].Id, statusAmount = 2, targetPlayer = true },
             };
 
-            if (upgrade == Upgrade.B) retval.Add(new AStatus() { disabled = VowsController.attackedThisTurn, status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = 1, targetPlayer = true });
+            if (upgrade == Upgrade.B) retval.Add(new AStatus() { disabled = s.route is Combat && VowsController.attackedThisTurn, status = (Status)MainManifest.statuses["vowOfMercy"].Id, statusAmount = 1, targetPlayer = true });
             if (upgrade != Upgrade.A) retval.Add(new AEndTurn());
 
             return retval;
