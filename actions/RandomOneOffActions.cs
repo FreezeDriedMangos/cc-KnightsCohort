@@ -358,4 +358,44 @@ namespace KnightsCohort.actions
         }
     }
 
+    public class ARedNumberStatus : AStatus
+    {
+        public override Icon? GetIcon(State s)
+        {
+            var icon = base.GetIcon(s);
+            if (icon == null) return null;
+
+            return new Icon(icon.Value.path, icon.Value.number, Colors.redd, icon.Value.flipY);
+        }
+    }
+
+    public class APlayHerbCardOnTopOfDiscard : CardAction 
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            timer = 0;
+            for (int i = c.discard.Count - 1; i >= 0; i--)
+            {
+                var card = c.discard[i];
+                if (card is not HerbCard herb) continue;
+                FoundHerb(herb, s, c);
+                return;
+            }
+        }
+
+        public virtual void FoundHerb(HerbCard herb, State s, Combat c)
+        {
+            c.QueueImmediate(herb.GetActionsOverridden(s, c));
+        }
+    }
+
+    public class AApplyToEnemyHerbCardOnTopOfDiscard : APlayHerbCardOnTopOfDiscard
+    {
+        public override void FoundHerb(HerbCard herb, State s, Combat c)
+        {
+            var a = new AApplySelectedHerbToEnemy();
+            a.selectedCard = herb;
+            c.QueueImmediate(a);
+        }
+    }
 }

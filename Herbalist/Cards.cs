@@ -799,4 +799,35 @@ namespace KnightsCohort.Herbalist.Cards
             };
         }
     }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Placebo : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            if (flipped)
+            {
+                return new()
+                {
+                    new AApplyToEnemyHerbCardOnTopOfDiscard()
+                };
+            }
+
+            return new()
+            {
+                new APlayHerbCardOnTopOfDiscard()
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new()
+            {
+                cost = upgrade == Upgrade.A ? 0 : 1,
+                floppable = upgrade == Upgrade.B,
+                description = flipped
+                    ? "Apply the topmost <c=heal>herb</c> in your <c=keyword>discard pile</c> to the enemy."
+                    : "Play the topmost <c=heal>herb</c> in your <c=keyword>discard pile</c>." + (upgrade == Upgrade.B && state == DB.fakeState ? " (Flop: apply to enemy)" : "")
+            };
+        }
+    }
 }
