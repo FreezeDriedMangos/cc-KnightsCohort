@@ -146,17 +146,27 @@ namespace KnightsCohort.Herbalist.Cards
         public class TTGlossaryNoDesc : TTGlossary { public TTGlossaryNoDesc(string key, params object[]? vals) : base(key, vals) { } }
         public class TTGlossaryNoDescNameOverride : TTGlossary { public string nameOverride; public TTGlossaryNoDescNameOverride(string key, string name, params object[]? vals) : base(key, vals) { nameOverride = name; } }
 
+        public virtual int GetNumCardsAdded(State s)
+        {
+            return upgrade switch
+            {
+                Upgrade.A => 2,
+                Upgrade.B => 6,
+                _ => 4
+            };
+        }
+
+        public virtual bool GetExhausts(State s) => upgrade == Upgrade.A;
+        public virtual bool GetSingleUse(State s) => upgrade != Upgrade.A;
+
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            int numCards = GetNumCardsAdded(s);
             if (isDuringTryPlay)
             {
-                return new()
-                {
-                   new AAddCard() { card = GenerateHerb(s) },
-                   new AAddCard() { card = GenerateHerb(s) },
-                   new AAddCard() { card = GenerateHerb(s) },
-                   new AAddCard() { card = GenerateHerb(s) },
-                };
+                List<CardAction> actions = new();
+                for (int i = 0; i < numCards; i++) actions.Add(new AAddCard() { card = GenerateHerb(s) });
+                return actions;
             }
             else
             {
@@ -176,21 +186,17 @@ namespace KnightsCohort.Herbalist.Cards
                 }
                 tooltips.Add(new TTDivider());
 
-                return new()
-                {
-                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } },
-                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } },
-                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } },
-                    new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) },
-                        tooltips = tooltips
-                    }
-                };
+
+                List<CardAction> actions = new();
+                for (int i = 0; i < numCards; i++) actions.Add(new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } });
+                if (actions.Count > 0) (actions[0] as ATooltipDummy).tooltips = tooltips;
+                return actions;
             }
         }
 
         public override CardData GetData(State state)
         {
-            return new() { cost = 0, description = $"Permanently add 4 random {GetHerbType()} herb cards to your deck.", singleUse = true };
+            return new() { cost = 0, description = $"Permanently add {GetNumCardsAdded(state)} random {GetHerbType()} herb cards to your deck.", singleUse = GetSingleUse(state), exhaust = GetExhausts(state) };
         }
 
         public virtual string GetHerbType() => "NULL";
