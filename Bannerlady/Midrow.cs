@@ -60,6 +60,7 @@ namespace KnightsCohort.Bannerlady.Midrow
 
     public class MartyrBanner : Banner
     {
+        public static readonly int HONOR = 3;
         public override Spr GetSprite() { return (Spr)MainManifest.sprites["midrow/banner_of_martyr"].Id; }
         public override Spr? GetIcon() { return (Spr)MainManifest.sprites["icons/banner_martyr"].Id; }
 
@@ -72,14 +73,14 @@ namespace KnightsCohort.Bannerlady.Midrow
                 if (p.type == Enum.Parse<PType>("empty")) return;
                 if (s.ship.Get(Enum.Parse<Status>("autododgeLeft")) > 0 || s.ship.Get(Enum.Parse<Status>("autododgeRight")) > 0) return;
 
-                c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true });
+                c.QueueImmediate(new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = HONOR, targetPlayer = true });
             }
         }
 
         public override List<Tooltip> GetTooltips()
         {
             var tooltips = base.GetTooltips();
-            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannermartyr"].Head, 1));
+            tooltips.Insert(0, new TTGlossary(MainManifest.glossary["bannermartyr"].Head, HONOR));
             return tooltips;
         }
     }
