@@ -369,7 +369,7 @@ namespace KnightsCohort
                 Name + ".Knight",
                 decks["knight"],
                 sprites["char_frame_knight"],
-                new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.RiposteCard) },
+                new Type[] { typeof(Knight.Cards.FightingChance), typeof(Knight.Cards.OffhandWeapon) },
                 new Type[0],
                 animations["knight.neutral"],
                 animations["knight.mini"]
@@ -386,7 +386,7 @@ namespace KnightsCohort
                 Name + ".Bannerlady",
                 decks["bannerlady"],
                 sprites["char_frame_bannerlady"],
-                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.LiftedBurdens) },
+                new Type[] { typeof(Bannerlady.Cards.RememberedGlory), typeof(Bannerlady.Cards.CoveredRetreat) },
                 new Type[0],
                 animations["bannerlady.neutral"],
                 animations["bannerlady.mini"]
@@ -622,7 +622,7 @@ namespace KnightsCohort
             status = "vowOfAction";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_action"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Vow of Action", $"Gain {{0}} honor at the start of your turn. If you gain shield by any effect, lose all stacks of this vow.");
+            statuses[status].AddLocalisation("Vow of Action", $"Gain {{0}} honor at the start of your turn. If you gain <c=keyword>shield</c> by any effect, lose all stacks of this vow.");
 
             status = "vowOfCourage";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_courage"], false);
@@ -693,7 +693,7 @@ namespace KnightsCohort
             status = "paranoia";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/paranoia"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Paranoia", $"On the start of your turn, lose one stack of paranoia. If you are the player, gain one Abyssal Visions in hand. If you are the enemy, randomly cancel one intent.");
+            statuses[status].AddLocalisation("Paranoia", $"On the start of your turn, lose one stack of paranoia. If you are the player, also gain one Abyssal Visions in hand. If you are the enemy, also randomly cancel one intent.");
 
             status = "herberdrive";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/herberdrive"], false);
@@ -703,7 +703,7 @@ namespace KnightsCohort
             status = "tempSherb";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/temp_sherb"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Temp Sherb", $"Every shot you take grants you <c=keyword>1 temp shield</c>. On the start of your turn, lose one stack of temp sherb.");
+            statuses[status].AddLocalisation("Temp Sherb", $"Every time you shoot, gain <c=keyword>1 temp shield</c>. On the start of your turn, lose one stack of temp sherb.");
         }
 
         public void LoadManifest(IArtifactRegistry registry)
