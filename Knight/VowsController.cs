@@ -94,7 +94,7 @@ namespace KnightsCohort.Knight
         [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
         public static void HarmonyPostfix_VowOfCourage_Cleanup(Ship __instance, State s, Combat c)
         {
-            AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfAdamancy"].Id));
+            AddHonor(__instance, 2* __instance.Get((Status)MainManifest.statuses["vowOfAdamancy"].Id));
             AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfChivalry"].Id));
             AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfRight"].Id));
             AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfLeft"].Id));
@@ -104,7 +104,7 @@ namespace KnightsCohort.Knight
             AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfAffluence"].Id));
             AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfMiddlingIncome"].Id));
             AddHonor(__instance, __instance.Get((Status)MainManifest.statuses["vowOfRest"].Id));
-            AddHonor(__instance, 2* __instance.Get((Status)MainManifest.statuses["vowOfMegaRest"].Id));
+            AddHonor(__instance, 3* __instance.Get((Status)MainManifest.statuses["vowOfMegaRest"].Id));
 
             GetAndDecrement(__instance, "vowOfCourage");
         }
