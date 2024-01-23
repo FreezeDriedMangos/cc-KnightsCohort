@@ -122,8 +122,8 @@ namespace KnightsCohort.Herbalist
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(Card), nameof(Card.RenderAction))]
-        public static bool Blindness_CardActionPatch(G g, State state, CardAction action, bool dontDraw = false, int shardAvailable = 0, int stunChargeAvailable = 0, int bubbleJuiceAvailable = 0)
+        [HarmonyPatch(typeof(Card), nameof(Card.MakeAllActionIcons))]
+        public static bool Blindness_CardActionPatch(G g, State s)
         {
             if (blindnessEnabled) return false;
             return true;
