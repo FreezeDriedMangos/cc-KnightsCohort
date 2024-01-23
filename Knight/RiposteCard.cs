@@ -66,7 +66,7 @@ namespace KnightsCohort.Knight.Cards
 
             if (hitPart.intent is IntentAttack)
             {
-                c.Queue(new AAttack()
+                c.QueueImmediate(new AAttack()
                 {
                     damage = RiposteDamage,
                     fromX = __instance.fromX,
@@ -75,13 +75,15 @@ namespace KnightsCohort.Knight.Cards
 
                 if (RiposteTwice)
                 {
-                    c.Queue(new AAttack()
+                    c.QueueImmediate(new AAttack()
                     {
                         damage = RiposteDamage,
                         fromX = __instance.fromX,
                         multiCannonVolley = true // don't trigger another volley, so that only attacking parts are hit twice
                     });
                 }
+
+                c.QueueImmediate(new AReadyRiposte() { ready = false });
             }
         }
     }
