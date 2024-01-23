@@ -109,6 +109,7 @@ namespace KnightsCohort.actions
 
             return new ATooltipDummy()
             {
+                disabled = aattack.disabled,
                 tooltips = tooltips,
                 icons = icons,
                 onGetTooltips = (s) => aattack.GetTooltips(s)
