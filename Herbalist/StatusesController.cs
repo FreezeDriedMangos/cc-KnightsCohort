@@ -36,11 +36,20 @@ namespace KnightsCohort.Herbalist
         // Herberdrive
         //
 
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(Card), nameof(Card.GetDmg))]
+        //public static void GetDmgHerberdrive(ref int __result, State s, int baseDamage, bool targetPlayer = false)
+        //{
+        //    if (s.ship.Get((Status)MainManifest.statuses["herberdrive"].Id) <= 0) return;
+        //    __result++;
+        //}
+        
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(Card), nameof(Card.GetDmg))]
-        public static void GetDmgHerberdrive(ref int __result, State s, int baseDamage, bool targetPlayer = false)
+        [HarmonyPatch(typeof(Card), nameof(Card.GetActualDamage))]
+        public static void GetDmgHerberdrive(ref int __result, State s, int baseDamage, bool targetPlayer = false, Card? card = null)
         {
-            if (s.ship.Get((Status)MainManifest.statuses["herberdrive"].Id) <= 0) return;
+            Ship ship = (targetPlayer && s.route is Combat c ? c.otherShip : s.ship);
+            if (ship.Get((Status)MainManifest.statuses["herberdrive"].Id) <= 0) return;
             __result++;
         }
 
@@ -92,9 +101,24 @@ namespace KnightsCohort.Herbalist
         }
 
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.OnAfterTurn))]
+        public static void DazedAndBlindnessDecrement_Enemy(Ship __instance, State s, Combat c)
+        {
+            // These are decremented at the end of the opponent's turn so that if the player applied, say 1 herberdrive on their turn
+            // the enemy WILL fire while the effects of that 1 herberdrive are still active. If it was instead decremented at the
+            // start of the enemy turn, it would go to 0 before the enemy ship ever fired, even once.
+            if (__instance.isPlayerShip) return;
+            Knight.VowsController.GetAndDecrement(__instance, "dazed");
+            Knight.VowsController.GetAndDecrement(__instance, "blindness");
+            Knight.VowsController.GetAndDecrement(__instance, "herberdrive");
+            Knight.VowsController.GetAndDecrement(__instance, "tempSherb");
+        }
+
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
         public static void DazedAndBlindnessDecrement(Ship __instance, State s, Combat c)
         {
+            if (!__instance.isPlayerShip) return;
             Knight.VowsController.GetAndDecrement(__instance, "dazed");
             Knight.VowsController.GetAndDecrement(__instance, "blindness");
             Knight.VowsController.GetAndDecrement(__instance, "herberdrive");
