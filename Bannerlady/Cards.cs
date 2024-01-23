@@ -92,23 +92,10 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-
-            Guid stopId;
-
-            if (upgrade == Upgrade.A)
-            {
-                return new()
-                {
-                    new ASpawn() { thing = new TatteredMartyrBanner() },
-                };
-            }
-
             if (upgrade == Upgrade.B)
             {
                 return new()
                 {
-                    new ASpawn() { thing = new MartyrBanner() },
-                    new ASpawn() { thing = new MartyrBanner(), offset = 1 },
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
                         MainManifest.KokoroApi.ActionCosts.Cost
@@ -122,36 +109,35 @@ namespace KnightsCohort.Bannerlady.Cards
                             ),
                             amount: 1
                         ),
-                        MainManifest.KokoroApi.Actions.MakeStop(out stopId)
+                        new ASpawn() { thing = new TatteredMartyrBanner() }
                     ),
-                    MainManifest.KokoroApi.Actions.MakeStopped(stopId, new AHurt(){ hurtAmount = 2, targetPlayer = true })
+                    MainManifest.KokoroApi.ActionCosts.Make
+                    (
+                        MainManifest.KokoroApi.ActionCosts.Cost
+                        (
+                            MainManifest.KokoroApi.ActionCosts.StatusResource
+                            (
+                                (Status)MainManifest.statuses["honor"].Id,
+                                Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                                (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                                (Spr)MainManifest.sprites["icons/honor_cost"].Id
+                            ),
+                            amount: 1
+                        ),
+                        new ASpawn() { thing = new TatteredMartyrBanner(), offset = 1 }
+                    ),
                 };
             }
 
+
             return new()
             {
-                new ASpawn() { thing = new MartyrBanner() },
-                MainManifest.KokoroApi.ActionCosts.Make
-                (
-                    MainManifest.KokoroApi.ActionCosts.Cost
-                    (
-                        MainManifest.KokoroApi.ActionCosts.StatusResource
-                        (
-                            (Status)MainManifest.statuses["honor"].Id,
-                            Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
-                            (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
-                            (Spr)MainManifest.sprites["icons/honor_cost"].Id
-                        ),
-                        amount: 1
-                    ),
-                    MainManifest.KokoroApi.Actions.MakeStop(out stopId)
-                ),
-                MainManifest.KokoroApi.Actions.MakeStopped(stopId, new AHurt(){ hurtAmount = 1, targetPlayer = true })
+                new ASpawn() { thing = new TatteredMartyrBanner() },
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1 };
         }
     }
 
@@ -248,7 +234,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3 };
+            return new() { cost = 1 };
         }
     }
 
@@ -257,16 +243,25 @@ namespace KnightsCohort.Bannerlady.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            if (upgrade == Upgrade.B)
             {
-               new ASpawn() { thing = new MartyrBanner(), offset = -1 },
-               new ASpawn() { thing = new MartyrBanner() },
-               new ASpawn() { thing = new MartyrBanner(), offset = 1 },
-            };
+                return new()
+                {
+                   new ASpawn() { thing = new MartyrBanner(), offset = -1 },
+                   new ASpawn() { thing = new MartyrBanner() },
+                };
+            }
+            else
+            {
+                return new()
+                {
+                   new ASpawn() { thing = new MartyrBanner() },
+                };
+            }
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.A ? 2 : 3, exhaust = upgrade == Upgrade.B ? false : true };
+            return new() { cost = upgrade == Upgrade.A ? 2 : 3, exhaust = true };
         }
     }
 
@@ -286,7 +281,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.A ? 2 : 3 };
+            return new() { cost = upgrade == Upgrade.A ? 1 : 2 };
         }
     }
 
@@ -433,7 +428,7 @@ namespace KnightsCohort.Bannerlady.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 3, description = upgrade switch
+            return new() { cost = 1, description = upgrade switch
                 {
                     Upgrade.None => $"From every banner, launch a {GetDmg(state, 1)} damage attack towards the enemy and towards you.",
                     Upgrade.A => $"From every banner, launch a {GetDmg(state, 1)} damage attack towards the enemy.",
@@ -698,16 +693,17 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             List<CardAction> retval = new()
             {
-                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) },
+                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
                 new AAttack() { damage = GetDmg(s, 1) },
+                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
+                new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1) },
                 new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) }
             };
-            if (upgrade == Upgrade.B) retval.Insert(1, new AAttack() { damage = GetDmg(s, 1) });
             return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = 1 };
         }
     }
 }

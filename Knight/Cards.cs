@@ -147,8 +147,11 @@ namespace KnightsCohort.Knight.Cards
                new AStatus() { status = (Status)MainManifest.statuses["vowOfAdamancy"].Id, statusAmount = vowStacks, targetPlayer = true },
             };
             
+            if (upgrade != Upgrade.A) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 2, status = Enum.Parse<Status>("tempShield") });
+
             if (upgrade == Upgrade.A) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 2, status = Enum.Parse<Status>("shield") });
             if (upgrade == Upgrade.B) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 0, status = Enum.Parse<Status>("evade"), mode = AStatusMode.Set });
+
 
             return retval;
         }
@@ -316,12 +319,13 @@ namespace KnightsCohort.Knight.Cards
                new AStatus() { status = (Status)MainManifest.statuses["vowOfRest"].Id, statusAmount = 1, targetPlayer = true },
             };
             if (upgrade == Upgrade.B) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 1, status = (Status)MainManifest.statuses["vowOfMegaRest"].Id });
+            if (upgrade == Upgrade.A) retval.Add(new AStatus() { targetPlayer = true, statusAmount = 1, status = Enum.Parse<Status>("energyNextTurn") });
 
             return retval;
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = (upgrade == Upgrade.A ? false : true) };
+            return new() { cost = 1, exhaust = (upgrade == Upgrade.B ? true : false) };
         }
     }
 
@@ -512,7 +516,7 @@ namespace KnightsCohort.Knight.Cards
             List<CardAction> retval = new()
             {
                 new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
-                new AStatus() { status = Enum.Parse<Status>("shield") }
+                new AStatus() { status = Enum.Parse<Status>("shield"), xHint = 1, targetPlayer = true, statusAmount = s.ship.Get((Status)MainManifest.statuses["honor"].Id) }
             };
 
             if (upgrade == Upgrade.A) retval.Add(new AStatus() { status = Enum.Parse<Status>("tempShield"), statusAmount = 2, targetPlayer = true });

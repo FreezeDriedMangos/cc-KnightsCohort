@@ -24,12 +24,18 @@ namespace KnightsCohort.Herbalist.Cards
             List<Card> selected = upgrade == Upgrade.A ? new() : new() { new HerbCard() { SerializedActions = new() { HerbActions.OXIDATION } } };
             int amount = upgrade == Upgrade.B ? 3 : 2;
 
+            List<Tooltip> tooltips = new() {
+                new TTGlossary(MainManifest.glossary["herbsearch"].Head, amount, "Deck"), 
+                new TTGlossary(MainManifest.glossary[upgrade == Upgrade.A ? "combineHerbs" : "combineHerbsToxic"].Head, 1), 
+            };
+            if (upgrade != Upgrade.A) tooltips.Add(MainManifest.KokoroApi.GetOxidationStatusTooltip(s, s.ship));
+
             return new()
             {
                new ACombineHerbs() { disabled = flipped, amount = amount, selected = selected },
                new ATooltipDummy() {
                    disabled = flipped,
-                   tooltips = new() { new TTGlossary(MainManifest.glossary["herbsearch"].Head, amount, "Deck"), new TTGlossary(MainManifest.glossary[upgrade == Upgrade.A ? "combineHerbs" : "combineHerbsToxic"].Head, 1), MainManifest.KokoroApi.GetOxidationStatusTooltip(s, s.ship) }, 
+                   tooltips = tooltips, 
                    icons = new() { new Icon((Spr)MainManifest.sprites["icons/herb_bundle"].Id, amount, flipped ? Colors.disabledText : Colors.textMain), new Icon((Spr)MainManifest.sprites[upgrade == Upgrade.A ? "icons/mortar_and_pestle" : "icons/mortar_and_pestle_toxic"].Id, upgrade == Upgrade.A ? null : 1, flipped ? Colors.disabledText : Colors.textMain) } 
                },
 
@@ -259,7 +265,7 @@ namespace KnightsCohort.Herbalist.Cards
                         actions = new()
                         {
                             new ARemoveSelectedCardFromWhereverItIs(),
-                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.None ? 1 : 2, targetPlayer = true }
+                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.None ? 3 : 5, targetPlayer = true }
                         }
                     }
                 }
@@ -478,12 +484,12 @@ namespace KnightsCohort.Herbalist.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = 1 }
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = 4 }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 0, exhaust = true };
+            return new() { cost = 1, exhaust = false };
         }
     }
 
@@ -494,12 +500,12 @@ namespace KnightsCohort.Herbalist.Cards
         {
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = 2 }
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = 4 }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 0, exhaust = true };
+            return new() { cost = 0, exhaust = false };
         }
     }
 
@@ -571,6 +577,7 @@ namespace KnightsCohort.Herbalist.Cards
                     new ADummyAction()
                 );
                 spendCorrodeAction.disabled = s.ship.Get((Status)MainManifest.statuses["honor"].Id) < 1 || s.ship.Get((Status)Enum.Parse<Status>("corrode")) < 1;
+                spendCorrodeAction.disabled = s.route is Combat && spendCorrodeAction.disabled;
 
                 var spendHonorToSpendCorrodeAction = MainManifest.KokoroApi.ActionCosts.Make
                 (
@@ -690,7 +697,6 @@ namespace KnightsCohort.Herbalist.Cards
                     new ASendSelectedCardToDiscard(),
                     new AApplySelectedHerbToEnemy(),
                     new AApplySelectedHerbToEnemy(),
-                    new ASendSelectedCardToHand(),
                 },
                 Upgrade.B => new()
                 {
@@ -698,39 +704,51 @@ namespace KnightsCohort.Herbalist.Cards
                     new AApplySelectedHerbToEnemy(),
                     new AApplySelectedHerbToEnemy(),
                     new AApplySelectedHerbToEnemy(),
+                    new AApplySelectedHerbToEnemy(),
                 }
             };
+
+            List<Icon> icons = new()
+            {
+                new Icon((Spr)MainManifest.sprites[upgrade == Upgrade.A ? "icons/herb_bundle" : "icons/herb_in_hand"].Id, 1, Colors.textMain),
+                new Icon((Spr)MainManifest.sprites["icons/burn_herb"].Id, upgrade == Upgrade.B ? 4 : 2, Colors.textMain),
+            };
+            List<Tooltip> tooltips = new() { new TTGlossary(MainManifest.glossary["burnHerb"].Head) };
+
+            if (upgrade == Upgrade.B)
+            {
+                tooltips.Add(new TTGlossary(MainManifest.glossary["moveCard"].Head, Enum.Parse<CardBrowse.Source>("DiscardPile"), "Destroy"));
+                icons.Add(new Icon((Spr)MainManifest.sprites["icons/move_card"].Id, null, Colors.textMain));
+                icons.Add(new Icon(Enum.Parse<Spr>("icons_singleUse"), null, Colors.textMain));
+            }
 
             return new()
             {
                 new AHerbCardSelect()
                 {
-                    browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
+                    browseSource = Enum.Parse<CardBrowse.Source>(upgrade == Upgrade.A ? "Deck" : "Hand"),
                     browseAction = new AQueueImmediateOtherActions()
                     {
                         actions = actions
                     }
                 },
                 new ATooltipDummy() { 
-                    tooltips = new (){ new TTGlossary(MainManifest.glossary["burnHerb"].Head) },
-                    icons = new()
-                    {
-                        new Icon((Spr)MainManifest.sprites["icons/herb_in_hand"].Id, 1, Colors.textMain),
-                        new Icon((Spr)MainManifest.sprites["icons/burn_herb"].Id, 2, Colors.textMain),
-                    }
-                }
+                    tooltips = tooltips,
+                    icons = icons
+                },
+                new ADummyAction()
                 //new ATooltipDummy() { tooltips = new (){ new TTGlossary(MainManifest.glossary["exhaustSelected"].Head), new TTGlossary(MainManifest.glossary["herbExhaust"].Head) } }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = upgrade == Upgrade.A,
-                description = upgrade switch
-                {
-                    Upgrade.None => "Select an herb in hand. Apply its effects to the enemy twice.",
-                    Upgrade.A => "Select an herb in hand. Apply its effects to the enemy twice, then return to hand.",
-                    Upgrade.B => "Select an herb in hand. Apply its effects to the enemy three times, then remove from deck."
-                }
+            return new() { cost = 1,
+                //description = upgrade switch
+                //{
+                //    Upgrade.None => "Select an herb in hand. Apply its effects to the enemy twice.",
+                //    Upgrade.A => "Select an herb in hand. Apply its effects to the enemy twice, then return to hand.",
+                //    Upgrade.B => "Select an herb in hand. Apply its effects to the enemy three times, then remove from deck."
+                //}
             };
         }
     }
