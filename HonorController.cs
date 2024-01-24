@@ -49,60 +49,73 @@ namespace KnightsCohort
         [HarmonyPatch(typeof(Combat), nameof(Combat.DrainCardActions))]
         public static void HarmonyPostfix_HonorableWinCheck(Combat __instance, G g)
         {
+            bool __result;
+            State s = g.state;
+
             //bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
             //if (!actionJustEnded) return;
 
             // TODO: this breaks when the enemy increases your honor through an on hit effect, such as the martyr banner or vow of courage
 
-            if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0) return;
+            if (s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0) return;
             if (__instance.otherShip.hull <= 0) return;
-            if (g.state.ship.hull <= 0) return;
+            if (s.ship.hull <= 0) return;
 
-            if (g.state.ship.Get((Status)MainManifest.statuses["honor"].Id) >= __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield")))
+            if (s.ship.Get((Status)MainManifest.statuses["honor"].Id) >= __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield")))
             {
-                if (g.state.map.IsFinalZone()) // this check doesn't work
-                {
-                    // bosses just die
-                    __instance.QueueImmediate(new List<CardAction>()
-                    {
-                        new ADelay() { time = 0.0, timer = 0.3 },
-                        new AHurt() { targetPlayer = false, hurtAmount = __instance.otherShip.hullMax+10, hurtShieldsFirst = false }
-                    });
-                }
-                else if (__instance.otherShip.ai is SogginsEvent) {
+                //if (s.map.IsFinalZone()) // this check doesn't work
+                //{
+                //    // bosses just die
+                //    __instance.QueueImmediate(new List<CardAction>()
+                //    {
+                //        new ADelay() { time = 0.0, timer = 0.3 },
+                //        new AHurt() { targetPlayer = false, hurtAmount = __instance.otherShip.hullMax+10, hurtShieldsFirst = false }
+                //    });
+                //}
+                
+                if (__instance.otherShip.ai is SogginsEvent) {
                     return; // don't resolve the soggins event with honor
                 }
 
-                __instance.Queue(new AMidCombatDialogue
-                {
-                    script = "clay.KnightsCohort.Honorable_Win" // make this randomly pick a line from a list of multiple for each of the 3 knights
-                });
-                __instance.Queue(new ADelay
-                {
-                    time = 0.0,
-                    timer = 0.7
-                });
-                __instance.Queue(new AEscape
-                {
-                    targetPlayer = false
-                });
-            }
-            else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= g.state.ship.hull + g.state.ship.Get(Enum.Parse<Status>("shield")))
-            {
-                __instance.noReward = true;
+                __result = true;
 
                 __instance.Queue(new AMidCombatDialogue
                 {
-                    script = "clay.KnightsCohort.Honorable_Loss" // make this randomly pick a line from a list of multiple for each of the 3 knights
+                    script = "clay.KnightsCohort.Honorable_Win", // make this randomly pick a line from a list of multiple for each of the 3 knights
+                    canRunAfterKill = true,
                 });
                 __instance.Queue(new ADelay
                 {
                     time = 0.0,
-                    timer = 0.1
+                    timer = 0.7,
+                    //canRunAfterKill = true,
                 });
                 __instance.Queue(new AEscape
                 {
-                    targetPlayer = true
+                    targetPlayer = false,
+                    canRunAfterKill = true,
+                });
+            }
+            else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= s.ship.hull + s.ship.Get(Enum.Parse<Status>("shield")))
+            {
+                __instance.noReward = true;
+                __result = true;
+
+                __instance.Queue(new AMidCombatDialogue
+                {
+                    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the 3 knights
+                    canRunAfterKill = true,
+                });
+                __instance.Queue(new ADelay
+                {
+                    time = 0.0,
+                    timer = 0.1,
+                    canRunAfterKill = true,
+                });
+                __instance.Queue(new AEscape
+                {
+                    targetPlayer = true,
+                    canRunAfterKill = true,
                 });
             }
         }

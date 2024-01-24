@@ -48,6 +48,7 @@ namespace KnightsCohort
             Instance = this;
             var harmony = new Harmony(this.Name);
             harmony.PatchAll();
+            CustomTTGlossary.ApplyPatches(harmony);
 
             KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
             VowsRenderer = new();
@@ -87,8 +88,6 @@ namespace KnightsCohort
                 "char_frame_bannerlady",
 
                 // treasuerer
-                
-                // bannerlady
                 "character/treasurer_neutral_1",
                 "character/treasurer_neutral_2",
                 "character/treasurer_neutral_3",
@@ -103,6 +102,17 @@ namespace KnightsCohort
                 "frame_treasurer",
                 "card_default_treasurer",
                 "char_frame_treasurer",
+                "cards/treasurer/card_default_treasurer_investment_tier_1",
+                "cards/treasurer/card_default_treasurer_investment_tier_2",
+                "cards/treasurer/card_default_treasurer_investment_tier_3",
+                "icons/gold_1_paid",
+                "icons/gold_1_unmet",
+                "icons/gold_1_met",
+                "icons/gold_1_locked",
+                "icons/gold_1_outline_left",
+                "icons/gold_1_outline_middle",
+                "icons/gold_1_outline_right",
+                "icons/gold_1_outline_full",
 
 
                 // herbalist
@@ -185,6 +195,16 @@ namespace KnightsCohort
                 "icons/evade_cost_unsatisfied",
                 "icons/droneshift_cost",
                 "icons/droneshift_cost_unsatisfied",
+
+                "icons/gold_10",
+                "icons/gold_5",
+                "icons/gold_1",
+                "icons/gold_10_unsatisfied",
+                "icons/gold_5_unsatisfied",
+                "icons/gold_1_unsatisfied",
+                "icons/gold_10_satisfied",
+                "icons/gold_5_satisfied",
+                "icons/gold_1_satisfied",
 
                 "icons/dazed",
                 "icons/blindness",
@@ -291,6 +311,7 @@ namespace KnightsCohort
 
 
                 new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
 
 
 
@@ -351,8 +372,9 @@ namespace KnightsCohort
             );
             if (!registry.RegisterDeck(decks["knight"])) throw new Exception("Sir Ratzo has taken his deck on a quest, cannot proceeed.");
 
-            unchecked { knightColor = (int)0xffcd4b4b; }
 
+
+            unchecked { knightColor = (int)0xffcd4b4b; }
             decks["bannerlady"] = new ExternalDeck(
                 Name + ".deck.Bannerlady",
                 System.Drawing.Color.FromArgb(knightColor),
@@ -363,8 +385,9 @@ namespace KnightsCohort
             );
             if (!registry.RegisterDeck(decks["bannerlady"])) throw new Exception("Dame Emily has taken her deck on campaign, cannot proceeed.");
 
-            unchecked { knightColor = (int)0xffbe9821; }
 
+
+            unchecked { knightColor = (int)0xffbe9821; }
             decks["treasurer"] = new ExternalDeck(
                 Name + ".deck.Treasurer",
                 System.Drawing.Color.FromArgb(knightColor),
@@ -373,7 +396,10 @@ namespace KnightsCohort
                 sprites["frame_treasurer"],
                 null
             );
-            if (!registry.RegisterDeck(decks["treasurer"])) throw new Exception("Lady Gemscale hid her deck in her hoard, cannot proceeed.");
+            if (!registry.RegisterDeck(decks["treasurer"])) throw new Exception("Lady Ruby hid her deck in her hoard, cannot proceeed.");
+
+
+
 
 
             unchecked { knightColor = (int)0xff815a30; }
@@ -441,7 +467,7 @@ namespace KnightsCohort
                 Name + ".Treasurer",
                 decks["treasurer"],
                 sprites["char_frame_treasurer"],
-                new Type[] { typeof(Treasurer.Cards.Dragonfire) },
+                new Type[] { typeof(Treasurer.Cards.Dragonfire), typeof(Treasurer.Cards.InitialInvestment) },
                 new Type[0],
                 animations["treasurer.neutral"],
                 animations["treasurer.mini"]
