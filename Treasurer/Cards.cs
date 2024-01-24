@@ -357,7 +357,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 0 };
+            return new() { cost = 0, exhaust = true };
         }
     }
 
