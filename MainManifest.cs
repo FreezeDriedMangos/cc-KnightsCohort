@@ -102,9 +102,11 @@ namespace KnightsCohort
                 "frame_treasurer",
                 "card_default_treasurer",
                 "char_frame_treasurer",
-                "cards/treasurer/card_default_treasurer_investment_tier_1",
+                "cards/treasurer/card_default_treasurer_investment_tier_1", // for 3 tier investment cards
                 "cards/treasurer/card_default_treasurer_investment_tier_2",
                 "cards/treasurer/card_default_treasurer_investment_tier_3",
+                "cards/treasurer/card_default_treasurer_investment_2_tier_1", // for two tier investment cards
+                "cards/treasurer/card_default_treasurer_investment_2_tier_2",
                 "icons/gold_1_paid",
                 "icons/gold_1_unmet",
                 "icons/gold_1_met",
@@ -131,6 +133,8 @@ namespace KnightsCohort
                 "char_frame_herbalist",
 
                 // misc
+
+                "icons/equal_sign",
 
                 //"midrow/sword", // sprite exits in banilla
                 "midrow/dagger",
@@ -205,6 +209,8 @@ namespace KnightsCohort
                 "icons/gold_10_satisfied",
                 "icons/gold_5_satisfied",
                 "icons/gold_1_satisfied",
+                "icons/heat_cost_unsatisfied",
+                "icons/heat_cost_satisfied",
 
                 "icons/dazed",
                 "icons/blindness",
@@ -312,6 +318,23 @@ namespace KnightsCohort
 
                 new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Ask for Aid", typeof(AskForAid), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Inspiration", typeof(Inspiration), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Weapons Vault", typeof(WeaponsVault), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Burning Glory", typeof(BurningGlory), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED", typeof(UNNAMED), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Fire Breath", typeof(FireBreath), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Golden Scales", typeof(GoldenScales), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Trading on Reputation", typeof(TradingOnReputation), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Forged in Fire", typeof(ForgedInFire), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Ancient Weapons", typeof(AncientWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Deep Sleep", typeof(DeepSleep), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Give Generously", typeof(GiveGenerously), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Suitable Weapons", typeof(SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Opportunistic Sale", typeof(OpportunisticSale), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
 
 
 
@@ -467,7 +490,7 @@ namespace KnightsCohort
                 Name + ".Treasurer",
                 decks["treasurer"],
                 sprites["char_frame_treasurer"],
-                new Type[] { typeof(Treasurer.Cards.Dragonfire), typeof(Treasurer.Cards.InitialInvestment) },
+                new Type[] { typeof(Treasurer.Cards.Donation), typeof(Treasurer.Cards.InitialInvestment) },
                 new Type[0],
                 animations["treasurer.neutral"],
                 animations["treasurer.mini"]

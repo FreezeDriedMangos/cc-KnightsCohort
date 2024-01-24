@@ -17,12 +17,18 @@ namespace KnightsCohort.Treasurer
         public virtual List<int> upgradeCosts => new() { 3, 4 };
         public int tier = 0;
 
-        protected virtual List<Spr> tierArt => new()
-        {
-            (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_tier_1"].Id,
-            (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_tier_2"].Id,
-            (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_tier_3"].Id,
-        };
+        protected virtual List<Spr> tierArt => upgradeCosts.Count == 1
+            ? new()
+                {
+                    (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_2_tier_1"].Id,
+                    (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_2_tier_2"].Id,
+                }
+            : new()
+                {
+                    (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_tier_1"].Id,
+                    (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_tier_2"].Id,
+                    (Spr)MainManifest.sprites["cards/treasurer/card_default_treasurer_investment_tier_3"].Id,
+                };
         protected virtual List<List<CardAction>> GetTierActions(State s, Combat c) { return new() { new(), new(), new() }; }
 
         [HarmonyPostfix]
@@ -122,7 +128,7 @@ namespace KnightsCohort.Treasurer
 
             int startingY = this.upgradeCosts.Count switch
             {
-                1 => 50,
+                1 => 42,
                 2 => 32,
                 _ => 0
             };

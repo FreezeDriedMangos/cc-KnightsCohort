@@ -398,4 +398,81 @@ namespace KnightsCohort.actions
             c.QueueImmediate(a);
         }
     }
+
+    public class DrawCardsOfSelectedCardColor : CardAction
+    {
+        public int count;
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null) return;
+            var deck = selectedCard.GetMeta().deck;
+
+            bool flag = false;
+            int num = 0;
+            for (int i = 0; i < count; i++)
+            {
+                if (c.hand.Count >= 10)
+                {
+                    c.PulseFullHandWarning();
+                    break;
+                }
+                if (s.deck.Count == 0)
+                {
+                    foreach (Card item in c.discard)
+                    {
+                        s.SendCardToDeck(item, doAnimation: true);
+                    }
+                    c.discard.Clear();
+                    s.ShuffleDeck(isMidCombat: true);
+                    if (s.deck.Count() == 0)
+                    {
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    Audio.Play(Event.CardHandling);
+                    flag = true;
+                }
+
+                bool drawn = false;
+                for (int j = 0; j < s.deck.Count; j++)
+                {
+                    if (s.deck[j].GetMeta().deck != deck) continue;
+                    c.DrawCardIdx(s, j).waitBeforeMoving = (double)i * 0.09;
+                    drawn = true;
+                    break;
+                }
+                if (!drawn) break;
+                num++;
+            }
+            foreach (Artifact item2 in s.EnumerateAllArtifacts())
+            {
+                item2.OnDrawCard(s, c, num);
+            }
+        }
+    }
+
+    public class APlayHighestCostCardInHand : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            base.Begin(g, s, c);
+            int highestCost = 0;
+            c.hand.ForEach(card => highestCost = Math.Max(highestCost, card.GetCurrentCost(s)));
+            for(int i = 0; i < c.hand.Count; i++)
+            {
+                if (c.hand[i].GetCurrentCost(s) == highestCost)
+                {
+                    c.QueueImmediate(new APlayOtherCard()
+                    {
+                        timer = 0.5,
+                        handPosition = i
+                    });
+                    return;
+                }
+            }
+        }
+    }
 }
