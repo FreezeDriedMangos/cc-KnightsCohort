@@ -302,11 +302,12 @@ namespace KnightsCohort.Treasurer.Cards
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AncientWeapons : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 4 };
+        public override List<int> upgradeCosts => new() { 2, 4 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
             return new() {
+                new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
                 new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
                 new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
             };
@@ -315,7 +316,7 @@ namespace KnightsCohort.Treasurer.Cards
         public override CardData GetData(State state)
         {
             CardData cardData = base.GetData(state);
-            cardData.cost = 1;
+            cardData.cost = 2;
             return cardData;
         }
     }
@@ -474,7 +475,6 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class HotCommodity : Card
     {
@@ -489,6 +489,34 @@ namespace KnightsCohort.Treasurer.Cards
         public override CardData GetData(State state)
         {
             return new() { cost = 0 };
+        }
+    }
+
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Bribe : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            var goldResource = MainManifest.KokoroApi.ActionCosts.StatusResource
+            (
+                (Status)MainManifest.statuses["gold"].Id,
+                Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
+                (Spr)MainManifest.sprites["icons/gold_10_unsatisfied"].Id,
+                (Spr)MainManifest.sprites["icons/gold_10_satisfied"].Id
+            );
+
+            return new()
+            {
+                MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: 2),
+                    new ANullRandomIntent_Paranoia()
+                )
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, description = $"Cost {2} gold, cancel a random enemy intent." };
         }
     }
 }

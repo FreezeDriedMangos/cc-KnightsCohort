@@ -340,6 +340,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Recurring Donation", typeof(ReocurringDonation), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Hot Commodity", typeof(HotCommodity), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Bribe", typeof(Bribe), sprites["card_default_treasurer"], decks["treasurer"]),
 
 
 
