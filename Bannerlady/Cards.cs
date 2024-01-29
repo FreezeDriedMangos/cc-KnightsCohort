@@ -612,9 +612,9 @@ namespace KnightsCohort.Bannerlady.Cards
             {
                 Upgrade.None => 2,
                 Upgrade.A => 1,
-                Upgrade.B => 4,
+                Upgrade.B => 2,
             };
-            int multiplier = upgrade == Upgrade.B ? 2 : 1;
+            int max = upgrade == Upgrade.B ? 6 : 4;
 
             return new()
             {
@@ -632,8 +632,9 @@ namespace KnightsCohort.Bannerlady.Cards
                         ),
                         amount: cost
                     ),
-                    new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = multiplier*honor, xHint = multiplier, targetPlayer = true, disabled = honor < cost }
+                    new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = Math.Min(max, honor), xHint = 1, targetPlayer = true, disabled = honor < cost }
                 ),
+                new AText() { text = $"(max {max})" }
             };
         }
         public override CardData GetData(State state)

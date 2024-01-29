@@ -3,6 +3,81 @@
 namespace KnightsCohort.actions
 {
     [HarmonyPatch(typeof(Card))]
+    public class AText : ADummyAction
+    {
+        public string text;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Card.RenderAction))]
+        public static bool HarmonyPrefix_Card_RenderAction(ref int __result, G g, State state, CardAction action, bool dontDraw = false, int shardAvailable = 0, int stunChargeAvailable = 0, int bubbleJuiceAvailable = 0)
+        {
+            if (action is AText aText)
+            {
+                if (aText.text == null)
+                {
+                    return true;
+                }
+
+                if (dontDraw)
+                {
+                    return false;
+                }
+
+                //bool isHighRes = DB.currentLocale.isHighRes;
+
+                Rect? rect = new Rect(0);
+                Vec xy = g.Push(null, rect).rect.xy;
+                // var descRect = Draw.Text(description, -100000, -100000, null, Colors.textMain, null, null, 51.0, null, isHighRes, 8, Colors.black, null, null, null, dontSubstituteLocFont: false, letterSpacing);
+                var descRect = Draw.Text
+                (
+                    aText.text, 
+                    0, 0, 
+                    color: Colors.textMain, 
+                    maxWidth:51.0, 
+                    dontDraw: true, 
+                    lineHeight: 8, 
+                    outline: Colors.black,
+                    dontSubstituteLocFont: false, 
+                    letterSpacing: 0
+                );
+                Draw.Text
+                (
+                    aText.text,
+                    xy.x - 26 + descRect.w / 2, xy.y,
+                    color: Colors.textMain,
+                    maxWidth: 51.0,
+                    dontDraw: false,
+                    lineHeight: 8,
+                    outline: Colors.black,
+                    dontSubstituteLocFont: false,
+                    letterSpacing: 0
+                );
+                g.Pop();
+
+                //if (DB.currentLocale.isHighRes)
+                //{
+                //    if (descRect.h > 48.0)
+                //    {
+                //        letterSpacing = -4;
+                //    }
+                //    string? description2 = description;
+                //    double x31 = 4.0;
+                //    double y31 = 31.0;
+                //    num9 = 51.0;
+                //    Color? color8 = Colors.textMain;
+                //    descRect = Draw.Text(description2, x31, y31, null, color8, null, null, num9, null, dontDraw: false, value3, Colors.black, null, null, null, dontSubstituteLocFont: false, letterSpacing);
+                //}
+            }
+            else
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Card))]
     public class ATooltipDummy : ADummyAction
     {
         public delegate void OnGetTooltips(State s);
