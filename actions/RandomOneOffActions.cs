@@ -444,7 +444,19 @@ namespace KnightsCohort.actions
                     drawn = true;
                     break;
                 }
-                if (!drawn) break;
+                if (!drawn)
+                {
+                    if (c.discard.Count == 0) break; // no cards to draw
+
+                    // else, shuffle discard into deck and try again
+                    foreach (Card item in c.discard)
+                    {
+                        s.SendCardToDeck(item, doAnimation: true);
+                    }
+                    c.discard.Clear();
+                    s.ShuffleDeck(isMidCombat: true);
+                    i--;
+                }
                 num++;
             }
             foreach (Artifact item2 in s.EnumerateAllArtifacts())
