@@ -213,15 +213,10 @@ namespace KnightsCohort.Treasurer.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            var xEqualsEnemyHeat = new ATooltipDummy()
-            {
-                icons = new() {
-                    new Icon(Enum.Parse<Spr>("icons_x"), null, Colors.textMain),
-                    new Icon((Spr)MainManifest.sprites["icons/equal_sign"].Id, null, Colors.textMain),
-                    new Icon(Enum.Parse<Spr>("icons_outgoing"), null, Colors.textMain),
-                    new Icon(Enum.Parse<Spr>("icons_heat"), null, Colors.textMain),
-                }
-            };
+            var xEqualsEnemyHeat = MainManifest.KokoroApi.Actions.SetTargetPlayer(
+                new AVariableHint() { status = Enum.Parse<Status>("heat") }, 
+                false
+            );
 
             if (upgrade == Upgrade.B)
             {
