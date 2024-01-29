@@ -34,19 +34,38 @@ namespace KnightsCohort.Treasurer.Cards
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class InitialInvestment : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 1 };
+        public override List<int> upgradeCosts => upgrade == Upgrade.B
+            ? new() { 1, 1 }
+            : new() { 1 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c) 
-        { return new() { 
-            new() { 
-                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 },
-                new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1 } 
-            },
-            new() {
-                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 },
-                new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1 }
-            },
-        };}
+        { 
+            if (upgrade == Upgrade.B)
+            {
+                return new() {
+                    new() {
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                    },
+                    new() {
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                    },
+                    new() {
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                    },
+                };
+            }
+
+            return new() { 
+                new() { 
+                    new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 },
+                    new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1 } 
+                },
+                new() {
+                    new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 4 : 2 },
+                    new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 2 : 1 }
+                },
+            };
+        }
 
         public override CardData GetData(State state)
         {
@@ -76,8 +95,8 @@ namespace KnightsCohort.Treasurer.Cards
                 new() { 
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
-                        MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: 1),
-                        new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 2, targetPlayer = true }
+                        MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: upgrade == Upgrade.B ? 2 : 1),
+                        new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.B ? 4 : 2, targetPlayer = true }
                     ), 
                 },
                 new() {
@@ -94,6 +113,7 @@ namespace KnightsCohort.Treasurer.Cards
         {
             CardData cardData = base.GetData(state);
             cardData.cost = 1;
+            if (upgrade == Upgrade.A) cardData.infinite = true;
             return cardData;
         }
     }
@@ -372,13 +392,13 @@ namespace KnightsCohort.Treasurer.Cards
                 new ACardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                    browseAction = new DrawCardsOfSelectedCardColor() { count = 3 }
+                    browseAction = new DrawCardsOfSelectedCardColor() { count = upgrade == Upgrade.B ? 5 : 3 }
                 }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true, description = "Select a card in hand, draw 3 cards of that color." };
+            return new() { cost = 1, exhaust = upgrade == Upgrade.A ? false : true, description = "Select a card in hand, draw 3 cards of that color." };
         }
     }
 
