@@ -17,9 +17,9 @@ namespace KnightsCohort.Treasurer.Cards
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
             return new() {
-                new() { new AAttack() { damage = GetDmg(s, 0), status = Enum.Parse<Status>("heat"), statusAmount = 1 } },
+                new() { new AStatus() { targetPlayer = false, status = Enum.Parse<Status>("heat"), statusAmount = 1 } },
+                new() { new AAttack() { damage = GetDmg(s, 1), status = Enum.Parse<Status>("heat"), statusAmount = 1 } },
                 new() { new AAttack() { damage = GetDmg(s, 2), status = Enum.Parse<Status>("heat"), statusAmount = 1 } },
-                new() { new AAttack() { damage = GetDmg(s, 3), status = Enum.Parse<Status>("heat"), statusAmount = 1 } },
             };
         }
 
@@ -39,11 +39,11 @@ namespace KnightsCohort.Treasurer.Cards
         protected override List<List<CardAction>> GetTierActions(State s, Combat c) 
         { return new() { 
             new() { 
-                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 } ,
+                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 },
                 new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1 } 
             },
             new() {
-                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 } ,
+                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 },
                 new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1 }
             },
         };}
@@ -59,7 +59,7 @@ namespace KnightsCohort.Treasurer.Cards
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class Donation : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 2, 2 };
+        public override List<int> upgradeCosts => new() { 1, 1 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
@@ -192,7 +192,6 @@ namespace KnightsCohort.Treasurer.Cards
         {
             return new()
             {
-               new AStatus() { status = Enum.Parse<Status>("heat"), statusAmount = 1 },
                new ATooltipDummy() { icons = new() {
                     new Icon(Enum.Parse<Spr>("icons_x"), null, Colors.textMain),
                     new Icon((Spr)MainManifest.sprites["icons/equal_sign"].Id, null, Colors.textMain),
@@ -267,7 +266,8 @@ namespace KnightsCohort.Treasurer.Cards
             return new()
             {
                 new AVariableHint() { status = (Status)MainManifest.statuses["honor"].Id },
-                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = s.ship.Get((Status)MainManifest.statuses["honor"].Id), xHint = 1 }
+                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = s.ship.Get((Status)MainManifest.statuses["honor"].Id), xHint = 1 },
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = 0, mode = AStatusMode.Set }
             };
         }
         public override CardData GetData(State state)
@@ -289,7 +289,8 @@ namespace KnightsCohort.Treasurer.Cards
                     new Icon(Enum.Parse<Spr>("icons_outgoing"), null, Colors.textMain),
                     new Icon(Enum.Parse<Spr>("icons_heat"), null, Colors.textMain),
                 } },
-               new ADrawCard() { count = c.otherShip.Get(Enum.Parse<Status>("heat")), xHint = 1 }
+               new ADrawCard() { count = c.otherShip.Get(Enum.Parse<Status>("heat")), xHint = 2 },
+               new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 0, mode = AStatusMode.Set }
             };
         }
         public override CardData GetData(State state)
@@ -301,12 +302,11 @@ namespace KnightsCohort.Treasurer.Cards
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AncientWeapons : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 2, 2 };
+        public override List<int> upgradeCosts => new() { 4 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
             return new() {
-                new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
                 new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
                 new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
             };
@@ -457,6 +457,20 @@ namespace KnightsCohort.Treasurer.Cards
         public override CardData GetData(State state)
         {
             return new() { cost = 1, exhaust = true, description = "Cost 5 gold. Play the highest energy cost card in hand." };
+        }
+    }
+
+
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class ReocurringDonation : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new() { new AStatus() { status = (Status)MainManifest.statuses["charity"].Id, targetPlayer = true, statusAmount = 1 } };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, exhaust = true };
         }
     }
 }

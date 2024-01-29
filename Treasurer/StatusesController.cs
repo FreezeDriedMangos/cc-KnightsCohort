@@ -19,6 +19,11 @@ namespace KnightsCohort.Treasurer
             var goldStatus = (Status)MainManifest.statuses["gold"].Id;
             int goldAmount = __instance.Get(goldStatus);
             __instance.Set(goldStatus, goldAmount + (goldAmount / INTEREST_RATE));
+
+            var charityAmount = __instance.Get((Status)MainManifest.statuses["charity"].Id);
+            goldAmount = __instance.Get(goldStatus); // refetch gold just in case
+            __instance.Set(goldStatus, Math.Max(0, goldAmount - charityAmount));
+            __instance.Add((Status)MainManifest.statuses["honor"].Id, Math.Max(0, goldAmount - charityAmount));
         }
     }
 }

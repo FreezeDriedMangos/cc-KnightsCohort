@@ -1,5 +1,6 @@
 ﻿using FSPRO;
 using HarmonyLib;
+using KnightsCohort.actions;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,13 @@ namespace KnightsCohort.Treasurer
                 allActions.AddRange(tieredActions[t]);
                 allActions.Add(new ADummyAction());
             }
+
+            allActions.Add(new ATooltipDummy {
+                tooltips = upgradeCosts.Count == 2
+                    ? new() { new TTGlossary(MainManifest.glossary["3tierinvestmentcard"].Head, upgradeCosts[0], upgradeCosts[1]) }
+                    : new() { new TTGlossary(MainManifest.glossary["2tierinvestmentcard"].Head, upgradeCosts[0]) }
+            });
+            allActions.Insert(0, new ADummyAction());
 
             return allActions;
         }

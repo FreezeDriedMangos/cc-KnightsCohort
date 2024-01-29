@@ -200,6 +200,7 @@ namespace KnightsCohort
                 "icons/droneshift_cost",
                 "icons/droneshift_cost_unsatisfied",
 
+
                 "icons/gold_10",
                 "icons/gold_5",
                 "icons/gold_1",
@@ -211,6 +212,8 @@ namespace KnightsCohort
                 "icons/gold_1_satisfied",
                 "icons/heat_cost_unsatisfied",
                 "icons/heat_cost_satisfied",
+                "icons/charity",
+
 
                 "icons/dazed",
                 "icons/blindness",
@@ -335,6 +338,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Suitable Weapons", typeof(SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Opportunistic Sale", typeof(OpportunisticSale), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Recurring Donation", typeof(ReocurringDonation), sprites["card_default_treasurer"], decks["treasurer"]),
 
 
 
@@ -647,6 +651,21 @@ namespace KnightsCohort
             );
 
             //
+            // treasurer
+            //
+
+            RegisterGlossaryEntry(registry, "3tierinvestmentcard", sprites["icons/gold_1"],
+                "INVEST",
+                "On right click, pay {0} gold to unlock the actions in tier 2, and then on the second right click, {1} gold to unlock the actions on tier 3."
+            );
+
+            RegisterGlossaryEntry(registry, "2tierinvestmentcard", sprites["icons/gold_1"],
+                "INVEST",
+                "On right click, pay {0} gold to unlock the actions in tier 2."
+            );
+
+
+            //
             // herbalist
             //
 
@@ -791,9 +810,15 @@ namespace KnightsCohort
 
 
             status = "gold";
-            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/vow_of_affluence"], false);
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/gold_10"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Gold", $"A resource used to activate effects on some cards.");
+            statuses[status].AddLocalisation("Gold", $"A resource used to activate effects on some cards. At the start of every turn, increases by <c=keyword>1</c> for every <c=keyword>{Treasurer.StatusesController.INTEREST_RATE}</c> you have.");
+            
+            status = "charity";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Charity", $"Lose up to {0} gold and gain equal honor at the start of every turn.");
+
 
 
 
