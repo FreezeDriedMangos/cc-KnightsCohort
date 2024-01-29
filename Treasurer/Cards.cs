@@ -473,4 +473,22 @@ namespace KnightsCohort.Treasurer.Cards
             return new() { cost = 1, exhaust = true };
         }
     }
+
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class HotCommodity : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+               new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 2 },
+               new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 }
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 0 };
+        }
+    }
 }
