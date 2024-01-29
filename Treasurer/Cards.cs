@@ -38,6 +38,8 @@ namespace KnightsCohort.Treasurer.Cards
             ? new() { 1, 1 }
             : new() { 1 };
 
+        public override bool SkipSpacerActions => upgrade == Upgrade.B ? true : false;
+
         protected override List<List<CardAction>> GetTierActions(State s, Combat c) 
         { 
             if (upgrade == Upgrade.B)
@@ -194,7 +196,7 @@ namespace KnightsCohort.Treasurer.Cards
             return new() {
                 new() { new AAttack() { damage = GetDmg(s, 1) } },
                 new() { new ADrawCard() { count = 2 } },
-                new() { new AStatus() { status = Enum.Parse<Status>("shield"), targetPlayer = true, statusAmount = 1 } }
+                new() { new AStatus() { status = Enum.Parse<Status>("shield"), targetPlayer = true, statusAmount = 2 } }
             };
         }
 
@@ -211,20 +213,46 @@ namespace KnightsCohort.Treasurer.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            var xEqualsEnemyHeat = new ATooltipDummy()
             {
-               new ATooltipDummy() { icons = new() {
+                icons = new() {
                     new Icon(Enum.Parse<Spr>("icons_x"), null, Colors.textMain),
                     new Icon((Spr)MainManifest.sprites["icons/equal_sign"].Id, null, Colors.textMain),
                     new Icon(Enum.Parse<Spr>("icons_outgoing"), null, Colors.textMain),
                     new Icon(Enum.Parse<Spr>("icons_heat"), null, Colors.textMain),
-                } },
+                }
+            };
+
+            if (upgrade == Upgrade.B)
+            {
+                var multiplier = 2;
+                return new()
+                {
+                   xEqualsEnemyHeat,
+                   new AStatus() { status = Enum.Parse<Status>("heat"), statusAmount = multiplier*c.otherShip.Get(Enum.Parse<Status>("heat")), targetPlayer = true, xHint = multiplier },
+                   new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = multiplier*c.otherShip.Get(Enum.Parse<Status>("heat")), targetPlayer = true, xHint = multiplier },
+                };
+            }
+
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                    new AStatus() { status = Enum.Parse<Status>("heat"), statusAmount = 1, targetPlayer = false },
+                   xEqualsEnemyHeat,
+                   new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = c.otherShip.Get(Enum.Parse<Status>("heat")), targetPlayer = true, xHint = 1 }
+                };
+            }
+
+            return new()
+            {
+               xEqualsEnemyHeat,
                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = c.otherShip.Get(Enum.Parse<Status>("heat")), targetPlayer = true, xHint = 1 }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = upgrade == Upgrade.B ? 2 : 1 };
         }
     }
 

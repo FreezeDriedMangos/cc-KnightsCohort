@@ -15,6 +15,7 @@ namespace KnightsCohort.Treasurer
     {
         public static Status GoldStatus => (Status)MainManifest.statuses["gold"].Id;
 
+        public virtual bool SkipSpacerActions => false;
         public virtual List<int> upgradeCosts => new() { 3, 4 };
         public int tier = 0;
 
@@ -80,14 +81,15 @@ namespace KnightsCohort.Treasurer
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            List<CardAction> allActions = new() { new ADummyAction() };
+            List<CardAction> allActions = new() { };
+            if (!SkipSpacerActions) allActions.Add(new ADummyAction());
 
             var tieredActions = GetTierActions(s, c);
             for (int t = 0;  t < tieredActions.Count; t++)
             {
                 tieredActions[t].ForEach(a => a.disabled = t > tier);
                 allActions.AddRange(tieredActions[t]);
-                allActions.Add(new ADummyAction());
+                if (!SkipSpacerActions) allActions.Add(new ADummyAction());
             }
 
             allActions.Add(new ATooltipDummy {
