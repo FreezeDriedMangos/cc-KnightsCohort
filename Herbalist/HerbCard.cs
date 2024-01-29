@@ -45,7 +45,7 @@ namespace KnightsCohort.Herbalist
         protected virtual List<HerbActions> GenerateSerializedActions(State s) { return new(); }
         protected virtual string GetTypeName() { return "INVALID"; }
         protected virtual List<HerbActions> possibleOptions => new();
-        protected virtual bool IsRaw => false;
+        public virtual bool IsRaw => false;
 
         public List<HerbActions> PotentialActions = new();
 
@@ -280,7 +280,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Leaf"; }
-        protected override bool IsRaw => true;
+        public override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
@@ -306,7 +306,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Bark"; }
-        protected override bool IsRaw => true;
+        public override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
@@ -331,7 +331,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Root"; }
-        protected override bool IsRaw => true;
+        public override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
@@ -364,7 +364,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Seed"; }
-        protected override bool IsRaw => true;
+        public override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
@@ -405,7 +405,7 @@ namespace KnightsCohort.Herbalist
         }
 
         protected override string GetTypeName() { return "Shroom"; }
-        protected override bool IsRaw => true;
+        public override bool IsRaw => true;
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]

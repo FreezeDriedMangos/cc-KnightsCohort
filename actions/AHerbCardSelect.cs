@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace KnightsCohort.actions
 {
-    public class HerbCardBrowse : CardBrowse { public List<Card> omit = new(); }
+    public class HerbCardBrowse : CardBrowse { public List<Card> omit = new(); public bool rawOnly; }
 
     [HarmonyPatch]
     public class AHerbCardSelect : ACardSelect
     {
         public List<Card> omit = new();
-
+        public bool rawOnly = false;
 
         public override List<Tooltip> GetTooltips(State s)
         {
@@ -46,7 +46,9 @@ namespace KnightsCohort.actions
                 ignoreCardType = ignoreCardType,
                 allowCancel = allowCancel,
                 allowCloseOverride = allowCloseOverride,
-                omit = omit
+
+                omit = omit,
+                rawOnly = rawOnly,
             };
             c.Queue(new ADelay
             {
@@ -76,7 +78,7 @@ namespace KnightsCohort.actions
             List<Card> herbs = new();
             foreach (var card in __result)
             {
-                if (card is HerbCard && !hcb.omit.Contains(card)) herbs.Add(card);
+                if (card is HerbCard herb && !hcb.omit.Contains(card) && (!hcb.rawOnly || herb.IsRaw)) herbs.Add(card);
             }
 
             __result.Clear();

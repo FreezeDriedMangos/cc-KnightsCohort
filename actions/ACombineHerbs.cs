@@ -34,7 +34,8 @@ namespace KnightsCohort.actions
                     {
                         browseAction = new ACombineHerbs() { selected = selected, amount = amount-1, selecting = true },
                         browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
-                        omit = selected
+                        omit = selected,
+                        rawOnly = true
                     }
                 );
             }
