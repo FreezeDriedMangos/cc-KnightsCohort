@@ -36,6 +36,7 @@ namespace KnightsCohort.Treasurer
         [HarmonyPatch(typeof(Combat), nameof(Combat.FlipCardInHand))]
         public static void InvestOnRightClickPatch(Combat __instance, G g, Card card)
         {
+            // TODO: acts weird when Ruby's missing
             if (card is InvestmentCard icard)
             {
                 icard.TryInvest(g.state, __instance);
@@ -107,30 +108,10 @@ namespace KnightsCohort.Treasurer
             return d;
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(Card), nameof(Card.MakeAllActionIcons))]
-        public static void DrawUpgradeCosts(Card __instance, G g, State s)
-        {
-            //if (__instance is not InvestmentCard icard) return;
-
-            ////"icons/gold_1"
-            ////"icons/gold_1_paid"
-            //int row = 0;
-            //int num = 1 * -6;
-            //int width = 8;
-            //Rect rect = new Rect(29 - width / 2, 50 + num + row * 12, 10.0) + GetShakeOffset(__instance, g);
-            //g.Push(null, rect);
-
-            //for (int i = 0; i < icard.upgradeCosts[0]; i++)
-            //{
-            //    Draw.Sprite((Spr)MainManifest.sprites["icons/gold_1"].Id, i*2+rect.x, 0, scale: new() { x = 2, y = 20 });
-            //}
-
-            //g.Pop();
-        }
-
         public override void ExtraRender(G g, Vec v)
         {
+            // TODO: should return early when ruby's missing
+
             base.ExtraRender(g, v);
             int gold = g.state.ship.Get(GoldStatus);
 

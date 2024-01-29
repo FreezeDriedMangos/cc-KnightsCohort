@@ -74,6 +74,7 @@ namespace KnightsCohort
                 //}
                 
                 if (__instance.otherShip.ai is SogginsEvent) {
+                    // TOOD: queue special dialoge "what's honor? can I eat it?"
                     return; // don't resolve the soggins event with honor
                 }
 

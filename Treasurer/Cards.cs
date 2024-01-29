@@ -44,25 +44,26 @@ namespace KnightsCohort.Treasurer.Cards
             {
                 return new() {
                     new() {
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 }
                     },
                     new() {
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 },
+                        new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1  }
                     },
                     new() {
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 }
                     },
                 };
             }
 
             return new() { 
                 new() { 
-                    new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 },
-                    new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1 } 
+                    new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 },
+                    new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 2 : 1  } 
                 },
                 new() {
-                    new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 4 : 2 },
-                    new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = upgrade == Upgrade.A ? 2 : 1 }
+                    new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 },
+                    new AStatus() { status = Enum.Parse<Status>(upgrade == Upgrade.A ? "shield" : "tempShield"), targetPlayer = true, statusAmount = 1 }
                 },
             };
         }
@@ -70,7 +71,7 @@ namespace KnightsCohort.Treasurer.Cards
         public override CardData GetData(State state)
         {
             CardData cardData = base.GetData(state);
-            cardData.cost = 0;
+            cardData.cost = 1;
             return cardData;
         }
     }
@@ -91,19 +92,19 @@ namespace KnightsCohort.Treasurer.Cards
             );
 
             return new() {
-                new() { new ADrawCard() { count = 2 } },
+                new() { new ADrawCard() { count = 1 } },
                 new() { 
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
                         MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: upgrade == Upgrade.B ? 2 : 1),
-                        new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.B ? 4 : 2, targetPlayer = true }
+                        new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true }
                     ), 
                 },
                 new() {
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
                         MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: 2),
-                        new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 4, targetPlayer = true }
+                        new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 2, targetPlayer = true }
                     ),
                 },
             };
@@ -373,7 +374,7 @@ namespace KnightsCohort.Treasurer.Cards
             {
                 new AVariableHint() { status = (Status)MainManifest.statuses["gold"].Id },
                 new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = true, statusAmount = s.ship.Get((Status)MainManifest.statuses["gold"].Id), xHint = 1 },
-                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = s.ship.Get((Status)MainManifest.statuses["gold"].Id), mode = AStatusMode.Set }
+                new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 0, mode = AStatusMode.Set }
             };
         }
         public override CardData GetData(State state)
