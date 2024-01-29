@@ -94,7 +94,8 @@ namespace KnightsCohort.Herbalist
         public static void DazedPatch(AMove __instance, G g, State s, Combat c)
         {
             Ship ship = (__instance.targetPlayer ? s.ship : c.otherShip);
-            if (ship.Get((Status)MainManifest.statuses["dazed"].Id) > 0)
+            int daze = Knight.VowsController.GetAndDecrement(ship, "dazed");
+            if (daze > 0)
             {
                 __instance.dir *= -1;
             }
