@@ -487,4 +487,31 @@ namespace KnightsCohort.actions
             }
         }
     }
+
+    public class APlayHighestCostCardAnywhere : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            base.Begin(g, s, c);
+            int highestCost = 0;
+            s.deck.ForEach(card => highestCost = Math.Max(highestCost, card.GetCurrentCost(s)));
+            for(int i = 0; i < s.deck.Count; i++)
+            {
+                if (s.deck[i].GetCurrentCost(s) == highestCost)
+                {
+                    c.QueueImmediate(MainManifest.KokoroApi.Actions.MakePlaySpecificCardFromAnywhere(s.deck[i].uuid));
+                    return;
+                }
+            }
+        }
+    }
+
+    public class APlaySelectedCardFromAnywhere : CardAction
+    {
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null) return;
+            c.QueueImmediate(MainManifest.KokoroApi.Actions.MakePlaySpecificCardFromAnywhere(selectedCard.uuid));
+        }
+    }
 }

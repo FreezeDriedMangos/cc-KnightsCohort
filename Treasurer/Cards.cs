@@ -295,12 +295,12 @@ namespace KnightsCohort.Treasurer.Cards
         {
             return new()
             {
-               new AAttack() { damage = GetDmg(s, 2), status = Enum.Parse<Status>("heat"), statusAmount = 3 }
+               new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 1 : 2), status = Enum.Parse<Status>("heat"), statusAmount = upgrade == Upgrade.A ? 5 : 3 }
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 2 };
+            return new() { cost = upgrade == Upgrade.B ? 1 : 2 };
         }
     }
 
@@ -378,14 +378,18 @@ namespace KnightsCohort.Treasurer.Cards
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AncientWeapons : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 2, 4 };
+        public override List<int> upgradeCosts => upgrade switch {
+            Upgrade.None => new() { 2, 4 },
+            Upgrade.A => new() { 1, 2 },
+            Upgrade.B => new() { 3, 4 },
+        };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
             return new() {
                 new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
                 new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
-                new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = 1, targetPlayer = true } },
+                new() { new AStatus() { status = Enum.Parse<Status>("overdrive"), statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true } },
             };
         }
 
@@ -467,7 +471,9 @@ namespace KnightsCohort.Treasurer.Cards
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class OpportunisticSale : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 1, 1 };
+        public override List<int> upgradeCosts => upgrade == Upgrade.B
+            ? new() { 2, 2 }
+            : new() { 1, 1 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
@@ -478,30 +484,31 @@ namespace KnightsCohort.Treasurer.Cards
                 (Spr)MainManifest.sprites["icons/heat_cost_unsatisfied"].Id,
                 (Spr)MainManifest.sprites["icons/heat_cost_satisfied"].Id
             );
+            int multiplier = upgrade == Upgrade.B ? 2 : 1;
 
             return new() {
                 new() 
                 {
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
-                        MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: 1),
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 }
+                        MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: multiplier*1),
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*1 }
                     )
                 },
                 new()
                 {
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
-                        MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: 1),
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
+                        MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: multiplier*1),
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*2 }
                     )
                 },
                 new()
                 {
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
-                        MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: 1),
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 3 }
+                        MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: multiplier*1),
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*3 }
                     )
                 },
             };
@@ -511,6 +518,7 @@ namespace KnightsCohort.Treasurer.Cards
         {
             CardData cardData = base.GetData(state);
             cardData.cost = 1;
+            if (upgrade == Upgrade.A) cardData.retain = true;
             return cardData;
         }
     }
@@ -528,18 +536,31 @@ namespace KnightsCohort.Treasurer.Cards
                 (Spr)MainManifest.sprites["icons/gold_10_satisfied"].Id
             );
 
+            int cost = upgrade switch
+            {
+                Upgrade.None => 5,
+                Upgrade.A => 3,
+                Upgrade.B => 10,
+            };
+
             return new()
             {
                 MainManifest.KokoroApi.ActionCosts.Make
                 (
-                    MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: 5),
-                    new APlayHighestCostCardInHand()
+                    MainManifest.KokoroApi.ActionCosts.Cost(goldResource, amount: cost),
+                    upgrade == Upgrade.B 
+                        ? new APlayHighestCostCardAnywhere()
+                        : new APlayHighestCostCardInHand()
                 )
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = true, description = "Cost 5 gold. Play the highest energy cost card in hand." };
+            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = true, 
+                description = upgrade == Upgrade.B
+                ? $"Cost 10 gold. Select and play a card from anywhere for free."
+                : $"Cost {(upgrade == Upgrade.A ? 3 : 5)} gold. Play the highest energy cost card in hand." 
+            };
         }
     }
 
