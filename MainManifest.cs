@@ -609,11 +609,6 @@ namespace KnightsCohort
                 "Move your ship's center {0} away from the enemy ship's center."
             );
 
-            RegisterGlossaryEntry(registry, "retreat", sprites["icons/retreat"],
-                "RETREAT",
-                "Move your ship's center {0} away from the enemy ship's center."
-            );
-
             // banners
             RegisterGlossaryEntry(registry, "tattered", sprites["icons/banner_tattered"],
                 "<c=midrow>TATTERED BANNER</c>",
