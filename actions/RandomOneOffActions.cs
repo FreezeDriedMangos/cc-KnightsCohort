@@ -8,6 +8,7 @@ using Shockah.Dracula;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -597,6 +598,9 @@ namespace KnightsCohort.actions
             if (__instance is not CataloguedHerbCardBrowse) return true;
 
             __result = HerbCard.GetCatalogue(g.state).Values.Select(herb => (Card)herb).ToList();
+            typeof(CardBrowse)
+                .GetField(nameof(CardBrowse._listCache), AccessTools.all)
+                .SetValue(__instance, __result);
             return false;
         }
     }
