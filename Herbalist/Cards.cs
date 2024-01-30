@@ -666,7 +666,8 @@ namespace KnightsCohort.Herbalist.Cards
                     browseAction = new ABrewTea()
                     {
                         increaseAmount = upgrade == Upgrade.B ? 2 : 1
-                    }
+                    },
+                    excludeTea = true
                 }
             };
         }
@@ -850,7 +851,7 @@ namespace KnightsCohort.Herbalist.Cards
                     {
                         new ASelectCataloguedHerb()
                         {
-                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Hand }
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Hand }
                         }
                     };
                 case Upgrade.A:
@@ -858,11 +859,11 @@ namespace KnightsCohort.Herbalist.Cards
                     {
                         new ASelectCataloguedHerb()
                         {
-                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Deck }
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Deck }
                         },
                         new ASelectCataloguedHerb()
                         {
-                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Deck }
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Deck }
                         },
                     };
                 case Upgrade.B:
@@ -870,15 +871,15 @@ namespace KnightsCohort.Herbalist.Cards
                     {
                         new ASelectCataloguedHerb()
                         {
-                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.DiscardPile }
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Discard }
                         },
                         new ASelectCataloguedHerb()
                         {
-                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.DiscardPile }
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Discard }
                         }, 
                         new ASelectCataloguedHerb()
                         {
-                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.DiscardPile }
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Discard }
                         },
                     };
             }
