@@ -3,6 +3,7 @@ using FSPRO;
 using HarmonyLib;
 using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
+using Microsoft.Extensions.Logging;
 using Shockah.Dracula;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,13 @@ namespace KnightsCohort.actions
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null || selectedCard is not HerbCard herb) return;
+
+            // record that this herb existed
+            var cataloguedHerbs = HerbCard.GetCatalogue(s);
+            cataloguedHerbs[herb.uuid] = herb;
+            MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY, cataloguedHerbs);
+
+            // queue actual actions
             var actions = herb.GetActionsOverridden(s, c);
             foreach (var action in actions)
             {
@@ -70,7 +78,9 @@ namespace KnightsCohort.actions
                 if (action is AHurt ahurt) ahurt.targetPlayer = !ahurt.targetPlayer;
             }
 
-            actions.Insert(0, new ACompletelyRemoveCard() { uuid = selectedCard.uuid, skipHandCheck = true });
+            bool singleUseOverriden = herb.singleUseOverride.HasValue && herb.singleUseOverride.Value == false;
+            if (!singleUseOverriden) actions.Insert(0, new ACompletelyRemoveCard() { uuid = selectedCard.uuid, skipHandCheck = true });
+            else                     actions.Insert(0, new ASendSelectedCardToDiscard() { selectedCard = selectedCard });
 
             if (!herb.revealed)
             {
@@ -553,6 +563,7 @@ namespace KnightsCohort.actions
             });
             if (cardBrowse.GetCardList(g).Count == 0)
             {
+                MainManifest.Instance.Logger.LogInformation("No herb cards in catalogue");
                 timer = 0.0;
                 return null;
             }

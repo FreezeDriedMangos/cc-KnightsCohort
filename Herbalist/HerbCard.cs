@@ -210,7 +210,10 @@ namespace KnightsCohort.Herbalist
             List<CardAction> herbActions = ParseSerializedActions(SerializedActions);
             List<CardAction> actions = new();
             
-            actions.Add(new ACompletelyRemoveCard() { uuid = this.uuid, skipHandCheck = true });
+            bool singleUseOverriden = this.singleUseOverride.HasValue && this.singleUseOverride.Value == false;
+            if (!singleUseOverriden) actions.Insert(0, new ACompletelyRemoveCard() { uuid = this.uuid, skipHandCheck = true });
+            else                     actions.Insert(0, new ASendSelectedCardToDiscard() { selectedCard = this });
+            
             actions.AddRange(herbActions);
             actions.Add(new ADummyAction());
             
@@ -288,7 +291,7 @@ namespace KnightsCohort.Herbalist
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
-        public static void DrawAfterPlayIfHerb(Combat __instance, bool __result, State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        public static void AfterPlayIfHerb(Combat __instance, bool __result, State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
         {
             if (__result && card is HerbCard herb)// && herb.IsRaw)
             {
@@ -296,6 +299,7 @@ namespace KnightsCohort.Herbalist
                 var cataloguedHerbs = GetCatalogue(s);
                 cataloguedHerbs[herb.uuid] = herb;
                 MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, CATALOGUED_HERBS_KEY, cataloguedHerbs);
+                MainManifest.Instance.Logger.LogInformation("Cataloguing herb card");
 
                 // herb bag
                 bool hasHerbBag = s.EnumerateAllArtifacts().Where(a => a is HerbBag).Any();
