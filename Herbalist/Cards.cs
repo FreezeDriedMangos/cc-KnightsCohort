@@ -77,8 +77,8 @@ namespace KnightsCohort.Herbalist.Cards
                     {
                         actions = new()
                         {
-                            new ARemoveSelectedCardFromWhereverItIs(),
-                            new ASendSelectedCardToDiscard(),
+                            //new ARemoveSelectedCardFromWhereverItIs(),
+                            //new ASendSelectedCardToDiscard(),
                             new AApplySelectedHerbToEnemy(),
                         }
                     }
@@ -324,6 +324,7 @@ namespace KnightsCohort.Herbalist.Cards
                 return new()
                 {
                     new AAddCard() { card = Util.GenerateRandomHerbCard(s) },
+                    new AAddCard() { card = Util.GenerateRandomHerbCard(s) },
                     new AAddCard() { card = Util.GenerateRandomHerbCard(s) }
                 };
             }
@@ -335,10 +336,13 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = upgrade != Upgrade.B, 
+            return new() { 
+                cost = 1, 
+                exhaust = upgrade == Upgrade.B, 
+                recycle = upgrade == Upgrade.A,
                 description = upgrade == Upgrade.B 
-                ? "Permanently gain 2 random herb cards."
-                : "Permanently gain a random herb card." 
+                    ? "Permanently gain 3 random herb cards."
+                    : "Permanently gain a random herb card." 
             };
         }
     }
@@ -827,6 +831,30 @@ namespace KnightsCohort.Herbalist.Cards
                 description = flipped
                     ? "Apply the topmost <c=heal>herb</c> in your <c=keyword>discard pile</c> to the enemy."
                     : "Play the topmost <c=heal>herb</c> in your <c=keyword>discard pile</c>." + (upgrade == Upgrade.B && state == DB.fakeState ? " (Flop: apply to enemy)" : "")
+            };
+        }
+    }
+
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Catalogue : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            return new()
+            {
+                new ASelectCataloguedHerb()
+                {
+                    browseAction = new ASendSelectedCardToHand() { isGainingCard = true }
+                }
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new()
+            {
+                cost = 1,
+                description = "Add a previously discovered herb card to your hand."
             };
         }
     }

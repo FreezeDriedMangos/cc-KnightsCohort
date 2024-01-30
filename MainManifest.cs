@@ -374,6 +374,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Change Ingredients", typeof(ChangeIngredients), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Cultivate", typeof(Cultivate), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Placebo", typeof(Placebo), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Catalogue", typeof(Catalogue), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -512,7 +513,7 @@ namespace KnightsCohort
                 Name + ".Herbalist",
                 decks["herbalist"],
                 sprites["char_frame_herbalist"],
-                new Type[] { typeof(Herbalist.Cards.MortarAndPestle), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.LeafPack) },
+                new Type[] { typeof(Herbalist.Cards.Forage), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.Catalogue) },
                 new Type[] { typeof(Herbalist.Artifacts.HerbBag) },
                 animations["herbalist.neutral"],
                 animations["herbalist.mini"]

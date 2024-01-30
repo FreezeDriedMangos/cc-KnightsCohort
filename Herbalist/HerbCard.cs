@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KnightsCohort.actions;
 using KnightsCohort.Herbalist.Artifacts;
 using Microsoft.Extensions.Logging;
 using System;
@@ -42,6 +43,8 @@ namespace KnightsCohort.Herbalist
     [HarmonyPatch]
     public class HerbCard : Card
     {
+        public static readonly string CATALOGUED_HERBS_KEY = "cataloguedHerbs";
+
         protected virtual List<HerbActions> GenerateSerializedActions(State s) { return new(); }
         protected virtual string GetTypeName() { return "INVALID"; }
         protected virtual List<HerbActions> possibleOptions => new();
@@ -52,6 +55,7 @@ namespace KnightsCohort.Herbalist
         public List<HerbActions> SerializedActions = new();
         public string name;
         public bool revealed;
+        public int revealTimer = 3;
         public HerbCard() { }
 
         public static HerbCard Generate(State s, HerbCard c)
@@ -80,6 +84,26 @@ namespace KnightsCohort.Herbalist
             n = char.ToUpper(n[0]) + n.Substring(1);
 
             return n;
+        }
+
+        public static Dictionary<int, HerbCard> GetCatalogue(State s)
+        {
+            Dictionary<int, HerbCard> catalogue = null;
+            try
+            {
+                catalogue = MainManifest.KokoroApi.GetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY);
+            }
+            catch
+            {
+                MainManifest.KokoroApi.RegisterTypeForExtensionData(typeof(State));
+            }
+
+            if (catalogue == null)
+            {
+                MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY, new());
+                return MainManifest.KokoroApi.GetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY);
+            }
+            return catalogue;
         }
 
 
@@ -183,7 +207,22 @@ namespace KnightsCohort.Herbalist
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return ParseSerializedActions(SerializedActions);
+            List<CardAction> herbActions = ParseSerializedActions(SerializedActions);
+            List<CardAction> actions = new();
+            
+            actions.Add(new ACompletelyRemoveCard() { uuid = this.uuid, skipHandCheck = true });
+            actions.AddRange(herbActions);
+            actions.Add(new ADummyAction());
+            
+            if (isDuringTryPlay && !revealed)
+            {
+                revealed = true;
+                //actions.Add(new AAddCard() { destination = CardDestination.Hand, card = this }); // don't single use remove this card just yet
+                actions.Insert(0, new ADisplayCard() { uuid = this.uuid });
+                actions.Add(new ADummyAction());
+            }
+
+            return actions;
         }
 
         public override CardData GetData(State state)
@@ -191,9 +230,15 @@ namespace KnightsCohort.Herbalist
             return new()
             {
                 cost = 0,
-                description = revealed ? null : " ",
+                description = revealed ? null : $"Reveal in {revealTimer} more draws, or on play/apply to enemy",
                 art = revealed ? null : Enum.Parse<Spr>("cards_OwnerMissing"),
+                singleUse = !isDuringTryPlay,
             };
+        }
+        public override void OnDraw(State s, Combat c)
+        {
+            revealTimer--;
+            if (revealTimer < 0) revealed = true;
         }
 
         public void OnExhausted(State s, Combat c)
@@ -245,14 +290,33 @@ namespace KnightsCohort.Herbalist
         [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
         public static void DrawAfterPlayIfHerb(Combat __instance, bool __result, State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
         {
-            // TODO: make this an artifact and have Halla start with it
             if (__result && card is HerbCard herb)// && herb.IsRaw)
             {
-                bool hasHerbBag = s.EnumerateAllArtifacts().Where(a => a is HerbBag).Any();
-                if (!hasHerbBag) return;
+                // record that this herb existed
+                var cataloguedHerbs = GetCatalogue(s);
+                cataloguedHerbs[herb.uuid] = herb;
+                MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, CATALOGUED_HERBS_KEY, cataloguedHerbs);
 
-                __instance.Queue(new ADrawCard() { count = 1 });
+                // herb bag
+                bool hasHerbBag = s.EnumerateAllArtifacts().Where(a => a is HerbBag).Any();
+                if (hasHerbBag) __instance.Queue(new ADrawCard() { count = 1 });
             }
+        }
+
+        private static bool isDuringTryPlay = false;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void TrackPlaying(State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            isDuringTryPlay = true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Combat), nameof(Combat.TryPlayCard))]
+        public static void StopTrackingPlaying(State s, Card card, bool playNoMatterWhatForFree = false, bool exhaustNoMatterWhat = false)
+        {
+            isDuringTryPlay = false;
         }
     }
 
