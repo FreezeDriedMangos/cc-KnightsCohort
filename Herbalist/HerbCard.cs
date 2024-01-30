@@ -292,10 +292,12 @@ namespace KnightsCohort.Herbalist
             if (__result && card is HerbCard herb)// && herb.IsRaw)
             {
                 // record that this herb existed
-                var cataloguedHerbs = GetCatalogue(s);
-                cataloguedHerbs[herb.uuid] = herb;
-                MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, CATALOGUED_HERBS_KEY, cataloguedHerbs);
-                MainManifest.Instance.Logger.LogInformation("Cataloguing herb card");
+                if (!herb.GetDataWithOverrides(s).temporary)
+                {
+                    var cataloguedHerbs = GetCatalogue(s);
+                    cataloguedHerbs[herb.uuid] = herb;
+                    MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, CATALOGUED_HERBS_KEY, cataloguedHerbs);
+                }
 
                 // herb bag
                 bool hasHerbBag = s.EnumerateAllArtifacts().Where(a => a is HerbBag).Any();

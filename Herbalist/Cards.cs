@@ -847,7 +847,7 @@ namespace KnightsCohort.Herbalist.Cards
             {
                 new ASelectCataloguedHerb()
                 {
-                    browseAction = new ASendSelectedCardToHand() { isGainingCard = true }
+                    browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Hand }
                 }
             };
         }
@@ -856,7 +856,12 @@ namespace KnightsCohort.Herbalist.Cards
             return new()
             {
                 cost = 1,
-                description = "Add a previously discovered herb card to your hand."
+                description = upgrade switch
+                {
+                    Upgrade.None => "Add a previously discovered herb card to your hand.",
+                    Upgrade.A => "Add two previously discovered herb cards to your draw pile.",
+                    Upgrade.B => "Add three previously discovered herb cards to your discard pile.",
+                }
             };
         }
     }

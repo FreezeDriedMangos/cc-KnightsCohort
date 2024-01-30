@@ -64,9 +64,12 @@ namespace KnightsCohort.actions
             if (selectedCard == null || selectedCard is not HerbCard herb) return;
 
             // record that this herb existed
-            var cataloguedHerbs = HerbCard.GetCatalogue(s);
-            cataloguedHerbs[herb.uuid] = herb;
-            MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY, cataloguedHerbs);
+            if (!herb.GetDataWithOverrides(s).temporary)
+            { 
+                var cataloguedHerbs = HerbCard.GetCatalogue(s);
+                cataloguedHerbs[herb.uuid] = herb;
+                MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY, cataloguedHerbs);
+            }
 
             // queue actual actions
             var actions = herb.GetActionsOverridden(s, c);
@@ -644,6 +647,31 @@ namespace KnightsCohort.actions
                 c.hand.Remove(card);
                 s.RemoveCardFromWhereverItIs(uuid);
                 timer = 0.3;
+            }
+        }
+    }
+
+    public class AAddTempCopyOfSelectedCard : CardAction
+    {
+        public bool isGainingCard = false;
+        public CardBrowse.Source destination;
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null) return;
+            Card newCard = Mutil.DeepCopy(selectedCard);
+            newCard.temporaryOverride = true;
+            newCard.uuid = Mutil.NextRandInt();
+            switch (destination)
+            {
+                case CardBrowse.Source.DrawPile: s.deck.Add(newCard); break;
+                case CardBrowse.Source.DiscardPile: c.SendCardToDiscard(s, newCard); break;
+                case CardBrowse.Source.Hand: c.SendCardToHand(s, newCard); break;
+            }
+
+            foreach (Artifact item in g.state.EnumerateAllArtifacts())
+            {
+                item.OnPlayerRecieveCardMidCombat(g.state, c, newCard);
             }
         }
     }
