@@ -658,25 +658,15 @@ namespace KnightsCohort.actions
     public class AAddTempCopyOfSelectedCard : CardAction
     {
         public bool isGainingCard = false;
-        public CardBrowse.Source destination;
+        public CardDestination destination;
 
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null) return;
-            Card newCard = Mutil.DeepCopy(selectedCard);
+            Card newCard = selectedCard.CopyWithNewId();
             newCard.temporaryOverride = true;
-            newCard.uuid = Mutil.NextRandInt();
-            switch (destination)
-            {
-                case CardBrowse.Source.DrawPile: s.deck.Add(newCard); break;
-                case CardBrowse.Source.DiscardPile: c.SendCardToDiscard(s, newCard); break;
-                case CardBrowse.Source.Hand: c.SendCardToHand(s, newCard); break;
-            }
 
-            foreach (Artifact item in g.state.EnumerateAllArtifacts())
-            {
-                item.OnPlayerRecieveCardMidCombat(g.state, c, newCard);
-            }
+            c.QueueImmediate(new AAddCard() { card = newCard, destination = destination });
         }
     }
 }
