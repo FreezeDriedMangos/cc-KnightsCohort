@@ -2,12 +2,17 @@
 using KnightsCohort.actions;
 using KnightsCohort.Herbalist.Artifacts;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nanoray.Shrike.Harmony;
+using Nanoray.Shrike;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static KnightsCohort.Herbalist.Cards.HerbPack;
+using System.Reflection.Emit;
 
 namespace KnightsCohort.Herbalist
 {
@@ -320,6 +325,58 @@ namespace KnightsCohort.Herbalist
         {
             isDuringTryPlay = false;
         }
+
+
+
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(Card), nameof(Card.Render))]
+        private static IEnumerable<CodeInstruction> Card_Render_Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase originalMethod)
+        {
+            try
+            {
+                return new SequenceBlockMatcher<CodeInstruction>(instructions)
+                    .Find(
+                        ILMatches.Ldloc<CardData>(originalMethod).ExtractLabels(out var labels).Anchor(out var findAnchor),
+                        ILMatches.Ldfld("buoyant"),
+                        ILMatches.Brfalse
+                    )
+                    .Find(
+                        ILMatches.Ldloc<Vec>(originalMethod).CreateLdlocInstruction(out var ldlocVec),
+                        ILMatches.Ldfld("y"),
+                        ILMatches.LdcI4(8),
+                        ILMatches.Ldloc<int>(originalMethod).CreateLdlocaInstruction(out var ldlocaCardTraitIndex),
+                        ILMatches.Instruction(OpCodes.Dup),
+                        ILMatches.LdcI4(1),
+                        ILMatches.Instruction(OpCodes.Add),
+                        ILMatches.Stloc<int>(originalMethod)
+                    )
+                    .Anchors().PointerMatcher(findAnchor)
+                    .Insert(
+                        SequenceMatcherPastBoundsDirection.Before, SequenceMatcherInsertionResultingBounds.IncludingInsertion,
+                        new CodeInstruction(OpCodes.Ldarg_0).WithLabels(labels),
+                        ldlocaCardTraitIndex,
+                        ldlocVec,
+                        new CodeInstruction(OpCodes.Call, AccessTools.DeclaredMethod(MethodBase.GetCurrentMethod()!.DeclaringType!, nameof(Card_Render_Transpiler_RenderCardTraitIfNeeded)))
+                )
+                .AllElements();
+            }
+            catch (Exception ex)
+            {
+                MainManifest.Instance.Logger.LogError("Could not patch method {Method} - {Mod} probably won't work.\nReason: {Exception}", originalMethod, "Knight's Cohort", ex);
+                return instructions;
+            }
+        }
+
+        private static void Card_Render_Transpiler_RenderCardTraitIfNeeded(Card card, ref int cardTraitIndex, Vec vec)
+        {
+            if (card is not HerbCard herb) return;
+            if (herb.isCultivated) Draw.Sprite((Spr)MainManifest.sprites["icons/herb_in_hand"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
+            if (herb.isPoultice) Draw.Sprite((Spr)MainManifest.sprites["icons/mortar_and_pestle"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
+            if (herb.isTea) Draw.Sprite((Spr)MainManifest.sprites["icons/temp_sherb"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
+        }
+
+
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[0], dontOffer = true, unreleased = true)]
