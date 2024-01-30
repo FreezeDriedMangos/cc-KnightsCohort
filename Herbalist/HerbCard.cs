@@ -49,6 +49,9 @@ namespace KnightsCohort.Herbalist
         protected virtual string GetTypeName() { return "INVALID"; }
         protected virtual List<HerbActions> possibleOptions => new();
         public virtual bool IsRaw => false;
+        public bool isPoultice = false;
+        public bool isTea = false;
+        public bool isCultivated = false;
 
         public List<HerbActions> PotentialActions = new();
 

@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace KnightsCohort.actions
 {
-    public class HerbCardBrowse : CardBrowse { public List<Card> omit = new(); public bool rawOnly; }
+    public class HerbCardBrowse : CardBrowse 
+    { 
+        public List<Card> omit = new(); 
+        public bool rawOnly;
+        public bool excludeTea;
+        public bool excludeCultivated;
+        public bool excludePoultices;
+    }
 
     [HarmonyPatch]
     public class AHerbCardSelect : ACardSelect
     {
         public List<Card> omit = new();
         public bool rawOnly = false;
+        public bool excludeTea = false;
+        public bool excludeCultivated = false;
+        public bool excludePoultices = false;
 
         public override List<Tooltip> GetTooltips(State s)
         {
@@ -49,6 +59,9 @@ namespace KnightsCohort.actions
 
                 omit = omit,
                 rawOnly = rawOnly,
+                excludeTea = excludeTea,
+                excludeCultivated = excludeCultivated,
+                excludePoultices = excludePoultices,
             };
             c.Queue(new ADelay
             {
@@ -78,7 +91,19 @@ namespace KnightsCohort.actions
             List<Card> herbs = new();
             foreach (var card in __result)
             {
-                if (card is HerbCard herb && !hcb.omit.Contains(card) && (!hcb.rawOnly || herb.IsRaw)) herbs.Add(card);
+                if (card is not HerbCard herb) continue;
+                
+                if 
+                (
+                    !hcb.omit.Contains(card) &&     // omission check
+                    (!hcb.rawOnly || herb.IsRaw) && // raw check
+                    (!hcb.excludeCultivated || !herb.isCultivated) && // cultivated check
+                    (!hcb.excludePoultices || !herb.isPoultice) &&    // poultice check
+                    (!hcb.excludeTea || !herb.isTea)                  // tea check
+                )
+                {
+                    herbs.Add(card);
+                }
             }
 
             __result.Clear();

@@ -652,7 +652,8 @@ namespace KnightsCohort.Herbalist.Cards
                     new AHerbCardSelect()
                     {
                         browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                        browseAction = new ABrewChoiceTea()
+                        browseAction = new ABrewChoiceTea(),
+                        excludeTea = true
                     }
                 };
             }
@@ -789,7 +790,8 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                    browseAction = new ACultivate()
+                    browseAction = new ACultivate(),
+                    excludeCultivated = true
                 }
             };
         }

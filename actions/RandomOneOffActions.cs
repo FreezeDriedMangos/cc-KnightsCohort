@@ -158,6 +158,9 @@ namespace KnightsCohort.actions
             foreach (var kvp in actionCounts) for (int i = 0; i < kvp.Value; i++) tea.SerializedActions.Add(kvp.Key);
             tea.name = herb.name.Split(' ')[0] + " Tea";
             tea.revealed = true;
+            tea.isPoultice = herb.isPoultice;
+            tea.isCultivated = herb.isCultivated;
+            tea.isTea = true;
 
             // remove the herb and add the tea
             s.RemoveCardFromWhereverItIs(selectedCard.uuid);
@@ -221,6 +224,10 @@ namespace KnightsCohort.actions
             foreach (var kvp in actionCounts) for (int i = 0; i < kvp.Value; i++) newHerb.SerializedActions.Add(kvp.Key);
             newHerb.name = herb.name.Split(' ')[0] + " Cultivar";
             newHerb.revealed = true;
+
+            newHerb.isPoultice = herb.isPoultice;
+            newHerb.isTea = herb.isTea;
+            newHerb.isCultivated = true;
 
             // remove the herb and add the cultivar
             s.RemoveCardFromWhereverItIs(selectedCard.uuid);

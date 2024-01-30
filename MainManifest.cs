@@ -837,7 +837,7 @@ namespace KnightsCohort
             status = "herberdrive";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/herberdrive"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Herberdrive", $"Shots do <c=redd>1</c> more damage. On the start of your turn, lose one stack of herberdrive.");
+            statuses[status].AddLocalisation("Herberdrive", $"Shots do <c=keyword>1</c> more damage. On the start of your turn, lose one stack of herberdrive.");
 
             status = "tempSherb";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/temp_sherb"], false);
