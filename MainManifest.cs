@@ -52,6 +52,8 @@ namespace KnightsCohort
 
             KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
             VowsRenderer = new();
+
+            MainManifest.KokoroApi.RegisterTypeForExtensionData(typeof(State));
         }
 
         public void LoadManifest(ISpriteRegistry artRegistry)
