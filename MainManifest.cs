@@ -234,6 +234,9 @@ namespace KnightsCohort
                 "icons/move_card",
                 "icons/burn_herb",
                 "icons/herb_in_hand",
+                "icons/poultice",
+                "icons/tea",
+                "icons/cultivar",
 
 
                 "artifacts/field_journal",
@@ -516,7 +519,7 @@ namespace KnightsCohort
                 decks["herbalist"],
                 sprites["char_frame_herbalist"],
                 new Type[] { typeof(Herbalist.Cards.Forage), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.Catalogue) },
-                new Type[] { typeof(Herbalist.Artifacts.HerbBag) },
+                new Type[] { },
                 animations["herbalist.neutral"],
                 animations["herbalist.mini"]
             );
@@ -667,6 +670,24 @@ namespace KnightsCohort
             //
             // herbalist
             //
+
+            RegisterGlossaryEntry(registry, "poultice", sprites["icons/poultice"],
+                "POULTICE",
+                "This herb card is a poultice. It cannot be combined into another poultice.",
+                GlossayType.cardtrait
+            );
+
+            RegisterGlossaryEntry(registry, "tea", sprites["icons/tea"],
+                "TEA",
+                "This herb card has been brewed into tea. It cannot be brewed into tea again.",
+                GlossayType.cardtrait
+            );
+
+            RegisterGlossaryEntry(registry, "cultivar", sprites["icons/cultivar"],
+                "CULTIVAR",
+                "This herb card has been cultivated. It cannot be cultivated again.",
+                GlossayType.cardtrait
+            );
 
             RegisterGlossaryEntry(registry, "herbsearch", sprites["icons/herb_bundle"],
                 "HERB SEARCH",

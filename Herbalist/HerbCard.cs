@@ -214,8 +214,14 @@ namespace KnightsCohort.Herbalist
             bool singleUseOverriden = this.singleUseOverride.HasValue && this.singleUseOverride.Value == false;
             if (!singleUseOverriden) actions.Insert(0, new ACompletelyRemoveCard() { uuid = this.uuid, skipHandCheck = true });
             else                     actions.Insert(0, new ASendSelectedCardToDiscard() { selectedCard = this });
-            
+
+            List<Tooltip> tooltips = new();
+            if (this.isPoultice) tooltips.Add(new TTGlossary(MainManifest.glossary["poultice"].Head));
+            if (this.isTea) tooltips.Add(new TTGlossary(MainManifest.glossary["tea"].Head));
+            if (this.isCultivated) tooltips.Add(new TTGlossary(MainManifest.glossary["cultivar"].Head));
+            actions.Add(new ATooltipDummy() { tooltips = tooltips });
             actions.AddRange(herbActions);
+            actions.Add(new ADummyAction());
             actions.Add(new ADummyAction());
             
             if (isDuringTryPlay && !revealed)
@@ -242,7 +248,7 @@ namespace KnightsCohort.Herbalist
         public override void OnDraw(State s, Combat c)
         {
             revealTimer--;
-            if (revealTimer < 0) revealed = true;
+            if (revealTimer <= 0) revealed = true;
         }
 
         public void OnExhausted(State s, Combat c)
@@ -371,9 +377,9 @@ namespace KnightsCohort.Herbalist
         private static void Card_Render_Transpiler_RenderCardTraitIfNeeded(Card card, ref int cardTraitIndex, Vec vec)
         {
             if (card is not HerbCard herb) return;
-            if (herb.isCultivated) Draw.Sprite((Spr)MainManifest.sprites["icons/herb_in_hand"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
-            if (herb.isPoultice) Draw.Sprite((Spr)MainManifest.sprites["icons/mortar_and_pestle"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
-            if (herb.isTea) Draw.Sprite((Spr)MainManifest.sprites["icons/temp_sherb"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
+            if (herb.isCultivated) Draw.Sprite((Spr)MainManifest.sprites["icons/cultivar"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
+            if (herb.isPoultice) Draw.Sprite((Spr)MainManifest.sprites["icons/poultice"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
+            if (herb.isTea) Draw.Sprite((Spr)MainManifest.sprites["icons/tea"].Id, vec.x, vec.y - 8 * cardTraitIndex++);
         }
 
 
