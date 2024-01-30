@@ -92,7 +92,7 @@ namespace KnightsCohort.Herbalist
         public static Dictionary<int, HerbCard> GetCatalogue(State s)
         {
             Dictionary<int, HerbCard> catalogue = null;
-            catalogue = MainManifest.KokoroApi.GetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY);
+            MainManifest.KokoroApi.TryGetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY, out catalogue);
 
             if (catalogue == null)
             {
