@@ -843,13 +843,47 @@ namespace KnightsCohort.Herbalist.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            return new()
+            switch (upgrade)
             {
-                new ASelectCataloguedHerb()
-                {
-                    browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Hand }
-                }
-            };
+                case Upgrade.None:
+                    return new()
+                    {
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Hand }
+                        }
+                    };
+                case Upgrade.A:
+                    return new()
+                    {
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Deck }
+                        },
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.Deck }
+                        },
+                    };
+                case Upgrade.B:
+                    return new()
+                    {
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.DiscardPile }
+                        },
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.DiscardPile }
+                        }, 
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardBrowse.Source.DiscardPile }
+                        },
+                    };
+            }
+
+            throw new Exception("How did this happen? Upgrade.C isn't a thing!!");
         }
         public override CardData GetData(State state)
         {
@@ -858,9 +892,9 @@ namespace KnightsCohort.Herbalist.Cards
                 cost = 1,
                 description = upgrade switch
                 {
-                    Upgrade.None => "Add a previously discovered herb card to your hand.",
-                    Upgrade.A => "Add two previously discovered herb cards to your draw pile.",
-                    Upgrade.B => "Add three previously discovered herb cards to your discard pile.",
+                    Upgrade.None => "Add a previously discovered herb card to your hand (temp copy).",
+                    Upgrade.A => "Add two previously discovered herb cards to your draw pile. (temp copies)",
+                    Upgrade.B => "Add three previously discovered herb cards to your discard pile. (temp copies)",
                 }
             };
         }
