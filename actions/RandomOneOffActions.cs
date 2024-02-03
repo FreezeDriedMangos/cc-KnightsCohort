@@ -1,11 +1,14 @@
 ﻿using FMOD;
 using FSPRO;
+using HarmonyLib;
 using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
+using Microsoft.Extensions.Logging;
 using Shockah.Dracula;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,10 +34,19 @@ namespace KnightsCohort.actions
     }
     public class ASendSelectedCardToHand : CardAction
     {
+        public bool isGainingCard = false;
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null) return;
             c.SendCardToHand(s, selectedCard);
+
+            if (isGainingCard)
+            {
+                foreach (Artifact item in g.state.EnumerateAllArtifacts())
+                {
+                    item.OnPlayerRecieveCardMidCombat(g.state, c, selectedCard);
+                }
+            }
         }
     }
     public class ASendSelectedCardToDiscard : CardAction
@@ -51,6 +63,16 @@ namespace KnightsCohort.actions
         public override void Begin(G g, State s, Combat c)
         {
             if (selectedCard == null || selectedCard is not HerbCard herb) return;
+
+            // record that this herb existed
+            if (!herb.GetDataWithOverrides(s).temporary)
+            { 
+                var cataloguedHerbs = HerbCard.GetCatalogue(s);
+                cataloguedHerbs[herb.uuid] = herb;
+                MainManifest.KokoroApi.SetExtensionData<Dictionary<int, HerbCard>>(s, HerbCard.CATALOGUED_HERBS_KEY, cataloguedHerbs);
+            }
+
+            // queue actual actions
             var actions = herb.GetActionsOverridden(s, c);
             foreach (var action in actions)
             {
@@ -58,9 +80,21 @@ namespace KnightsCohort.actions
                 if (action is AMove amove) amove.targetPlayer = !amove.targetPlayer;
                 if (action is AHeal aheal) aheal.targetPlayer = !aheal.targetPlayer;
                 if (action is AHurt ahurt) ahurt.targetPlayer = !ahurt.targetPlayer;
-
-                c.Queue(Mutil.DeepCopy(action));
             }
+
+            bool singleUseOverriden = herb.singleUseOverride.HasValue && herb.singleUseOverride.Value == false;
+            if (!singleUseOverriden) actions.Insert(0, new ACompletelyRemoveCard() { uuid = selectedCard.uuid, skipHandCheck = true });
+            else                     actions.Insert(0, new ASendSelectedCardToDiscard() { selectedCard = selectedCard });
+
+            if (!herb.revealed)
+            {
+                herb.revealed = true;
+                actions.Insert(0, new ADisplayCard() { uuid = selectedCard.uuid });
+            }
+            c.QueueImmediate(actions);
+
+
+            //s.RemoveCardFromWhereverItIs(selectedCard.uuid);
         }
     }
 
@@ -128,6 +162,9 @@ namespace KnightsCohort.actions
             foreach (var kvp in actionCounts) for (int i = 0; i < kvp.Value; i++) tea.SerializedActions.Add(kvp.Key);
             tea.name = herb.name.Split(' ')[0] + " Tea";
             tea.revealed = true;
+            tea.isPoultice = herb.isPoultice;
+            tea.isCultivated = herb.isCultivated;
+            tea.isTea = true;
 
             // remove the herb and add the tea
             s.RemoveCardFromWhereverItIs(selectedCard.uuid);
@@ -191,6 +228,10 @@ namespace KnightsCohort.actions
             foreach (var kvp in actionCounts) for (int i = 0; i < kvp.Value; i++) newHerb.SerializedActions.Add(kvp.Key);
             newHerb.name = herb.name.Split(' ')[0] + " Cultivar";
             newHerb.revealed = true;
+
+            newHerb.isPoultice = herb.isPoultice;
+            newHerb.isTea = herb.isTea;
+            newHerb.isCultivated = true;
 
             // remove the herb and add the cultivar
             s.RemoveCardFromWhereverItIs(selectedCard.uuid);
@@ -512,6 +553,120 @@ namespace KnightsCohort.actions
         {
             if (selectedCard == null) return;
             c.QueueImmediate(MainManifest.KokoroApi.Actions.MakePlaySpecificCardFromAnywhere(selectedCard.uuid));
+        }
+    }
+
+    public class ASelectCataloguedHerb : CardAction
+    {
+        public CardAction browseAction;
+
+        public override Route? BeginWithRoute(G g, State s, Combat c)
+        {
+            CardBrowse cardBrowse = new CataloguedHerbCardBrowse
+            {
+                mode = CardBrowse.Mode.Browse,
+                browseAction = browseAction,
+            };
+            c.Queue(new ADelay
+            {
+                time = 0.0,
+                timer = 0.0
+            });
+            if (cardBrowse.GetCardList(g).Count == 0)
+            {
+                MainManifest.Instance.Logger.LogInformation("No herb cards in catalogue");
+                timer = 0.0;
+                return null;
+            }
+            return cardBrowse;
+        }
+
+        public override bool CanSkipTimerIfLastEvent()
+        {
+            return false;
+        }
+
+    }
+
+    [HarmonyPatch]
+    public class CataloguedHerbCardBrowse : CardBrowse
+    {
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CardBrowse), nameof(CardBrowse.GetCardList))]
+        public static bool GetCardList(CardBrowse __instance, ref List<Card> __result, G g)
+        {
+            if (__instance is not CataloguedHerbCardBrowse) return true;
+
+            __result = HerbCard.GetCatalogue(g.state).Values.Select(herb => (Card)herb).ToList();
+            typeof(CardBrowse)
+                .GetField(nameof(CardBrowse._listCache), AccessTools.all)
+                .SetValue(__instance, __result);
+            return false;
+        }
+    }
+
+    public class ADisplayCard : CardAction
+    {
+        public int uuid;
+        public double waitBeforeMoving = 1.2;
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            Card card = s.FindCard(uuid);
+
+            timer = waitBeforeMoving + 0.2;
+            if (s.route is Combat)
+            {
+                card.pos = new Vec(G.screenSize.x * 0.5 - 30.0, 30.0);
+                card.waitBeforeMoving = waitBeforeMoving + 1;
+                card.drawAnim = 1.0;
+            }
+        }
+    }
+
+    public class AExhaustFX : CardAction
+    {
+        public Card card;
+        public override void Begin(G g, State s, Combat c)
+        {
+            card.ExhaustFX();
+        }
+    }
+
+    public class ACompletelyRemoveCard : CardAction
+    {
+        public int uuid;
+        public bool skipHandCheck;
+        
+        public const double delayTimer = 0.3;
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            timer = 0.0;
+            Card card = s.FindCard(uuid);
+            if (card != null && (skipHandCheck || c.hand.Contains(card)))
+            {
+                card.ExhaustFX();
+                Audio.Play(Event.CardHandling);
+                c.hand.Remove(card);
+                s.RemoveCardFromWhereverItIs(uuid);
+                timer = 0.3;
+            }
+        }
+    }
+
+    public class AAddTempCopyOfSelectedCard : CardAction
+    {
+        public bool isGainingCard = false;
+        public CardDestination destination;
+
+        public override void Begin(G g, State s, Combat c)
+        {
+            if (selectedCard == null) return;
+            Card newCard = selectedCard.CopyWithNewId();
+            newCard.temporaryOverride = true;
+
+            c.QueueImmediate(new AAddCard() { card = newCard, destination = destination });
         }
     }
 }

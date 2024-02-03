@@ -35,7 +35,8 @@ namespace KnightsCohort.actions
                         browseAction = new ACombineHerbs() { selected = selected, amount = amount-1, selecting = true },
                         browseSource = Enum.Parse<CardBrowse.Source>("Deck"),
                         omit = selected,
-                        rawOnly = true
+                        //rawOnly = true
+                        excludePoultices = true // less restrictive, I think it's better like this
                     }
                 );
             }
@@ -46,10 +47,13 @@ namespace KnightsCohort.actions
                 poultice.SerializedActions = new();
                 poultice.name = "Poultice";
                 poultice.revealed = true;
+                poultice.isPoultice = true;
                 foreach(Card card in selected)
                 {
                     if (card is not HerbCard herb) { throw new Exception("Non herb card put into ACombineHerbs!"); }
                     poultice.SerializedActions.AddRange(herb.SerializedActions);
+                    poultice.isTea = poultice.isTea || herb.isTea;
+                    poultice.isCultivated = poultice.isCultivated || herb.isCultivated;
                 }
 
                 c.QueueImmediate(new AAddCard() { card = poultice, destination = Enum.Parse<CardDestination>("Hand")});

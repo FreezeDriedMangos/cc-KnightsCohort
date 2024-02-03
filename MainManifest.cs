@@ -52,6 +52,8 @@ namespace KnightsCohort
 
             KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
             VowsRenderer = new();
+
+            MainManifest.KokoroApi.RegisterTypeForExtensionData(typeof(State));
         }
 
         public void LoadManifest(ISpriteRegistry artRegistry)
@@ -232,6 +234,9 @@ namespace KnightsCohort
                 "icons/move_card",
                 "icons/burn_herb",
                 "icons/herb_in_hand",
+                "icons/poultice",
+                "icons/tea",
+                "icons/cultivar",
 
 
                 "artifacts/field_journal",
@@ -374,6 +379,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Change Ingredients", typeof(ChangeIngredients), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Cultivate", typeof(Cultivate), sprites["card_default_herbalist"], decks["herbalist"]),
                 new ExternalCard(namePrefix + "Placebo", typeof(Placebo), sprites["card_default_herbalist"], decks["herbalist"]),
+                new ExternalCard(namePrefix + "Catalogue", typeof(Catalogue), sprites["card_default_herbalist"], decks["herbalist"]),
             };
             
             foreach(var card in cardDefinitions)
@@ -512,8 +518,8 @@ namespace KnightsCohort
                 Name + ".Herbalist",
                 decks["herbalist"],
                 sprites["char_frame_herbalist"],
-                new Type[] { typeof(Herbalist.Cards.MortarAndPestle), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.LeafPack) },
-                new Type[] { typeof(Herbalist.Artifacts.HerbBag) },
+                new Type[] { typeof(Herbalist.Cards.Forage), typeof(Herbalist.Cards.Smolder), typeof(Herbalist.Cards.Catalogue) },
+                new Type[] { },
                 animations["herbalist.neutral"],
                 animations["herbalist.mini"]
             );
@@ -608,11 +614,6 @@ namespace KnightsCohort
                 "Move your ship's center {0} away from the enemy ship's center."
             );
 
-            RegisterGlossaryEntry(registry, "retreat", sprites["icons/retreat"],
-                "RETREAT",
-                "Move your ship's center {0} away from the enemy ship's center."
-            );
-
             // banners
             RegisterGlossaryEntry(registry, "tattered", sprites["icons/banner_tattered"],
                 "<c=midrow>TATTERED BANNER</c>",
@@ -669,6 +670,24 @@ namespace KnightsCohort
             //
             // herbalist
             //
+
+            RegisterGlossaryEntry(registry, "poultice", sprites["icons/poultice"],
+                "POULTICE",
+                "This herb card is a poultice. It cannot be combined into another poultice.",
+                GlossayType.cardtrait
+            );
+
+            RegisterGlossaryEntry(registry, "tea", sprites["icons/tea"],
+                "TEA",
+                "This herb card has been brewed into tea. It cannot be brewed into tea again.",
+                GlossayType.cardtrait
+            );
+
+            RegisterGlossaryEntry(registry, "cultivar", sprites["icons/cultivar"],
+                "CULTIVAR",
+                "This herb card has been cultivated. It cannot be cultivated again.",
+                GlossayType.cardtrait
+            );
 
             RegisterGlossaryEntry(registry, "herbsearch", sprites["icons/herb_bundle"],
                 "HERB SEARCH",
@@ -841,7 +860,7 @@ namespace KnightsCohort
             status = "herberdrive";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/herberdrive"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Herberdrive", $"Shots do <c=redd>1</c> more damage. On the start of your turn, lose one stack of herberdrive.");
+            statuses[status].AddLocalisation("Herberdrive", $"Shots do <c=keyword>1</c> more damage. On the start of your turn, lose one stack of herberdrive.");
 
             status = "tempSherb";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/temp_sherb"], false);

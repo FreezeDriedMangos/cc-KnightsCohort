@@ -77,8 +77,8 @@ namespace KnightsCohort.Herbalist.Cards
                     {
                         actions = new()
                         {
-                            new ARemoveSelectedCardFromWhereverItIs(),
-                            new ASendSelectedCardToDiscard(),
+                            //new ARemoveSelectedCardFromWhereverItIs(),
+                            //new ASendSelectedCardToDiscard(),
                             new AApplySelectedHerbToEnemy(),
                         }
                     }
@@ -324,6 +324,7 @@ namespace KnightsCohort.Herbalist.Cards
                 return new()
                 {
                     new AAddCard() { card = Util.GenerateRandomHerbCard(s) },
+                    new AAddCard() { card = Util.GenerateRandomHerbCard(s) },
                     new AAddCard() { card = Util.GenerateRandomHerbCard(s) }
                 };
             }
@@ -335,10 +336,13 @@ namespace KnightsCohort.Herbalist.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, exhaust = upgrade != Upgrade.B, 
+            return new() { 
+                cost = 1, 
+                exhaust = upgrade == Upgrade.B, 
+                recycle = upgrade == Upgrade.A,
                 description = upgrade == Upgrade.B 
-                ? "Permanently gain 2 random herb cards."
-                : "Permanently gain a random herb card." 
+                    ? "Permanently gain 3 random herb cards."
+                    : "Permanently gain a random herb card." 
             };
         }
     }
@@ -648,7 +652,8 @@ namespace KnightsCohort.Herbalist.Cards
                     new AHerbCardSelect()
                     {
                         browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                        browseAction = new ABrewChoiceTea()
+                        browseAction = new ABrewChoiceTea(),
+                        excludeTea = true
                     }
                 };
             }
@@ -661,7 +666,8 @@ namespace KnightsCohort.Herbalist.Cards
                     browseAction = new ABrewTea()
                     {
                         increaseAmount = upgrade == Upgrade.B ? 2 : 1
-                    }
+                    },
+                    excludeTea = true
                 }
             };
         }
@@ -785,7 +791,8 @@ namespace KnightsCohort.Herbalist.Cards
                 new AHerbCardSelect()
                 {
                     browseSource = Enum.Parse<CardBrowse.Source>("Hand"),
-                    browseAction = new ACultivate()
+                    browseAction = new ACultivate(),
+                    excludeCultivated = true
                 }
             };
         }
@@ -827,6 +834,69 @@ namespace KnightsCohort.Herbalist.Cards
                 description = flipped
                     ? "Apply the topmost <c=heal>herb</c> in your <c=keyword>discard pile</c> to the enemy."
                     : "Play the topmost <c=heal>herb</c> in your <c=keyword>discard pile</c>." + (upgrade == Upgrade.B && state == DB.fakeState ? " (Flop: apply to enemy)" : "")
+            };
+        }
+    }
+
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Catalogue : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            switch (upgrade)
+            {
+                case Upgrade.None:
+                    return new()
+                    {
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Hand }
+                        }
+                    };
+                case Upgrade.A:
+                    return new()
+                    {
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Deck }
+                        },
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Deck }
+                        },
+                    };
+                case Upgrade.B:
+                    return new()
+                    {
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Discard }
+                        },
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Discard }
+                        }, 
+                        new ASelectCataloguedHerb()
+                        {
+                            browseAction = new AAddTempCopyOfSelectedCard() { destination = CardDestination.Discard }
+                        },
+                    };
+            }
+
+            throw new Exception("How did this happen? Upgrade.C isn't a thing!!");
+        }
+        public override CardData GetData(State state)
+        {
+            return new()
+            {
+                cost = 1,
+                description = upgrade switch
+                {
+                    Upgrade.None => "Add a previously discovered herb card to your hand (temp copy).",
+                    Upgrade.A => "Add two previously discovered herb cards to your draw pile. (temp copies)",
+                    Upgrade.B => "Add three previously discovered herb cards to your discard pile. (temp copies)",
+                }
             };
         }
     }
