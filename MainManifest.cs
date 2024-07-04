@@ -504,7 +504,7 @@ namespace KnightsCohort
                 decks["treasurer"],
                 sprites["char_frame_treasurer"],
                 new Type[] { typeof(Treasurer.Cards.Donation), typeof(Treasurer.Cards.InitialInvestment) },
-                new Type[0],
+                new Type[] { typeof(Treasurer.Artifacts.DragonsHoard) },
                 animations["treasurer.neutral"],
                 animations["treasurer.mini"]
             );
@@ -902,6 +902,13 @@ namespace KnightsCohort
             artifact.AddLocalisation("FIELD JOURNAL", "<c=keyword>Herb cards</c> are revealed on pickup.");
             registry.RegisterArtifact(artifact);
 
+            //
+            // Treasurer
+            //
+
+            artifact = new ExternalArtifact(Name + ".Artifacts.DragonsHoard", typeof(Treasurer.Artifacts.DragonsHoard), sprites["artifacts/field_journal"], ownerDeck: decks["treasurer"]);
+            artifact.AddLocalisation("DRAGON'S HOARD", "For every 8 cards in your deck, gain <c=keyword>1 gold</c> at the start of each turn.");
+            registry.RegisterArtifact(artifact);
         }
 
         public void LoadManifest(IStoryRegistry storyRegistry)
