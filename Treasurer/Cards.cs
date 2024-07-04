@@ -78,6 +78,7 @@ namespace KnightsCohort.Treasurer.Cards
         {
             CardData cardData = base.GetData(state);
             cardData.cost = 1;
+            cardData.exhaust = true;
             return cardData;
         }
     }
@@ -264,7 +265,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED : Card
+    public class SpringCleaning : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -444,7 +445,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.A ? 1 : 0, exhaust = upgrade == Upgrade.A ? false : true };
+            return new() { cost = 3, exhaust = upgrade == Upgrade.A ? false : true };
         }
     }
 
@@ -473,7 +474,7 @@ namespace KnightsCohort.Treasurer.Cards
     {
         public override List<int> upgradeCosts => upgrade == Upgrade.B
             ? new() { 2, 2 }
-            : new() { 1, 1 };
+            : new() { 2, 2 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
@@ -500,7 +501,7 @@ namespace KnightsCohort.Treasurer.Cards
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
                         MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: multiplier*1),
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*2 }
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*1 }
                     )
                 },
                 new()
@@ -508,7 +509,7 @@ namespace KnightsCohort.Treasurer.Cards
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
                         MainManifest.KokoroApi.ActionCosts.Cost(enemyHeatResource, amount: multiplier*1),
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*3 }
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = multiplier*2 }
                     )
                 },
             };
@@ -601,7 +602,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.B ? 1 : 0 };
+            return new() { cost = upgrade == Upgrade.B ? 1 : 0, exhaust = true };
         }
     }
 
@@ -650,6 +651,80 @@ namespace KnightsCohort.Treasurer.Cards
                 Upgrade.A => $"Cost 3 gold, cancel 1 random enemy intent.",
                 Upgrade.B => $"Cost 5 gold, cancel all enemy intents.",
             }};
+        }
+    }
+
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class Firewall : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                   new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 3 },
+                   new AStatus() { status = Enum.Parse<Status>("maxShield"), targetPlayer = false, statusAmount = 2 },
+                   new AStatus() { status = Enum.Parse<Status>("shield"), targetPlayer = false, statusAmount = 2 },
+                };
+            }
+
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                   new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 2 },
+                   new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = true, statusAmount = 1 },
+                   new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = false, statusAmount = 2 },
+                };
+            } 
+
+            return new()
+            {
+               new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 2 },
+               new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = false, statusAmount = 2 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = upgrade == Upgrade.B ? 1 : 0 };
+        }
+    }
+
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class FlameCoating : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                   new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = true, statusAmount = 1 },
+                   new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 1 },
+                };
+            }
+
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                   new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 2 },
+                   new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 2 },
+                };
+            }
+
+            return new()
+            {
+               new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 2 },
+               new AStatus() { status = Enum.Parse<Status>("heat"), targetPlayer = false, statusAmount = 1 },
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1, infinite = upgrade == Upgrade.A };
         }
     }
 }

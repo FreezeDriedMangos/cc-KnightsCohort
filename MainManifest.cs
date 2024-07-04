@@ -327,13 +327,13 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Ask for Aid", typeof(AskForAid), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Ask for Aid", typeof(AskForAid), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Inspiration", typeof(Inspiration), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Weapons Vault", typeof(WeaponsVault), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Burning Glory", typeof(BurningGlory), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "UNNAMED", typeof(UNNAMED), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Spring Cleaning", typeof(SpringCleaning), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Fire Breath", typeof(FireBreath), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Golden Scales", typeof(GoldenScales), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Golden Scales", typeof(GoldenScales), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Trading on Reputation", typeof(TradingOnReputation), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Forged in Fire", typeof(ForgedInFire), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
@@ -346,6 +346,8 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "Recurring Donation", typeof(ReocurringDonation), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Hot Commodity", typeof(HotCommodity), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Bribe", typeof(Bribe), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Fire Wall", typeof(Firewall), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Flame Coating", typeof(FlameCoating), sprites["card_default_treasurer"], decks["treasurer"]),
 
 
 
@@ -837,7 +839,7 @@ namespace KnightsCohort
             status = "charity";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Charity", $"Lose up to {0} gold and gain equal honor at the start of every turn.");
+            statuses[status].AddLocalisation("Charity", "Lose up to {0} gold and gain equal honor at the start of every turn.");
 
 
 
