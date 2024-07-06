@@ -516,7 +516,7 @@ namespace KnightsCohort.Knight.Cards
         {
             return new()
             {
-                new AMove() { targetPlayer = false, dir = s.ship.x - c.otherShip.x },
+                new AMoveEnemy() { targetPlayer = false, ignoreHermes = true, dir = s.ship.x - c.otherShip.x },
             };
         }
         public override CardData GetData(State state)

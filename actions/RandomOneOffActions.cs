@@ -5,6 +5,7 @@ using KnightsCohort.Herbalist;
 using KnightsCohort.Herbalist.Cards;
 using Microsoft.Extensions.Logging;
 using Shockah.Dracula;
+using Shockah.Kokoro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,30 @@ using System.Threading.Tasks;
 
 namespace KnightsCohort.actions
 {
+    public class AMoveEnemy : AMove
+    {
+        public AMoveEnemy()
+        {
+            this.targetPlayer = false;
+        }
+
+        public override List<Tooltip> GetTooltips(State s)
+        {
+            var tooltip = new CustomTTGlossary
+            (
+                CustomTTGlossary.GlossaryType.cardtrait, 
+                () => $"Enemy Move {(dir > 0 ? "Right" : "Left")}", 
+                () => dir > 0
+                    ? "Instantly move the enemy <c=keyword>{0}</c> spaces to the <c=keyword>RIGHT</c>"
+                    : "Instantly move the enemy <c=keyword>{0}</c> spaces to the <c=keyword>LEFT</c>",
+                [ 
+                    () => ""+Math.Abs(dir)
+                ]
+            );
+            return new() { tooltip };
+        }
+    }
+
     public class AQueueImmediateOtherActions : CardAction
     {
         public List<CardAction> actions = new();
