@@ -53,11 +53,12 @@ namespace KnightsCohort.Treasurer.Cards
                         new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 }
                     },
                     new() {
+                        new ADummyAction(),
                         new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 },
-                        new AStatus() { status = Enum.Parse<Status>("tempShield"), targetPlayer = true, statusAmount = 1  }
+                        new ADummyAction(),
                     },
                     new() {
-                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 1 }
+                        new AStatus() { status = (Status)MainManifest.statuses["gold"].Id, targetPlayer = true, statusAmount = 2 }
                     },
                 };
             }
@@ -77,7 +78,7 @@ namespace KnightsCohort.Treasurer.Cards
         public override CardData GetData(State state)
         {
             CardData cardData = base.GetData(state);
-            cardData.cost = 1;
+            cardData.cost = 2;
             cardData.exhaust = true;
             return cardData;
         }
@@ -557,10 +558,18 @@ namespace KnightsCohort.Treasurer.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = upgrade == Upgrade.A ? 0 : 1, exhaust = true, 
-                description = upgrade == Upgrade.B
-                ? $"Cost 10 gold. Select and play a card from anywhere for free."
-                : $"Cost {(upgrade == Upgrade.A ? 3 : 5)} gold. Play the highest energy cost card in hand." 
+            var goldCost = upgrade switch { Upgrade.None => 5, Upgrade.A => 3, Upgrade.B => 10, _ => 999999 };
+            var descriptionText = upgrade == Upgrade.B
+                    ? $"Cost {goldCost} gold. Play highest energy cost card owned, wherever it is."
+                    : $"Cost {goldCost} gold. Play the highest energy cost card in hand.";
+
+
+            return new() { 
+                cost = upgrade == Upgrade.A ? 0 : 1, 
+                exhaust = true, 
+                description = state.ship.Get((Status)MainManifest.statuses["gold"].Id) >= goldCost
+                    ? descriptionText
+                    : $"<c=textFaint>{descriptionText}</c>" 
             };
         }
     }
