@@ -166,10 +166,10 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.None ? 1 : 2, s, c) },
-                new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = upgrade == Upgrade.A ? 2 : 1, targetPlayer = true },
+                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
+                new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
                 new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1), targetPlayer = false },
-                new ACharge() { dir = ACharge.GetDir(1, s, c) },
+                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
             };
         }
         public override CardData GetData(State state)

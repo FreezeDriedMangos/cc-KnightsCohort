@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KnightsCohort.Bannerlady.Cards;
 using System;
 using System.Collections.Generic;
 using System.Linq;
