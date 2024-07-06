@@ -43,7 +43,7 @@ namespace KnightsCohort.Herbalist
         //    if (s.ship.Get((Status)MainManifest.statuses["herberdrive"].Id) <= 0) return;
         //    __result++;
         //}
-        
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Card), nameof(Card.GetActualDamage))]
         public static void GetDmgHerberdrive(ref int __result, State s, int baseDamage, bool targetPlayer = false, Card? card = null)
@@ -62,7 +62,7 @@ namespace KnightsCohort.Herbalist
         public static void EnemyParanoia(G g, State s, Combat c)
         {
             if (c.otherShip.Get((Status)MainManifest.statuses["paranoia"].Id) <= 0) return;
-            
+
             c.QueueImmediate(new List<CardAction>()
             {
                 new ADelay() { time = 0.0, timer = 0.5 },
@@ -172,7 +172,7 @@ namespace KnightsCohort.Herbalist
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(AIHelpers), nameof(AIHelpers.MoveToAimAt))]
+        [HarmonyPatch(typeof(AIHelpers), nameof(AIHelpers.MoveToAimAt), new Type[] { typeof(State), typeof(Ship), typeof(Ship), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
         public static void Blindness_EnemyPatch(List<CardAction> __result, State s, Ship movingShip, Ship targetShip, int alignPartLocalX, int maxMove = 99, bool movesFast = false, bool? attackWeakPoints = null, bool avoidAsteroids = false, bool avoidMines = true)
         {
             var blindnessStacks = movingShip.Get((Status)MainManifest.statuses["blindness"].Id);
@@ -190,7 +190,8 @@ namespace KnightsCohort.Herbalist
 
             __result.AddRange
             (
-                Enumerable.Range(0, blindnessStacks).Select(i => new AMove() {
+                Enumerable.Range(0, blindnessStacks).Select(i => new AMove()
+                {
                     dir = Math.Sign(m.dir),
                     targetPlayer = false
                 })
