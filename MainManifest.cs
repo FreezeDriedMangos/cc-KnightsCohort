@@ -244,6 +244,7 @@ namespace KnightsCohort
                 "artifacts/Mushroom_Friend",
                 "artifacts/peace_dove",
                 "artifacts/holy_grail",
+                "artifacts/dragons_hoard",
 
                 "cards/blindness",
             };
@@ -906,8 +907,8 @@ namespace KnightsCohort
             // Treasurer
             //
 
-            artifact = new ExternalArtifact(Name + ".Artifacts.DragonsHoard", typeof(Treasurer.Artifacts.DragonsHoard), sprites["artifacts/field_journal"], ownerDeck: decks["treasurer"]);
-            artifact.AddLocalisation("DRAGON'S HOARD", "For every 8 cards in your deck, gain <c=keyword>1 gold</c> at the start of each turn.");
+            artifact = new ExternalArtifact(Name + ".Artifacts.DragonsHoard", typeof(Treasurer.Artifacts.DragonsHoard), sprites["artifacts/dragons_hoard"], ownerDeck: decks["treasurer"]);
+            artifact.AddLocalisation("DRAGON'S HOARD", "For every 8 cards you own, gain <c=keyword>1 gold</c> at the start of each turn.");
             registry.RegisterArtifact(artifact);
         }
 
