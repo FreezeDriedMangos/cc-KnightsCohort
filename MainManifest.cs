@@ -326,29 +326,30 @@ namespace KnightsCohort
 
 
                 new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Ask for Aid", typeof(AskForAid), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Inspiration", typeof(Inspiration), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Weapons Vault", typeof(WeaponsVault), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Burning Glory", typeof(BurningGlory), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Spring Cleaning", typeof(SpringCleaning), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Fire Breath", typeof(FireBreath), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Inspiration", typeof(Inspiration), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Weapons Vault", typeof(WeaponsVault), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Burning Glory", typeof(BurningGlory), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Spring Cleaning", typeof(SpringCleaning), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Fire Breath", typeof(FireBreath), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Golden Scales", typeof(GoldenScales), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Trading on Reputation", typeof(TradingOnReputation), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Forged in Fire", typeof(ForgedInFire), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Ancient Weapons", typeof(AncientWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Deep Sleep", typeof(DeepSleep), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Give Generously", typeof(GiveGenerously), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Trading on Reputation", typeof(TradingOnReputation), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Forged in Fire", typeof(ForgedInFire), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
+                ////new ExternalCard(namePrefix + "Ancient Weapons", typeof(AncientWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Deep Sleep", typeof(DeepSleep), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Give Generously", typeof(GiveGenerously), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Suitable Weapons", typeof(SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Opportunistic Sale", typeof(OpportunisticSale), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Recurring Donation", typeof(ReocurringDonation), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Hot Commodity", typeof(HotCommodity), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Bribe", typeof(Bribe), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Fire Wall", typeof(Firewall), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Flame Coating", typeof(FlameCoating), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Opportunistic Sale", typeof(OpportunisticSale), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Recurring Donation", typeof(ReocurringDonation), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Hot Commodity", typeof(HotCommodity), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Bribe", typeof(Bribe), sprites["card_default_treasurer"], decks["treasurer"]),
+                ////new ExternalCard(namePrefix + "Fire Wall", typeof(Firewall), sprites["card_default_treasurer"], decks["treasurer"]),
+                ////new ExternalCard(namePrefix + "Flame Coating", typeof(FlameCoating), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Medical Services", typeof(Cauterize), sprites["card_default_treasurer"], decks["treasurer"]),
 
 
 
@@ -504,8 +505,8 @@ namespace KnightsCohort
                 Name + ".Treasurer",
                 decks["treasurer"],
                 sprites["char_frame_treasurer"],
-                new Type[] { typeof(Treasurer.Cards.Donation), typeof(Treasurer.Cards.InitialInvestment) },
-                new Type[] { typeof(Treasurer.Artifacts.DragonsHoard) },
+                new Type[] { }, //typeof(Treasurer.Cards.Donation), typeof(Treasurer.Cards.InitialInvestment) },
+                new Type[0],
                 animations["treasurer.neutral"],
                 animations["treasurer.mini"]
             );
@@ -835,13 +836,22 @@ namespace KnightsCohort
             status = "gold";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/gold_10"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Gold", $"A resource used to activate effects on some cards. At the start of every turn, increases by <c=keyword>1</c> for every <c=keyword>{Treasurer.StatusesController.INTEREST_RATE}</c> you have.");
-            
+            statuses[status].AddLocalisation("Gold", $"A resource used to activate effects on some cards.");
+
             status = "charity";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Charity", "Lose up to {0} gold and gain equal honor at the start of every turn.");
 
+            status = "goldShield";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Gold Shield", "Activates before temp shield. Lose all stacks at the start of the turn. Gain 1 gold for every gold shield spent defending you from damage.");
+
+            status = "honorShield";
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
+            statusRegistry.RegisterStatus(statuses[status]);
+            statuses[status].AddLocalisation("Honor Shield", "Activates before temp shield and gold shield. Lose all stacks at the start of the turn. Gain 1 honor for every honor shield spent defending you from damage.");
 
 
 
@@ -912,6 +922,32 @@ namespace KnightsCohort
             registry.RegisterArtifact(artifact);
         }
 
+        // random dialogue
+            // Dracula
+                // CAT: Hey Dracula! Whatcha up to?
+                // Dracula: Oh nothing much, just thinking about the last vampire crusade a thousand years ago.
+                // CAT: Haha
+                // Dracula: Haha
+                // Dracula: Don't do another one.
+                // Emily (nervous): Yes sir.
+
+        // TODO: specific honor win interactions
+            // Enemy Drake: "Today's your lucky day.  I decided to let you off with a warning...this time." (credit Kelsey)
+            // Riggs?
+                // “augh! What is this? Why is it so bright??”
+                //“… was that my reactor?”
+                //Ship explodes
+                //CAT: “we won!”
+                //“Honorably.”
+            // Big Crystal
+                // Random crew: "Where's it going?"
+                // CAT: "... I have no idea."
+            // Duncan: "You know what?  I'm just gonna mine somewhere else."
+            // Smiff: You guys are lame, I'm outta here. CAT: ... a win is a win! (credit Arin)
+
+        // TODO: lines for the knights to say when winning by honor
+
+        // TODO: losing a run to enemy honor interaction: CAT - “they’re too honorable! It burns!” And then the ship blows up
         public void LoadManifest(IStoryRegistry storyRegistry)
         {
             storyRegistry.RegisterStory(new ExternalStory(
