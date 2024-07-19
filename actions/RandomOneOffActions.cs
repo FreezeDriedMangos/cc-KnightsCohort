@@ -637,7 +637,9 @@ namespace KnightsCohort.actions
 
         public override void Begin(G g, State s, Combat c)
         {
-            Card card = s.FindCard(uuid);
+            Card? card = s.FindCard(uuid);
+
+            if (card == null) return;
 
             timer = waitBeforeMoving + 0.2;
             if (s.route is Combat)
