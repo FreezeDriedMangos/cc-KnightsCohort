@@ -173,7 +173,7 @@ namespace KnightsCohort.Herbalist
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AIHelpers), nameof(AIHelpers.MoveToAimAt), new Type[] { typeof(State), typeof(Ship), typeof(Ship), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
-        public static void Blindness_EnemyPatch(List<CardAction> __result, State s, Ship movingShip, Ship targetShip, int alignPartLocalX, int maxMove = 99, bool movesFast = false, bool? attackWeakPoints = null, bool avoidAsteroids = false, bool avoidMines = true)
+        public static void Blindness_EnemyPatch(List<CardAction> __result, State s, Ship movingShip, Ship targetShip, int key, int maxMove = 99, bool movesFast = false, bool? attackWeakPoints = null, bool avoidAsteroids = false, bool avoidMines = true, bool avoidDualDrones = false)
         {
             var blindnessStacks = movingShip.Get((Status)MainManifest.statuses["blindness"].Id);
             if (blindnessStacks <= 0) return;
