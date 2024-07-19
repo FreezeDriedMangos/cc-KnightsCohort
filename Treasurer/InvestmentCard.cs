@@ -105,8 +105,8 @@ namespace KnightsCohort.Treasurer
         public override CardData GetData(State state)
         {
             CardData d = base.GetData(state);
-            d.art = tierArt[tier];
             d.artTint = "ffffff";
+            try { d.art = tierArt[tier]; } catch { d.art = tierArt[0]; }
             return d;
         }
 
