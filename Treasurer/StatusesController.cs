@@ -122,7 +122,7 @@ namespace KnightsCohort.Treasurer
             for (int l = minRealTempIndex + 1; l <= maxTempIndex; l++)
             {
                 bool isNotGhostShield = l < tempShieldAmt;
-                Color color4 = new Color("ffffff"); //Colors.healthBarTempShield;
+                Color color4 = l > minRealTempIndex + goldShieldAmt ? new Color("bbbb55") : new Color("aaffaa"); //Colors.healthBarTempShield;
                 color4 = isNotGhostShield ? color4 : color4.fadeAlpha(0.25);
 
                 if (l >= tempShieldAmt && l < tempShieldAmt + __instance.ghostTempShield)
