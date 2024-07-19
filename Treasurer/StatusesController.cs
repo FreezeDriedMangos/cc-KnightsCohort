@@ -169,15 +169,18 @@ namespace KnightsCohort.Treasurer
             Status goldShield = (Status)MainManifest.statuses["goldShield"].Id;
             Status honorShield = (Status)MainManifest.statuses["honorShield"].Id;
 
-            // postfix Ship.NomalDamage - calculate missingShield = originalShield - tempShield. Remove Math.max(0, missingShield) stacks of honor shield, then remove Math.max(0, missingShield - originalHonorShield) stacks of gold shield
             int missingShield = originalTempShield - __instance.Get(Status.tempShield);
 
             int originalHonorShield = __instance.Get(honorShield);
-            __instance.Add(honorShield, -Math.Min(originalHonorShield, missingShield));
-            missingShield = Math.Max(0, missingShield - originalHonorShield);
+            int missingHonorShield = Math.Min(originalHonorShield, missingShield);
+            __instance.Add(honorShield, -missingHonorShield);
+            __instance.Add((Status)MainManifest.statuses["honor"].Id, missingHonorShield);
+            missingShield = Math.Max(0, missingShield - missingHonorShield);
 
             int originalGoldShield = __instance.Get(goldShield);
-            __instance.Add(honorShield, -Math.Min(originalGoldShield, missingShield));
+            int missingGoldShield = Math.Min(originalGoldShield, missingShield);
+            __instance.Add(goldShield, -missingGoldShield);
+            __instance.Add((Status)MainManifest.statuses["gold"].Id, missingGoldShield);
             missingShield = Math.Max(0, missingShield - originalGoldShield);
 
             if (missingShield > originalTempShield)
