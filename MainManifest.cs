@@ -328,6 +328,9 @@ namespace KnightsCohort
 
 
 
+                new ExternalCard(namePrefix + "DEBUG Gold Shield", typeof(DEBUG_GoldShield), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "DEBUG Honor Shield", typeof(DEBUG_HonorShield), sprites["card_default_treasurer"], decks["treasurer"]),
+
                 new ExternalCard(namePrefix + "Cloaked In Honor", typeof(CloakedInHonor), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Petition Donations", typeof(PetitionDonations), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
@@ -851,12 +854,12 @@ namespace KnightsCohort
             status = "goldShield";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/gold_shield"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Gold Shield", "Activates before temp shield. Lose all stacks at the start of the turn. Gain 1 gold for every gold shield spent defending you from damage.");
+            statuses[status].AddLocalisation("Gold Shield", "A type of temp shield. Activates before regular temp shield. Gain 1 gold for every gold shield spent defending you from damage.");
 
             status = "honorShield";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/honor_shield"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Honor Shield", "Activates before temp shield and gold shield. Lose all stacks at the start of the turn. Gain 1 honor for every honor shield spent defending you from damage.");
+            statuses[status].AddLocalisation("Honor Shield", "A type of temp shield. Activates before regular temp shield and gold shield. Gain 1 honor for every honor shield spent defending you from damage.");
 
 
 

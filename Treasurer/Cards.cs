@@ -9,6 +9,26 @@ using System.Reflection.Emit;
 
 namespace KnightsCohort.Treasurer.Cards
 {
+
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B }, dontOffer = true, unreleased = true)]
+    public class DEBUG_HonorShield : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c) { return new() { new AHonorShield() }; }
+        public override CardData GetData(State state) { return new() { cost = 0 }; }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B }, dontOffer = true, unreleased = true)]
+    public class DEBUG_GoldShield : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c) { return new() { new AGoldShield() }; }
+        public override CardData GetData(State state) { return new() { cost = 0 }; }
+    }
+
+
+
+
+
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class CloakedInHonor : InvestmentCard
     {
@@ -18,7 +38,7 @@ namespace KnightsCohort.Treasurer.Cards
         {
             return new() {
                 new() { new AStatus() { status = Status.tempShield, targetPlayer = true, statusAmount = 1 }, new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 1 } },
-                new() { new AStatus() { status = (Status)MainManifest.statuses["honorShield"].Id, targetPlayer = true, statusAmount = 1 } },
+                new() { new AHonorShield() },
             };
         }
 
@@ -48,7 +68,7 @@ namespace KnightsCohort.Treasurer.Cards
                 MainManifest.KokoroApi.ActionCosts.Make
                 (
                     MainManifest.KokoroApi.ActionCosts.Cost(enemyHonorResource , amount: 1),
-                    new AStatus() { status = (Status)MainManifest.statuses["goldShield"].Id, targetPlayer = true, statusAmount = 2 }
+                    new AGoldShield() { amount = 2 }
                 )
             };
         }
