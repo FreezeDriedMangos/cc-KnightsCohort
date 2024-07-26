@@ -10,20 +10,15 @@ using System.Reflection.Emit;
 namespace KnightsCohort.Treasurer.Cards
 {
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class Dragonfire : InvestmentCard
+    public class CloakedInHonor : InvestmentCard
     {
-        public override List<int> upgradeCosts => new() { 2, 4 };
+        public override List<int> upgradeCosts => new() { 2 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
-            CardAction firstAction = upgrade == Upgrade.A
-                ? new AAttack() { damage = GetDmg(s, 0), status = Enum.Parse<Status>("heat"), statusAmount = 1 }
-                : new AStatus() { targetPlayer = false, status = Enum.Parse<Status>("heat"), statusAmount = 1 };
-
             return new() {
-                new() { firstAction },
-                new() { new AAttack() { damage = GetDmg(s, 1), status = Enum.Parse<Status>("heat"), statusAmount = 1 } },
-                new() { new AAttack() { damage = GetDmg(s, 2), status = Enum.Parse<Status>("heat"), statusAmount = upgrade == Upgrade.B ? 3 : 1 } },
+                new() { new AStatus() { status = Status.tempShield, targetPlayer = true, statusAmount = 1 }, new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 1 } },
+                new() { new AStatus() { status = (Status)MainManifest.statuses["honorShield"].Id, targetPlayer = true, statusAmount = 1 } },
             };
         }
 
@@ -32,6 +27,34 @@ namespace KnightsCohort.Treasurer.Cards
             CardData cardData = base.GetData(state);
             cardData.cost = 1;
             return cardData;
+        }
+    }
+
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class PetitionDonations : Card
+    {
+        public override List<CardAction> GetActions(State s, Combat c)
+        {
+            var enemyHonorResource = MainManifest.KokoroApi.ActionCosts.StatusResource
+            (
+                (Status)MainManifest.statuses["honor"].Id,
+                Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.EnemyWithOutgoingArrow,
+                (Spr)MainManifest.sprites["icons/honor_cost_unsatisfied"].Id,
+                (Spr)MainManifest.sprites["icons/honor_cost"].Id
+            );
+
+            return new()
+            {
+                MainManifest.KokoroApi.ActionCosts.Make
+                (
+                    MainManifest.KokoroApi.ActionCosts.Cost(enemyHonorResource , amount: 1),
+                    new AStatus() { status = (Status)MainManifest.statuses["goldShield"].Id, targetPlayer = true, statusAmount = 2 }
+                )
+            };
+        }
+        public override CardData GetData(State state)
+        {
+            return new() { cost = 1 };
         }
     }
 

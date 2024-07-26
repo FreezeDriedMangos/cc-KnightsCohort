@@ -11,6 +11,15 @@ namespace KnightsCohort
     [HarmonyPatch]
     public static class HonorController
     {
+        //// TODO: this is just for fixing debug menu's low resolution
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(Editor), nameof(Editor.ImGuiLayout))]
+        //public static void FixEditorResolution(G g)
+        //{
+
+        //}
+
+
         public static Color HONOR_COLOR = new Color("c5c5c5");
         public static Color GHOST_HONOR_COLOR = Colors.healthBarGhost; //new Color("f0e892");
         public static Color GHOST_LOST_HONOR_COLOR = new Color("8f34eb");
@@ -57,8 +66,8 @@ namespace KnightsCohort
 
             // TODO: this breaks when the enemy increases your honor through an on hit effect, such as the martyr banner or vow of courage
 
-            if (s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0) return;
-            if (__instance.otherShip.hull <= 0) return;
+            // if (s.ship.Get((Status)MainManifest.statuses["honor"].Id) <= 0) return;
+            if (__instance.otherShip.hull <= 0) return; // TODO: BUG: THIS DOESN'T SEEM TO WORK, GAINING ENOUGH HONOR TO MAKE THE ENEMY FLEE AND ALSO KILLING THEM ON THE SAME TURN STILL CAUSES A CRASH
             if (s.ship.hull <= 0) return;
 
             if (s.ship.Get((Status)MainManifest.statuses["honor"].Id) >= __instance.otherShip.hull + __instance.otherShip.Get(Enum.Parse<Status>("shield")))
@@ -104,7 +113,7 @@ namespace KnightsCohort
 
                 __instance.Queue(new AMidCombatDialogue
                 {
-                    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the 3 knights
+                    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the knights
                     canRunAfterKill = true,
                 });
                 __instance.Queue(new ADelay

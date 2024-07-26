@@ -118,6 +118,9 @@ namespace KnightsCohort
                 "icons/gold_1_outline_right",
                 "icons/gold_1_outline_full",
 
+                "icons/gold_shield",
+                "icons/honor_shield",
+
 
                 // herbalist
                 "character/herbalist_neutral_1",
@@ -325,7 +328,9 @@ namespace KnightsCohort
 
 
 
-                new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Cloaked In Honor", typeof(CloakedInHonor), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Petition Donations", typeof(PetitionDonations), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Ask for Aid", typeof(AskForAid), sprites["card_default_treasurer"], decks["treasurer"]),
@@ -505,7 +510,7 @@ namespace KnightsCohort
                 Name + ".Treasurer",
                 decks["treasurer"],
                 sprites["char_frame_treasurer"],
-                new Type[] { }, //typeof(Treasurer.Cards.Donation), typeof(Treasurer.Cards.InitialInvestment) },
+                new Type[] { typeof(Treasurer.Cards.CloakedInHonor), typeof(Treasurer.Cards.PetitionDonations) }, //typeof(Treasurer.Cards.Donation), typeof(Treasurer.Cards.InitialInvestment) },
                 new Type[0],
                 animations["treasurer.neutral"],
                 animations["treasurer.mini"]
@@ -844,12 +849,12 @@ namespace KnightsCohort
             statuses[status].AddLocalisation("Charity", "Lose up to {0} gold and gain equal honor at the start of every turn.");
 
             status = "goldShield";
-            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/gold_shield"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Gold Shield", "Activates before temp shield. Lose all stacks at the start of the turn. Gain 1 gold for every gold shield spent defending you from damage.");
 
             status = "honorShield";
-            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/charity"], false);
+            statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/honor_shield"], false);
             statusRegistry.RegisterStatus(statuses[status]);
             statuses[status].AddLocalisation("Honor Shield", "Activates before temp shield and gold shield. Lose all stacks at the start of the turn. Gain 1 honor for every honor shield spent defending you from damage.");
 

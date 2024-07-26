@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 
 namespace KnightsCohort.Knight.Cards
 {
+    // TODO: give sir Ratzo a "give you a random vow" card, make it a starter? alt starter?
+
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class FightingChance : Card
     {

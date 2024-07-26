@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,6 +67,69 @@ namespace KnightsCohort.Treasurer
                 __instance.Set((Status)MainManifest.statuses["honorShield"].Id, 0);
             }
         }
+
+        // ///////////////////////////////////////////
+        //
+        // HIT HANDLING
+        //
+        // ///////////////////////////////////////////
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
+        public static void CustomShieldDamagePrePatch(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        {
+            originalTempShield = __instance.Get(Status.tempShield);
+            // I'm directly accessing the statusEffects dictionary rather than using Set in order to avoid triggering anyone's "on gain temp shield" effects, since this isn't really gaining temp shield, it's just hijacking tempShield to avoid needing to transpile Ship.NormalDamage 
+            __instance.statusEffects[Status.tempShield] =
+                originalTempShield
+                + __instance.Get((Status)MainManifest.statuses["goldShield"].Id)
+                + __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
+        public static void CustomShieldDamagePostPatch(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        {
+            Status goldShield = (Status)MainManifest.statuses["goldShield"].Id;
+            Status honorShield = (Status)MainManifest.statuses["honorShield"].Id;
+
+            int originalHonorShield = __instance.Get(honorShield);
+            int originalGoldShield = __instance.Get(goldShield);
+            int missingShield = (originalTempShield + originalHonorShield + originalGoldShield) - __instance.Get(Status.tempShield);
+
+            int missingHonorShield = Math.Min(originalHonorShield, missingShield);
+            __instance.Add(honorShield, -missingHonorShield);
+            __instance.Add((Status)MainManifest.statuses["honor"].Id, missingHonorShield);
+            missingShield = Math.Max(0, missingShield - missingHonorShield);
+
+            int missingGoldShield = Math.Min(originalGoldShield, missingShield);
+            __instance.Add(goldShield, -missingGoldShield);
+            __instance.Add((Status)MainManifest.statuses["gold"].Id, missingGoldShield);
+            missingShield = Math.Max(0, missingShield - originalGoldShield);
+
+            MainManifest.Instance.Logger.LogInformation($"GAINING {missingHonorShield} HONOR and {missingGoldShield} GOLD  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)}  - {missingShield}");
+
+            // Again, accessing __instance.statusEffects directly to avoid "on gain/lose temp shield" effects
+            if (missingShield > originalTempShield)
+            {
+                throw new Exception($"Math isn't mathing. {{currentTempShield: {__instance.Get(Status.tempShield)}, originalTempShield: {originalTempShield}, originalHonorShield: {originalHonorShield}, originalGoldShield: {originalGoldShield}, missingShield: {originalTempShield - __instance.Get(Status.tempShield)}}}");
+            }
+            else if (missingShield == originalTempShield)
+            {
+                __instance.statusEffects.Remove(Status.tempShield);
+            }
+            else
+            {
+                __instance.statusEffects[Status.tempShield] = originalTempShield - missingShield;
+            }
+        }
+
+        // ///////////////////////////////////////////
+        //
+        // DRAWING
+        //
+        // ///////////////////////////////////////////
+
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.RenderHealthBar))]
@@ -152,51 +216,23 @@ namespace KnightsCohort.Treasurer
         }
 
 
+        private static int gshield = 0;
+        private static int hshield = 0;
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
-        public static void CustomShieldDamagePrePatch(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        [HarmonyPatch(typeof(Ship), nameof(Ship.RenderStatuses))]
+        public static void DontRenderCustomShieldsBelowHealthbar(Ship __instance, G g, string keyPrefix)
         {
-            originalTempShield = __instance.Get(Status.tempShield);
-            // I'm directly accessing the statusEffects dictionary rather than using Set in order to avoid triggering anyone's "on gain temp shield" effects, since this isn't really gaining temp shield, it's just hijacking tempShield to avoid needing to transpile Ship.NormalDamage 
-            __instance.statusEffects[Status.tempShield] =
-                originalTempShield
-                + __instance.Get((Status)MainManifest.statuses["goldShield"].Id)
-                + __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
+            gshield = __instance.Get((Status)MainManifest.statuses["goldShield"].Id);
+            hshield = __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
+            __instance.statusEffects.Remove((Status)MainManifest.statuses["goldShield"].Id);
+            __instance.statusEffects.Remove((Status)MainManifest.statuses["honorShield"].Id);
         }
-
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
-        public static void CustomShieldDamagePostPatch(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        [HarmonyPatch(typeof(Ship), nameof(Ship.RenderStatuses))]
+        public static void DontRenderCustomShieldsBelowHealthbar_Cleanup(Ship __instance, G g, string keyPrefix)
         {
-            Status goldShield = (Status)MainManifest.statuses["goldShield"].Id;
-            Status honorShield = (Status)MainManifest.statuses["honorShield"].Id;
-
-            int missingShield = originalTempShield - __instance.Get(Status.tempShield);
-
-            int originalHonorShield = __instance.Get(honorShield);
-            int missingHonorShield = Math.Min(originalHonorShield, missingShield);
-            __instance.Add(honorShield, -missingHonorShield);
-            __instance.Add((Status)MainManifest.statuses["honor"].Id, missingHonorShield);
-            missingShield = Math.Max(0, missingShield - missingHonorShield);
-
-            int originalGoldShield = __instance.Get(goldShield);
-            int missingGoldShield = Math.Min(originalGoldShield, missingShield);
-            __instance.Add(goldShield, -missingGoldShield);
-            __instance.Add((Status)MainManifest.statuses["gold"].Id, missingGoldShield);
-            missingShield = Math.Max(0, missingShield - originalGoldShield);
-
-            if (missingShield > originalTempShield)
-            {
-                throw new Exception($"Math isn't mathing. {{currentTempShield: {__instance.Get(Status.tempShield)}, originalTempShield: {originalTempShield}, originalHonorShield: {originalHonorShield}, originalGoldShield: {originalGoldShield}, missingShield: {originalTempShield - __instance.Get(Status.tempShield)}}}");
-            }
-            else if (missingShield == originalTempShield)
-            {
-                __instance.statusEffects.Remove(Status.tempShield);
-            }
-            else
-            {
-                __instance.statusEffects[Status.tempShield] = originalTempShield - missingShield;
-            }
+            if (gshield != 0) __instance.statusEffects[(Status)MainManifest.statuses["goldShield"].Id] = gshield;
+            if (hshield != 0) __instance.statusEffects[(Status)MainManifest.statuses["honorShield"].Id] = hshield;
         }
     }
 }

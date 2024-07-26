@@ -86,6 +86,8 @@ namespace KnightsCohort.Bannerlady
         // Attacks destroy tattered banners patches
         //
 
+        // TODO: BUG: shots no longer pass through banners
+
         static StuffBase removedBanner = null;
 
         [HarmonyPostfix]

@@ -197,6 +197,7 @@ namespace KnightsCohort.Knight
             //bool actionJustEnded = __instance.currentCardAction != null && __instance.currentCardAction.timer <= 0.0;
             //if (!actionJustEnded) return;
 
+            // DOESN'T TRIGGER ON USE EVADE BUTTONS
             if (previousX != g.state.ship.x)
             {
                 // we've moved in general
