@@ -126,7 +126,7 @@ namespace KnightsCohort.Treasurer.Cards
             return new()
             {
                 new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },
-                new ADrawCard()
+                new ADrawCard() { count = 1 }
             };
         }
         public override CardData GetData(State state)
@@ -145,8 +145,8 @@ namespace KnightsCohort.Treasurer.Cards
             (
                 (Status)MainManifest.statuses["gold"].Id,
                 Shockah.Kokoro.IKokoroApi.IActionCostApi.StatusResourceTarget.Player,
-                (Spr)MainManifest.sprites["icons/gold_cost_unsatisfied"].Id,
-                (Spr)MainManifest.sprites["icons/gold_cost_satisfied"].Id
+                (Spr)MainManifest.sprites["icons/gold_10_unsatisfied"].Id,
+                (Spr)MainManifest.sprites["icons/gold_10_satisfied"].Id
             );
 
             return new()
@@ -304,7 +304,7 @@ namespace KnightsCohort.Treasurer.Cards
                     statusAmount = s.ship.Get((Status)MainManifest.statuses["gold"].Id),
                     xHint=1
                 },
-                new AStatus() { mode = AStatusMode.Set, status = (Status)MainManifest.statuses["gold"].Id, statusAmount = 0 }
+                new AStatus() { mode = AStatusMode.Set, status = (Status)MainManifest.statuses["gold"].Id, statusAmount = 0, targetPlayer = true }
             };
         }
         public override CardData GetData(State state)
@@ -326,7 +326,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1, description= "NOT YET IMPLEMENTED! Gost 5 gold, temporarily upgrade a card in hand." };
+            return new() { cost = 1, description= "NOT YET IMPLEMENTED! Cost 5 gold, temporarily upgrade a card in hand." };
         }
     }
 
@@ -343,7 +343,7 @@ namespace KnightsCohort.Treasurer.Cards
                 new() 
                 { 
                     new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = false },
-                    new AStatus() { status = (Status)MainManifest.statuses["charity"].Id, statusAmount = 1, targetPlayer = false }
+                    new AStatus() { status = (Status)MainManifest.statuses["charity"].Id, statusAmount = 1, targetPlayer = true }
                 },
             };
         }
@@ -446,7 +446,7 @@ namespace KnightsCohort.Treasurer.Cards
             {
                 cost = upgrade == Upgrade.A ? 0 : 1,
                 exhaust = true,
-                description = state.ship.Get((Status)MainManifest.statuses["gold"].Id) >= goldCost
+                description = state.route is Combat && state.ship.Get((Status)MainManifest.statuses["gold"].Id) >= goldCost
                     ? descriptionText
                     : $"<c=textFaint>{descriptionText}</c>"
             };
