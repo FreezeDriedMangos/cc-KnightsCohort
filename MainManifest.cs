@@ -9,6 +9,7 @@ using KnightsCohort.Herbalist.Cards;
 using KnightsCohort.Knight;
 using KnightsCohort.Knight.Cards;
 using KnightsCohort.Treasurer.Cards;
+using KnightsCohort.Treasurer.OldCards;
 using Microsoft.Extensions.Logging;
 using shockah;
 using Shockah.Kokoro;
@@ -333,6 +334,28 @@ namespace KnightsCohort
 
                 new ExternalCard(namePrefix + "Cloaked In Honor", typeof(CloakedInHonor), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Petition Donations", typeof(PetitionDonations), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED 1", typeof(UNNAMED1), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Honor Duel", typeof(HonorDuel), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Extreme Confidence", typeof(ExtremeConfidence), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Charity", typeof(Charity), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Twoumvirate", typeof(Twoumvirate), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Call for Respite", typeof(CallForRespite), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED 2", typeof(UNNAMED2), sprites["card_default_treasurer"], decks["treasurer"]),
+                
+                new ExternalCard(namePrefix + "UNNAMED 3", typeof(UNNAMED3), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED 4", typeof(UNNAMED4), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "AllIn", typeof(AllIn), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED 5", typeof(UNNAMED5), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Market Sense", typeof(MarketSense), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Suitable Weapons", typeof(SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED 6", typeof(UNNAMED6), sprites["card_default_treasurer"], decks["treasurer"]),
+                
+                new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED 7", typeof(UNNAMED7), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Tollbooth", typeof(Tollbooth), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Golden Scales", typeof(GoldenScales), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Bribe", typeof(Bribe), sprites["card_default_treasurer"], decks["treasurer"]),
+
                 //new ExternalCard(namePrefix + "Dragonfire", typeof(Dragonfire), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Initial Investment", typeof(InitialInvestment), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Donation", typeof(Donation), sprites["card_default_treasurer"], decks["treasurer"]),
@@ -349,7 +372,7 @@ namespace KnightsCohort
                 ////new ExternalCard(namePrefix + "Ancient Weapons", typeof(AncientWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Deep Sleep", typeof(DeepSleep), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Give Generously", typeof(GiveGenerously), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Suitable Weapons", typeof(SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Suitable Weapons", typeof(SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Opportunistic Sale", typeof(OpportunisticSale), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Big Budget", typeof(BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Recurring Donation", typeof(ReocurringDonation), sprites["card_default_treasurer"], decks["treasurer"]),
