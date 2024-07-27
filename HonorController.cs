@@ -108,25 +108,26 @@ namespace KnightsCohort
             }
             else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= s.ship.hull + s.ship.Get(Enum.Parse<Status>("shield")))
             {
-                __instance.noReward = true;
-                __result = true;
+                __instance.QueueImmediate(new AHurt() { targetPlayer = true, hurtAmount = 9999999 });
+                //__instance.noReward = true;
+                //__result = true;
 
-                __instance.Queue(new AMidCombatDialogue
-                {
-                    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the knights
-                    canRunAfterKill = true,
-                });
-                __instance.Queue(new ADelay
-                {
-                    time = 0.0,
-                    timer = 0.1,
-                    canRunAfterKill = true,
-                });
-                __instance.Queue(new AEscape
-                {
-                    targetPlayer = true,
-                    canRunAfterKill = true,
-                });
+                //__instance.Queue(new AMidCombatDialogue
+                //{
+                //    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the knights
+                //    canRunAfterKill = true,
+                //});
+                //__instance.Queue(new ADelay
+                //{
+                //    time = 0.0,
+                //    timer = 0.1,
+                //    canRunAfterKill = true,
+                //});
+                //__instance.Queue(new AEscape
+                //{
+                //    targetPlayer = true,
+                //    canRunAfterKill = true,
+                //});
             }
         }
 
