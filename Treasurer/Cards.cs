@@ -38,7 +38,7 @@ namespace KnightsCohort.Treasurer.Cards
         {
             return new() {
                 new() { new AStatus() { status = Status.tempShield, targetPlayer = true, statusAmount = 1 }, new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 1 } },
-                new() { new AHonorShield() },
+                new() { /*new ACharge() { dir = 2 },*/  new AHonorShield() },
             };
         }
 
@@ -66,6 +66,7 @@ namespace KnightsCohort.Treasurer.Cards
 
             return new()
             {
+                new ACharge() { dir = 1 },
                 MainManifest.KokoroApi.ActionCosts.Make
                 (
                     MainManifest.KokoroApi.ActionCosts.Cost(enemyHonorResource , amount: 1),
@@ -80,7 +81,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED1 : InvestmentCard
+    public class GoldStandard : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2 };
 
@@ -88,7 +89,7 @@ namespace KnightsCohort.Treasurer.Cards
         {
             return new() {
                 new() { new AGoldShield() },
-                new() { new AGoldShield() },
+                new() { new AGoldShield() { amount = 2 } },
             };
         }
 
@@ -123,10 +124,21 @@ namespace KnightsCohort.Treasurer.Cards
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
+            if (upgrade == Upgrade.A)
+            {
+                return new()
+                {
+                    new ACharge() { dir = 1 },
+                    new AStatus() { status = Status.overdrive, targetPlayer = false, statusAmount = 1 },
+                    new ADrawCard() { count = 1 }
+                };
+            }
+
             return new()
             {
-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },
-                new ADrawCard() { count = 1 }
+                // new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },
+                new AStatus() { status = Status.overdrive, targetPlayer = false, statusAmount = upgrade == Upgrade.B ? 2 : 1 },
+                new ADrawCard() { count = upgrade == Upgrade.B ? 2 : 1 }
             };
         }
         public override CardData GetData(State state)
@@ -198,7 +210,7 @@ namespace KnightsCohort.Treasurer.Cards
             return new()
             {
                 xEqualsEnemyHonor,
-                new AStatus() { status = Status.tempShield, targetPlayer = false, statusAmount = c.otherShip.Get((Status)MainManifest.statuses["honor"].Id), xHint=1 },
+                new AStatus() { status = Status.tempShield, targetPlayer = true, statusAmount = c.otherShip.Get((Status)MainManifest.statuses["honor"].Id), xHint=1 },
             };
         }
         public override CardData GetData(State state)
@@ -208,7 +220,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED2 : InvestmentCard
+    public class Bravado : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2 };
 
@@ -223,13 +235,17 @@ namespace KnightsCohort.Treasurer.Cards
             );
 
             return new() {
-                new() { new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = false } },
+                new() { 
+                    new ACharge() { dir = 2 },
+                    new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = false } 
+                },
                 new() {
                     MainManifest.KokoroApi.ActionCosts.Make
                     (
                         MainManifest.KokoroApi.ActionCosts.Cost(enemyHonorResource , amount: 2),
                         new AHonorShield()
-                    )
+                    ),
+                    new ADummyAction()
                 },
             };
         }
@@ -243,7 +259,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED3 : Card
+    public class Revocation : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -267,7 +283,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED4 : InvestmentCard
+    public class ForGlory : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 1, 3 };
 
@@ -314,7 +330,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED5 : Card
+    public class DeluxeEdition : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -340,10 +356,35 @@ namespace KnightsCohort.Treasurer.Cards
             // TODO: replace charity with Savvy
             return new() {
                 new() { new AStatus() { status = (Status)MainManifest.statuses["charity"].Id, statusAmount = 1, targetPlayer = true } },
-                new() 
-                { 
+                new()
+                {
                     new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = false },
                     new AStatus() { status = (Status)MainManifest.statuses["charity"].Id, statusAmount = 1, targetPlayer = true }
+                },
+            };
+        }
+
+        public override CardData GetData(State state)
+        {
+            CardData cardData = base.GetData(state);
+            cardData.cost = 1;
+            return cardData;
+        }
+    }
+
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class UNNAMED : InvestmentCard
+    {
+        public override List<int> upgradeCosts => new() { 1 };
+
+        protected override List<List<CardAction>> GetTierActions(State s, Combat c)
+        {
+            return new() {
+                new() { new AStatus() { status = Status.overdrive, statusAmount = 1, targetPlayer = false } },
+                new()
+                {
+                    new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = false },
+                    new AStatus() { status = Status.shield, statusAmount = 1, targetPlayer = true }
                 },
             };
         }
@@ -377,13 +418,12 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED6 : InvestmentCard
+    public class LayeredShield : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2, 2 };
 
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
-            // TODO: replace charity with Savvy
             return new() {
                 new() { new AStatus() { status = Status.tempShield, statusAmount = 1, targetPlayer = true } },
                 new() { new AStatus() { status = Status.shield, statusAmount = 1, targetPlayer = true } },
@@ -399,6 +439,27 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    public class ShieldCharge : InvestmentCard
+    {
+        public override List<int> upgradeCosts => new() { 2, 2 };
+
+        protected override List<List<CardAction>> GetTierActions(State s, Combat c)
+        {
+            return new() {
+                new() { new ACharge() { dir = 2 } },
+                new() { new AStatus() { status = Status.shield, statusAmount = 2, targetPlayer = true } },
+                new() { new ACharge() { dir = 2 } },
+            };
+        }
+
+        public override CardData GetData(State state)
+        {
+            CardData cardData = base.GetData(state);
+            cardData.cost = 1;
+            return cardData;
+        }
+    }
 
 
 
@@ -454,7 +515,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
-    public class UNNAMED7 : Card
+    public class MutualRespect : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -513,7 +574,7 @@ namespace KnightsCohort.Treasurer.Cards
         protected override List<List<CardAction>> GetTierActions(State s, Combat c)
         {
             return new() {
-                new() { new AStatus() { status = Status.tempShield, statusAmount = 2, targetPlayer = true } },
+                new() { new AGoldShield() { amount = 2 } },
                 new() { new AHonorShield() },
                 new() { new AStatus() { status = Status.shield, statusAmount = 2, targetPlayer = true } },
             };

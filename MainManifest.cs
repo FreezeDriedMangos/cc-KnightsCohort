@@ -334,24 +334,26 @@ namespace KnightsCohort
 
                 new ExternalCard(namePrefix + "Cloaked In Honor", typeof(CloakedInHonor), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Petition Donations", typeof(PetitionDonations), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Gold Standard", typeof(UNNAMED1), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Gold Standard", typeof(GoldStandard), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Honor Duel", typeof(HonorDuel), sprites["card_default_treasurer"], decks["treasurer"]), // TODO: alt starter 1
                 new ExternalCard(namePrefix + "Extreme Confidence", typeof(ExtremeConfidence), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Charity", typeof(Charity), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Duumvirate", typeof(Twoumvirate), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Call for Respite", typeof(CallForRespite), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Bravado", typeof(UNNAMED2), sprites["card_default_treasurer"], decks["treasurer"]), // TODO: alt starter 2
+                new ExternalCard(namePrefix + "Bravado", typeof(Bravado), sprites["card_default_treasurer"], decks["treasurer"]), // TODO: alt starter 2
                 
-                new ExternalCard(namePrefix + "Revocation", typeof(UNNAMED3), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "For Glory", typeof(UNNAMED4), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Revocation", typeof(Revocation), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "For Glory", typeof(ForGlory), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "All In", typeof(AllIn), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Deluxe Edition", typeof(UNNAMED5), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Market Sense", typeof(MarketSense), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Deluxe Edition", typeof(DeluxeEdition), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Market Sense", typeof(MarketSense), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "UNNAMED", typeof(UNNAMED), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Suitable Weapons", typeof(Treasurer.Cards.SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Layered Shield", typeof(UNNAMED6), sprites["card_default_treasurer"], decks["treasurer"]),
+                //new ExternalCard(namePrefix + "Layered Shield", typeof(LayeredShield), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Shield Charge", typeof(ShieldCharge), sprites["card_default_treasurer"], decks["treasurer"]),
                 
                 new ExternalCard(namePrefix + "Big Budget", typeof(Treasurer.Cards.BigBudget), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "Mutual Respect", typeof(UNNAMED7), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Mutual Respect", typeof(MutualRespect), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Tollbooth", typeof(Tollbooth), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Golden Scales", typeof(Treasurer.Cards.GoldenScales), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Bribe", typeof(Treasurer.Cards.Bribe), sprites["card_default_treasurer"], decks["treasurer"]),
