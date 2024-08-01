@@ -6,23 +6,46 @@ Bannerlady was sent with him as her first outing, and her role was to attempt to
 Halla, as a senior knight, was sent to supervise them and guide them
 
 they have some adventures as they make their way over to the lawless sector
+
+----- RATZO MEMORY 2 ------
 eventually they run into a pirate, who immediately attempts to mug them. 
 Halla> Ratzo, don't-
 Ratzo> A duel??? We accept!!
 Halla exasperated> Of course.
+They lose the fight, and Emily's comms go to static. Ruby is horrified, Ratzo wishes her well on her new "quest"
 
-They lose the fight, and Emily's comms go to static.
+----- ????? Memory ? -----
+
+Explosions rock the ship
+Emily (nervous)> Guys, I don't think the ship can take this, we gotta eject! We gotta do SOMETHING!
+Ruby (fierce)> Hold on Emily, we got them right where we want them! We-
+explosion rocks the ship
+Emily (static)>
+Ruby (face falling)> We... 
+Ruby (continuing to fall)> I...
+Ruby (anguished / disbelief)> Emily?
 
 
+----- RUBY MEMORY 2 -----
+immediately after the Ratzo memory where they lose Emily. Ruby is disconsolate, she's lost another. She tells Ratzo off for being excited about her "new quest". If she didn't die in that fight, then certainly she's dead now, in the hands of pirates. Ratzo successfuly reassures her. They decide to look for her.
+don't reference Emily by name
+draw portraits of 3-4 other knights (as ghosts?) and have each of them say "..." at the start of the memory, followed by Ruby with closed eyes saying "I've lost another..."
+
+
+----- EMILY MEMORY 3 -----
 Day 127
 Pirate 2> Ohoho! A knight! I heard your order pays out ransoms. I reckon you'll fetch at least a relic of some sort.
 Pirate 1> But where do we keep her until the other knights arrive...? It's not like we have prisons.
-Emily> Well if I'm worth at least some magical relic, seems to me like you should keep me in your treasure vault, back at camp.
+Emily> Well if I'm worth at least some magical relic, seems to me like you should keep me in your ship's vault. // storehouse?? idk
 Pirate 2> Don't-
 Pirate 1> You're totally right! What a great idea!
-Pirate 2> How did you end up in charge...
+Pirate 2> This is a terrible idea-
+Pirate 2> Wait. If we convince her we'll split the haul with her order, maybe...
+
+// Something about bringing her to the Cobalt, maybe having her wield excalibur to help them in some heist. they can't pick it up anyway
 
 Day 134
+Pirate 2> If you're just gonna keep trying mutiny, you can wait in here until we're done with the Cobalt.
 Emily> Ouhf!
 Vault door> *slam!*
 Emily, just eyes in darkness> I can't believe that worked. 
@@ -30,15 +53,114 @@ Emily, just eyes in darkness, squint> Alright. Now... where are you?
 Excalibur>
 Emiliy> Aha!
 Emily's hands with cut ropes hanging off of them> If this sword is even half of what they say it is, it'll have no problem with that door
+Valut door>
 *no dialouge box for a second*
+Vault door, split in half>
 Emily, fierce> Have at you!!
 Pirate 1> You! How'd you get out?
 Pirate 2> Ugh. The giant glowing sword, maybe?
-Emily, scared> Wait, that light, that's not excalibur, what is-
+Emily, scared> Wait, that light, that's not from the sword, what is-
 Core explosion flash sweeps over the scene
+
+
+----- Ratzo Memory 3 -----
+They've done some reconnisance (Ratzo has a clever streak in him under all the thickheaddedness), maybe by talking to the walrus
+and tracked the pirates that they fought before (if anyone knows what's happened to her, it's them)
+finds out they're going to the cobalt
+
+time skip
+
+they spot the ship
+huh, why's the ship glowing? ... wait, there's no way
+hey ruby? I think I found excalibur. 
+yeah, I can see that. that pirate ship is glowing
+what? that tiny light? no look over here. now THAT'S a glow
+Core explosion flash sweeps over the scene
+
+
+----- First Ruby/Emily run intro -----
+Have Ruby call Emily by the wrong name - the name of a knight that's now long dead (and appears in the list that Ruby gets flashbacks of)
+Ruby: Jonna? What are you doing here?
+Emily (squint): ... I think I'm Emily?
+Ruby: Oh. Are you sure?
+Emily: Not in the slightest
+
+
+----- Ruby Memory 3 -----
+248 Days Before
+
+// TODO: needs something before this line, maybe Ruby coming to Halla 
+Ruby: 
+Halla: I can't tell you anything you don't already know
+Halla: But I can tell you something you don't want to acknowledge
+Ghost knight 1: Safety is an illusion.
+Ghost knight 2: What you should wish for instead
+Ghost knight 3: is the strength to rebuild.
+Ghost knight 4: You know this.
+Ghost knight 5: And you've had it.
+Halla: Every time.
+
+
+knight 1: secretary bird
+knight 2: little starling constantly flying to stay in frame (frame 1 at top of arc, wings down, frame 2 drop one pixel, wings half extend, frame 3 drop one pixel, wings full spread, frame 4 up one pixel, wings mostly closed)
+knight 3: honey badger
+knight 4: scarred and serious red squirrel (like jester)
+knight 5: (Rithaniel's idea): A very prim and respectful black bear who is honestly a bit too large for his armor (needs a big moustache)
+
+
+----- Emily Memory 2 -----
+34 Days Before
+
+Emily (sad): I just-
+Emily (sad): I don't know if I"m cut oout for knighthood, I...
+Halla (eyes closed, gently serious): Emily.
+Halla: Do you know why I gave you the banner?
+Emily: No, I don't understand, I don't have skill with a sword, I don't have the manners of a proper knight, why am I here?
+Halla: I gave it to you because the bannerholder is a leader. I gave it to you because of who you are, Emily. Not because of anything so silly as skill with a sword. No, enough training will make anyone a master. Emily, you have great courage and great heart. Be proud of that.
 
 
 
 
 Not story relevant, but a memory of young halla joining the order, and of her asking Ruby for advice, then later of Ruby coming to her for advice
 ^ Montage of halla growing up, with an unchanging Ruby sharing scenes with her?
+
+Halla inducts Emily into the order, an orphan - Halla sees something in her and wants to give her a future where she can make something of it and of herself.
+
+
+
+
+
+They kind of have triforce arcs
+Emily reveals her courage
+Ratzo reveals his wisdom
+Ruby  reveals her strength
+
+
+NOTE: I don't think this story works exactly right, Ruby memory 3 doesnt hit quite right because the loss of Emily is something Ruby's in part, direclty responsible for
+perhaps the start of that memory has her claim responsibility, but still want to give up. She founded the order to bring safety but it hasn't worked at all
+or perhaps she shouldn't be so excited about the duel. maybe the pirate attacks and she gives the angry face and says "alright, weapons hot." and in the memory where Emily's lost, her response to emily's "we need to leave" is an angry "Just a little to the left, we've almost got them lined up"
+
+I do like the idea of Ruby valuing safety, as a shield user
+
+
+In Ratzo fight, instead of offering duel, give both ships a vow of chivalry (the one that says don't hit weak points)
+
+
+----- RUBY PRE MEMORY 1 -----
+Cobalt> That is quite the expression you have.
+Ruby (smug/smirking)> Hello. I'm contracting your services. Name your price.
+Cobalt> That is not how this works.
+Ruby> Alright, I'll name it then, my hoard is vast. Whatever your price is, I can afford it.
+Cobalt> ... I have no interest in gold.
+Ruby (surprised)> ...
+Ruby> are you sure?
+Cobalt> Quite.
+
+
+----- RUBY PRE MEMORY 3 -----
+Cobalt> You seem like you have something you wish to ask.
+Ruby> ... can I talk to them? Just one time.
+Cobalt> I am afraid that is something I do not have the ability to do for you.
+Ruby> Even just one of them. Any of them. Please?
+Cobalt> You have another chance now. Be with those who are still here.
+
