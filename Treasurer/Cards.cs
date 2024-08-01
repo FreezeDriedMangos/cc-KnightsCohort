@@ -134,11 +134,19 @@ namespace KnightsCohort.Treasurer.Cards
                 };
             }
 
+            if (upgrade == Upgrade.B)
+            {
+                return new()
+                {
+                    new AStatus() { status = Status.overdrive, targetPlayer = false, statusAmount = 1 },
+                    new ADrawCard() { count = 2 }
+                };
+            }
+
             return new()
             {
-                // new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },
-                new AStatus() { status = Status.overdrive, targetPlayer = false, statusAmount = upgrade == Upgrade.B ? 2 : 1 },
-                new ADrawCard() { count = upgrade == Upgrade.B ? 2 : 1 }
+                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },
+                new ADrawCard() { count = 2 }
             };
         }
         public override CardData GetData(State state)
