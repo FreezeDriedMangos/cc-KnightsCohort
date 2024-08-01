@@ -150,7 +150,7 @@ namespace KnightsCohort.Bannerlady.Cards
             {
                new ASpawn() { thing = new MercyBanner() },
                new AStatus() { status = Enum.Parse<Status>("droneShift"), statusAmount = upgrade == Upgrade.B ? 4 : 2, targetPlayer = true },
-               new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) }
+               new ARetreat() { dir = upgrade == Upgrade.A ? 4 : 2 }
             };
         }
         public override CardData GetData(State state)
@@ -166,10 +166,10 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             return new()
             {
-                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
+                new ACharge() { dir = upgrade == Upgrade.A ? 2 : 1 },
                 new AStatus() { status = Enum.Parse<Status>("shield"), statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
                 new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1), targetPlayer = false },
-                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
+                new ACharge() { dir = upgrade == Upgrade.A ? 2 : 1 },
             };
         }
         public override CardData GetData(State state)
@@ -293,7 +293,7 @@ namespace KnightsCohort.Bannerlady.Cards
             return new()
             {
                new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1) },
-               new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 3 : 2, s, c) },
+               new ARetreat() { dir = upgrade == Upgrade.A ? 3 : 2 },
             };
         }
         public override CardData GetData(State state)
@@ -326,7 +326,7 @@ namespace KnightsCohort.Bannerlady.Cards
             return new()
             {
                new ASpawn() { thing = upgrade == Upgrade.A ? new TatteredPirateBanner() : new PirateBanner() },
-               new ARetreat() { dir = ARetreat.GetDir(2, s, c) }
+               new ARetreat() { dir = 2 }
             };
         }
         public override CardData GetData(State state)
@@ -382,7 +382,7 @@ namespace KnightsCohort.Bannerlady.Cards
                 return new()
                 {
                    new ASpawn() { thing = new BannerOfShielding() },
-                   new ACharge() { dir = ACharge.GetDir(1, s, c) },
+                   new ACharge() { dir = 1 },
                    new ASpawn() { thing = new BannerOfShielding() },
                 };
             }
@@ -390,7 +390,7 @@ namespace KnightsCohort.Bannerlady.Cards
             return new()
             {
                new ASpawn() { thing = new BannerOfShielding() },
-               new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 3 : 1, s, c) },
+               new ARetreat() { dir = upgrade == Upgrade.A ? 3 : 1 },
             };
         }
         public override CardData GetData(State state)
@@ -521,13 +521,13 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             List<CardAction> retval = new()
             {
-                new ACharge() { dir = ACharge.GetDir(2, s, c) },
+                new ACharge() { dir = 2 },
                 new AAttack() { damage = GetDmg(s, 1), targetPlayer = false },
             };
 
             retval.Insert(upgrade == Upgrade.A ? 2 : 0, new AAttack() { damage = GetDmg(s, 1), targetPlayer = false });
 
-            if (upgrade == Upgrade.B) retval.Insert(0, new ACharge() { dir = ACharge.GetDir(2, s, c) });
+            if (upgrade == Upgrade.B) retval.Insert(0, new ACharge() { dir = 2 });
 
             return retval;
         }
@@ -694,11 +694,11 @@ namespace KnightsCohort.Bannerlady.Cards
         {
             List<CardAction> retval = new()
             {
-                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
+                new ACharge() { dir = upgrade == Upgrade.A ? 2 : 1 },
                 new AAttack() { damage = GetDmg(s, 1) },
-                new ACharge() { dir = ACharge.GetDir(upgrade == Upgrade.A ? 2 : 1, s, c) },
+                new ACharge() { dir = upgrade == Upgrade.A ? 2 : 1 },
                 new AAttack() { damage = GetDmg(s, upgrade == Upgrade.B ? 2 : 1) },
-                new ARetreat() { dir = ARetreat.GetDir(upgrade == Upgrade.A ? 4 : 2, s, c) }
+                new ARetreat() { dir = upgrade == Upgrade.A ? 4 : 2 }
             };
             return retval;
         }

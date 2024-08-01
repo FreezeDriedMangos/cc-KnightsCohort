@@ -11,6 +11,7 @@ namespace KnightsCohort.actions
     public class ACharge : CardAction
     {
         public int dir = 0;
+        public int cardId;
         protected virtual string NonDirectionalSprite => "icons/charge";
         protected virtual string DirectionalSprite => "icons/charge_directional";
 
@@ -29,14 +30,18 @@ namespace KnightsCohort.actions
 
         public override void Begin(G g, State s, Combat c)
         {
+            int dir = ACharge.GetDir(this.dir, s, c);
             c.QueueImmediate(new AMove() { dir = dir, targetPlayer = true });
         }
 
         public override Icon? GetIcon(State s)
         {
+
             // if (s.route is Combat c && ((s.routeOverride == null && c.routeOverride == null) || c.eyeballPeek))
             if (s.route is Combat c)
             {
+                int dir = ACharge.GetDir(this.dir, s, c);
+
                 if (dir == 0) return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, Math.Abs(dir), Colors.textMain);
                 if (dir < 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, Math.Abs(dir), Colors.textMain);
                 if (dir > 0) return new Icon((Spr)MainManifest.sprites[DirectionalSprite+"_right"].Id, Math.Abs(dir), Colors.textMain);
@@ -65,6 +70,7 @@ namespace KnightsCohort.actions
 
         public override void Begin(G g, State s, Combat c)
         {
+            int dir = ARetreat.GetDir(this.dir, s, c);
             c.QueueImmediate(new AMove() { dir = dir, targetPlayer = true });
         }
 
@@ -75,6 +81,7 @@ namespace KnightsCohort.actions
             // if (s.route is Combat c && ((s.routeOverride == null && c.routeOverride == null) || c.eyeballPeek))
             if (s.route is Combat c)
             {
+                int dir = ARetreat.GetDir(this.dir, s, c);
                 if (dir == 0) return new Icon((Spr)MainManifest.sprites[NonDirectionalSprite].Id, Math.Abs(dir), Colors.textMain);
                 if (dir < 0)  return new Icon((Spr)MainManifest.sprites[DirectionalSprite].Id, Math.Abs(dir), Colors.textMain);
                 if (dir > 0)  return new Icon((Spr)MainManifest.sprites[DirectionalSprite + "_right"].Id, Math.Abs(dir), Colors.textMain);
