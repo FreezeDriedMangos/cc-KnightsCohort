@@ -265,7 +265,7 @@ namespace KnightsCohort.Herbalist.Cards
                         actions = new()
                         {
                             new ARemoveSelectedCardFromWhereverItIs(),
-                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = upgrade == Upgrade.None ? 3 : 5, targetPlayer = true }
+                            new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, statusAmount = 1, targetPlayer = true }
                         }
                     }
                 }
