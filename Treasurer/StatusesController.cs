@@ -62,6 +62,8 @@ namespace KnightsCohort.Treasurer
 
         //private static int tempShieldToAddInPost = 0;
 
+        static bool freezeCustomShields = false;
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.Set))]
         public static void SyncTempShieldWithCustomShields(Ship __instance, Status status, int n = 1)
@@ -71,6 +73,7 @@ namespace KnightsCohort.Treasurer
             //
             if (status == Status.tempShield)
             {
+                if (freezeCustomShields) return;
 
                 // if n < goldShield+honorShield, remove gold shield
                 // if still less, remove honor shield
@@ -139,10 +142,20 @@ namespace KnightsCohort.Treasurer
             //    + __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
         }
 
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
+        public static void FreezeCustomShieldsForDamageCalc(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        {
+            freezeCustomShields = true;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
         public static void CustomShieldDamagePostPatch(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
         {
+            freezeCustomShields = false;
+
             Status goldShield = (Status)MainManifest.statuses["goldShield"].Id;
             Status honorShield = (Status)MainManifest.statuses["honorShield"].Id;
 
@@ -160,7 +173,7 @@ namespace KnightsCohort.Treasurer
             __instance.Add((Status)MainManifest.statuses["gold"].Id, missingGoldShield);
             missingShield = Math.Max(0, missingShield - originalGoldShield);
 
-            MainManifest.Instance.Logger.LogInformation($"GAINING {missingHonorShield} HONOR and {missingGoldShield} GOLD  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)}  - {missingShield}");
+            MainManifest.Instance.Logger.LogInformation($"GAINING {missingHonorShield} HONOR and {missingGoldShield} GOLD  -  original gshield {originalGoldShield} original hshield {originalHonorShield}  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)} -  missing shield {missingShield}");
 
             // // Again, accessing __instance.statusEffects directly to avoid "on gain/lose temp shield" effects
             //if (missingShield > originalTempShield)
