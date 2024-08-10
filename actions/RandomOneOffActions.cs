@@ -420,7 +420,9 @@ namespace KnightsCohort.actions
         public override void Begin(G g, State s, Combat c)
         {
             var parts = c.otherShip.parts.Where(p => p.intent != null).ToList();
-            parts.KnightRandom(s.rngActions).intent = null;
+            if (parts.Count <= 0) return;
+
+            parts.KnightRandom(s.rngActions)!.intent = null;
         }
     }
 

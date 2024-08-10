@@ -11,14 +11,14 @@ namespace KnightsCohort.Treasurer.Cards
 {
 
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B }, dontOffer = true, unreleased = true)]
+    [CardMeta(rarity = Rarity.uncommon, dontOffer = true, unreleased = true)]
     public class DEBUG_HonorShield : Card
     {
         public override List<CardAction> GetActions(State s, Combat c) { return new() { new AHonorShield() }; }
         public override CardData GetData(State state) { return new() { cost = 0 }; }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B }, dontOffer = true, unreleased = true)]
+    [CardMeta(rarity = Rarity.uncommon, dontOffer = true, unreleased = true)]
     public class DEBUG_GoldShield : Card
     {
         public override List<CardAction> GetActions(State s, Combat c) { return new() { new AGoldShield() }; }
@@ -29,7 +29,7 @@ namespace KnightsCohort.Treasurer.Cards
 
 
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class CloakedInHonor : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2 };
@@ -51,7 +51,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
     // Ruby: Will you be able to sign this or will I need to find your next of kin?
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class PetitionDonations : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -80,7 +80,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class GoldStandard : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2 };
@@ -101,7 +101,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class HonorDuel : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -119,7 +119,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class ExtremeConfidence : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -156,7 +156,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class Charity : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -184,7 +184,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class Twoumvirate : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2 };
@@ -205,7 +205,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class CallForRespite : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -227,7 +227,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common)]
     public class Bravado : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2 };
@@ -266,7 +266,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class Revocation : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -290,7 +290,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class ForGlory : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 1, 3 };
@@ -312,7 +312,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class AllIn : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -337,7 +337,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon, dontOffer = true)] // TODO: remove DONT OFFER
     public class DeluxeEdition : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -354,7 +354,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class MarketSense : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 1 };
@@ -380,7 +380,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class UNNAMED : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 1 };
@@ -425,7 +425,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class LayeredShield : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2, 2 };
@@ -447,7 +447,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon)]
     public class ShieldCharge : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 2, 2 };
@@ -522,7 +522,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.rare)]
     public class MutualRespect : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -546,7 +546,7 @@ namespace KnightsCohort.Treasurer.Cards
     }
 
 
-    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.B })]
     public class Tollbooth : Card
     {
         public override List<CardAction> GetActions(State s, Combat c)
@@ -574,7 +574,7 @@ namespace KnightsCohort.Treasurer.Cards
         }
     }
 
-    [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.rare)]
     public class GoldenScales : InvestmentCard
     {
         public override List<int> upgradeCosts => new() { 3, 3 };

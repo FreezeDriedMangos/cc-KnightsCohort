@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KnightsCohort.actions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -62,56 +63,56 @@ namespace KnightsCohort.Treasurer
 
         //private static int tempShieldToAddInPost = 0;
 
-        static bool freezeCustomShields = false;
+        // static bool freezeCustomShields = false;
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(Ship), nameof(Ship.Set))]
-        public static void SyncTempShieldWithCustomShields(Ship __instance, Status status, int n = 1)
-        {
-            //
-            // Handling for making sure we don't end up with more custom shields than temp shields
-            //
-            if (status == Status.tempShield)
-            {
-                if (freezeCustomShields) return;
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(Ship), nameof(Ship.Set))]
+        //public static void SyncTempShieldWithCustomShields(Ship __instance, Status status, int n = 1)
+        //{
+        //    //
+        //    // Handling for making sure we don't end up with more custom shields than temp shields
+        //    //
+        //    if (status == Status.tempShield)
+        //    {
+        //        if (freezeCustomShields) return;
 
-                // if n < goldShield+honorShield, remove gold shield
-                // if still less, remove honor shield
-                int goldShield = __instance.Get((Status)MainManifest.statuses["goldShield"].Id);
-                int honorShield = __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
+        //        // if n < goldShield+honorShield, remove gold shield
+        //        // if still less, remove honor shield
+        //        int goldShield = __instance.Get((Status)MainManifest.statuses["goldShield"].Id);
+        //        int honorShield = __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
 
-                if (n >= goldShield + honorShield) return;
+        //        if (n >= goldShield + honorShield) return;
 
-                MainManifest.Instance.Logger.LogInformation($"Setting temp shield, {n} golds{goldShield} honors{honorShield}");
+        //        MainManifest.Instance.Logger.LogInformation($"Setting temp shield, {n} golds{goldShield} honors{honorShield}");
 
-                // GGHHH
-                // TTT
-                __instance._Set((Status)MainManifest.statuses["goldShield"].Id, Math.Min(n, goldShield));
+        //        // GGHHH
+        //        // TTT
+        //        __instance._Set((Status)MainManifest.statuses["goldShield"].Id, Math.Min(n, goldShield));
 
-                n -= Math.Min(n, goldShield);
+        //        n -= Math.Min(n, goldShield);
 
-                __instance._Set((Status)MainManifest.statuses["honorShield"].Id, Math.Min(n, honorShield));
+        //        __instance._Set((Status)MainManifest.statuses["honorShield"].Id, Math.Min(n, honorShield));
 
-                MainManifest.Instance.Logger.LogInformation($"        {n} golds{__instance.Get((Status)MainManifest.statuses["goldShield"].Id)} honors{__instance.Get((Status)MainManifest.statuses["honorShield"].Id)}");
-            }
-            ////
-            //// Handling for changing custom shield stacks
-            ////
-            //else if (status == (Status)MainManifest.statuses["honorShield"].Id)
-            //{
-            //    int diff = n - __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
-            //    MainManifest.Instance.Logger.LogInformation($"Setting honor shield, {n} diffing temp shield {diff}");
-            //    //__instance.Add(Status.tempShield, diff);
-            //    tempShieldToAddInPost = diff;
-            //}
-            //else if (status == (Status)MainManifest.statuses["goldShield"].Id)
-            //{
-            //    int diff = n - __instance.Get((Status)MainManifest.statuses["goldShield"].Id);
-            //    MainManifest.Instance.Logger.LogInformation($"Setting gold shield, {n} diffing gold shield {diff}");
-            //    //__instance.Add(Status.tempShield, diff);
-            //    tempShieldToAddInPost = diff;
-            //}
-        }
+        //        MainManifest.Instance.Logger.LogInformation($"        {n} golds{__instance.Get((Status)MainManifest.statuses["goldShield"].Id)} honors{__instance.Get((Status)MainManifest.statuses["honorShield"].Id)}");
+        //    }
+        //    ////
+        //    //// Handling for changing custom shield stacks
+        //    ////
+        //    //else if (status == (Status)MainManifest.statuses["honorShield"].Id)
+        //    //{
+        //    //    int diff = n - __instance.Get((Status)MainManifest.statuses["honorShield"].Id);
+        //    //    MainManifest.Instance.Logger.LogInformation($"Setting honor shield, {n} diffing temp shield {diff}");
+        //    //    //__instance.Add(Status.tempShield, diff);
+        //    //    tempShieldToAddInPost = diff;
+        //    //}
+        //    //else if (status == (Status)MainManifest.statuses["goldShield"].Id)
+        //    //{
+        //    //    int diff = n - __instance.Get((Status)MainManifest.statuses["goldShield"].Id);
+        //    //    MainManifest.Instance.Logger.LogInformation($"Setting gold shield, {n} diffing gold shield {diff}");
+        //    //    //__instance.Add(Status.tempShield, diff);
+        //    //    tempShieldToAddInPost = diff;
+        //    //}
+        //}
 
 
         //[HarmonyPrefix]
@@ -143,18 +144,37 @@ namespace KnightsCohort.Treasurer
         }
 
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
-        public static void FreezeCustomShieldsForDamageCalc(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
+        //public static void FreezeCustomShieldsForDamageCalc(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
+        //{
+        //    freezeCustomShields = true;
+        //}
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.OnBeginTurn))]
+        public static void ExpireCustomShields(Ship __instance, State s, Combat c)
         {
-            freezeCustomShields = true;
+            Status goldShield = (Status)MainManifest.statuses["goldShield"].Id;
+            Status honorShield = (Status)MainManifest.statuses["honorShield"].Id;
+
+            int originalGoldShield = __instance.Get(goldShield);
+            int originalHonorShield = __instance.Get(honorShield);
+
+            __instance.Add((Status)MainManifest.statuses["gold"].Id, originalGoldShield);
+            __instance.Add((Status)MainManifest.statuses["honor"].Id, originalHonorShield);
+            
+            __instance.Set(goldShield, 0);
+            __instance.Set(honorShield, 0);
+
+            MainManifest.Instance.Logger.LogInformation($"GAINING {originalHonorShield} HONOR and {originalGoldShield} GOLD  -  original gshield {originalGoldShield} original hshield {originalHonorShield}  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)}");
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Ship), nameof(Ship.NormalDamage))]
         public static void CustomShieldDamagePostPatch(Ship __instance, State s, Combat c, int incomingDamage, int? maybeWorldGridX, bool piercing = false)
         {
-            freezeCustomShields = false;
+            // freezeCustomShields = false;
 
             Status goldShield = (Status)MainManifest.statuses["goldShield"].Id;
             Status honorShield = (Status)MainManifest.statuses["honorShield"].Id;
@@ -165,15 +185,16 @@ namespace KnightsCohort.Treasurer
 
             int missingHonorShield = Math.Min(originalHonorShield, missingShield);
             __instance.Add(honorShield, -missingHonorShield);
-            __instance.Add((Status)MainManifest.statuses["honor"].Id, missingHonorShield);
+            __instance.Add((Status)MainManifest.statuses["honor"].Id, 2*missingHonorShield);
             missingShield = Math.Max(0, missingShield - missingHonorShield);
 
             int missingGoldShield = Math.Min(originalGoldShield, missingShield);
             __instance.Add(goldShield, -missingGoldShield);
-            __instance.Add((Status)MainManifest.statuses["gold"].Id, missingGoldShield);
+            __instance.Add((Status)MainManifest.statuses["gold"].Id, 2*missingGoldShield);
             missingShield = Math.Max(0, missingShield - originalGoldShield);
 
-            MainManifest.Instance.Logger.LogInformation($"GAINING {missingHonorShield} HONOR and {missingGoldShield} GOLD  -  original gshield {originalGoldShield} original hshield {originalHonorShield}  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)} -  missing shield {missingShield}");
+            MainManifest.Instance.Logger.LogInformation($"GAINING 2*{missingHonorShield} HONOR and 2*{missingGoldShield} GOLD  -  original gshield {originalGoldShield} original hshield {originalHonorShield}  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)} -  missing shield {missingShield}");
+            // MainManifest.Instance.Logger.LogInformation($"GAINING {missingHonorShield} HONOR and {missingGoldShield} GOLD  -  original gshield {originalGoldShield} original hshield {originalHonorShield}  -  original tshield {originalTempShield} new temp shield {__instance.Get(Status.tempShield)} -  missing shield {missingShield}");
 
             // // Again, accessing __instance.statusEffects directly to avoid "on gain/lose temp shield" effects
             //if (missingShield > originalTempShield)

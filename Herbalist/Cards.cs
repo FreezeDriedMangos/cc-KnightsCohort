@@ -250,6 +250,7 @@ namespace KnightsCohort.Herbalist.Cards
         public override List<HerbActions> PossibleActions() => HerbCard_Shroom.options;
     }
 
+    // TODO: remove ALL herb cards and give 1 honor for each?
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class PublishFindings : Card
     {

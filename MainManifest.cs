@@ -11,6 +11,8 @@ using KnightsCohort.Knight.Cards;
 using KnightsCohort.Treasurer.Cards;
 using KnightsCohort.Treasurer.OldCards;
 using Microsoft.Extensions.Logging;
+using Nanoray.PluginManager;
+using Nickel.Legacy;
 using shockah;
 using Shockah.Kokoro;
 using System.Runtime.CompilerServices;
@@ -18,7 +20,7 @@ using static CobaltCoreModding.Definitions.ExternalItems.ExternalGlossary;
 
 namespace KnightsCohort
 {
-    public class MainManifest : IModManifest, ISpriteManifest, ICardManifest, ICharacterManifest, IDeckManifest, IAnimationManifest, IGlossaryManifest, IStatusManifest, IArtifactManifest, IStoryManifest
+    public class MainManifest : IModManifest, ISpriteManifest, ICardManifest, ICharacterManifest, IDeckManifest, IAnimationManifest, IGlossaryManifest, IStatusManifest, IArtifactManifest, IStoryManifest, INickelManifest
     {
         public static readonly string MOD_NAMESPACE = "clay.KnightsCohort";
         public static MainManifest Instance;
@@ -40,11 +42,12 @@ namespace KnightsCohort
 
         public static IKokoroApi KokoroApi = null!;
         internal static VowsRenderer VowsRenderer = null;
+        public static Nickel.IModHelper NickelApi = null;
 
         public void BootMod(IModLoaderContact contact)
         {
-            ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.dll"));
-            ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.Harmony.dll"));
+            shockah.ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.dll"));
+            shockah.ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.Harmony.dll"));
 
             Instance = this;
             var harmony = new Harmony(this.Name);
@@ -55,6 +58,11 @@ namespace KnightsCohort
             VowsRenderer = new();
 
             MainManifest.KokoroApi.RegisterTypeForExtensionData(typeof(State));
+        }
+
+        public void OnNickelLoad(IPluginPackage<Nickel.IModManifest> package, Nickel.IModHelper helper)
+        {
+            NickelApi = helper;
         }
 
         public void LoadManifest(ISpriteRegistry artRegistry)
@@ -901,7 +909,7 @@ namespace KnightsCohort
             status = "paranoia";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/paranoia"], false);
             statusRegistry.RegisterStatus(statuses[status]);
-            statuses[status].AddLocalisation("Paranoia", $"On the start of your turn, lose one stack of paranoia. If you are the player, also gain one Abyssal Visions in hand. If you are the enemy, also randomly cancel one intent.");
+            statuses[status].AddLocalisation("Paranoia", $"On the start of your turn, lose one stack of paranoia. If you are the player, also gain one random crewmate missing status. If you are the enemy, also randomly cancel one intent.");
 
             status = "herberdrive";
             statuses[status] = new ExternalStatus(Name + ".statuses." + status, true, System.Drawing.Color.FromArgb(honorColor), null, sprites["icons/herberdrive"], false);

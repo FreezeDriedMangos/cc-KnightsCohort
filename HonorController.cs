@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using KnightsCohort.actions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,22 +91,7 @@ namespace KnightsCohort
 
                 __result = true;
 
-                __instance.Queue(new AMidCombatDialogue
-                {
-                    script = "clay.KnightsCohort.Honorable_Win", // make this randomly pick a line from a list of multiple for each of the 3 knights
-                    canRunAfterKill = true,
-                });
-                __instance.Queue(new ADelay
-                {
-                    time = 0.0,
-                    timer = 0.7,
-                    //canRunAfterKill = true,
-                });
-                __instance.Queue(new AEscape
-                {
-                    targetPlayer = false,
-                    canRunAfterKill = true,
-                });
+                __instance.Queue(new AHonorableVictory());
             }
             else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= s.ship.hull + s.ship.Get(Enum.Parse<Status>("shield")))
             {

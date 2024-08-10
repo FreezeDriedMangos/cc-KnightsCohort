@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace KnightsCohort.Treasurer.Artifacts
 {
+
+    // TODO: if I go with "honor/gold shield only covers one part and doesn't expire" make an artifact that makes them cover the whole ship but tick down by 1 at the end of the turn
+
+    // TODO: should trigger every other turn
     public class DragonsHoard : Artifact
     {
         public static readonly int INCOME_RATE = 8;

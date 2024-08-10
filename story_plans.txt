@@ -103,7 +103,7 @@ Halla: Every time.
 
 knight 1: secretary bird
 knight 2: little starling constantly flying to stay in frame (frame 1 at top of arc, wings down, frame 2 drop one pixel, wings half extend, frame 3 drop one pixel, wings full spread, frame 4 up one pixel, wings mostly closed)
-knight 3: honey badger
+knight 3: honey badger in a space suit (like sanghili space suits from Reach) with a plume on the helmet
 knight 4: scarred and serious red squirrel (like jester)
 knight 5: (Rithaniel's idea): A very prim and respectful black bear who is honestly a bit too large for his armor (needs a big moustache)
 

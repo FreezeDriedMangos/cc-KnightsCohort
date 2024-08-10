@@ -63,6 +63,10 @@ namespace KnightsCohort.Knight.Cards
                 };
             }
 
+            CardAction secondAction = upgrade == Upgrade.A
+                ? new AMove() { dir = 2, targetPlayer = true }
+                : new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = 1, targetPlayer = true };
+
             return new()
             {
                new ASpawn()
@@ -72,12 +76,12 @@ namespace KnightsCohort.Knight.Cards
                        targetPlayer = s.ship.Get(Enum.Parse<Status>("backwardsMissiles")) > 0
                    }
                },
-               new AStatus() { status = Enum.Parse<Status>("evade"), statusAmount = upgrade == Upgrade.A ? 2 : 1, targetPlayer = true },
+               secondAction
             };
         }
         public override CardData GetData(State state)
         {
-            return new() { cost = 1 };
+            return new() { cost = 1, flippable = upgrade == Upgrade.A };
         }
     }
 

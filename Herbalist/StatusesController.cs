@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using KnightsCohort.actions;
 using KnightsCohort.Knight;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,10 +78,19 @@ namespace KnightsCohort.Herbalist
         {
             if (!__instance.isPlayerShip) return;
             if (__instance.Get((Status)MainManifest.statuses["paranoia"].Id) <= 0) return;
+
+            Deck? missingCharacter = s.characters.Select(c => c.deckType).Take((int)(s.rngActions.NextUint() % 3) + 1).Last();
+            Status? missingStatus = missingCharacter == null ? null : MainManifest.NickelApi.Content.Characters.V2.LookupByDeck((Deck)missingCharacter)?.MissingStatus?.Status;
+
+            MainManifest.Instance.Logger.LogInformation($"creating missing for {missingCharacter} - {missingStatus}");
+
+            CardAction paranoiaConcequence = missingStatus == null
+                ? new AAddCard() { card = new AbyssalVisions(), destination = CardDestination.Hand }
+                : new AStatus() { status = (Status)missingStatus, targetPlayer = true, statusAmount = -1 };
+
             c.QueueImmediate(new List<CardAction>()
             {
-                // TODO: [REQUIRES NICKEL] instead of adding an AbyssalVisions, give the player a random crew-member-missing status
-                new AAddCard() { card = new AbyssalVisions(), destination = CardDestination.Hand },
+                paranoiaConcequence,
                 new AStatus() { status = (Status)MainManifest.statuses["paranoia"].Id, targetPlayer = true, statusAmount = -1 },
             });
         }

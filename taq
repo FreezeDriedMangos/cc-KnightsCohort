@@ -1,0 +1,72 @@
+[1mdiff --git a/HonorController.cs b/HonorController.cs[m
+[1mindex a08708c..0f9c992 100644[m
+[1m--- a/HonorController.cs[m
+[1m+++ b/HonorController.cs[m
+[36m@@ -108,25 +108,26 @@[m [mnamespace KnightsCohort[m
+             }[m
+             else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= s.ship.hull + s.ship.Get(Enum.Parse<Status>("shield")))[m
+             {[m
+[31m-                __instance.noReward = true;[m
+[31m-                __result = true;[m
+[32m+[m[32m                __instance.QueueImmediate(new AHurt() { targetPlayer = true, hurtAmount = 9999999 });[m
+[32m+[m[32m                //__instance.noReward = true;[m
+[32m+[m[32m                //__result = true;[m
+ [m
+[31m-                __instance.Queue(new AMidCombatDialogue[m
+[31m-                {[m
+[31m-                    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the knights[m
+[31m-                    canRunAfterKill = true,[m
+[31m-                });[m
+[31m-                __instance.Queue(new ADelay[m
+[31m-                {[m
+[31m-                    time = 0.0,[m
+[31m-                    timer = 0.1,[m
+[31m-                    canRunAfterKill = true,[m
+[31m-                });[m
+[31m-                __instance.Queue(new AEscape[m
+[31m-                {[m
+[31m-                    targetPlayer = true,[m
+[31m-                    canRunAfterKill = true,[m
+[31m-                });[m
+[32m+[m[32m                //__instance.Queue(new AMidCombatDialogue[m
+[32m+[m[32m                //{[m
+[32m+[m[32m                //    script = "clay.KnightsCohort.Honorable_Loss", // make this randomly pick a line from a list of multiple for each of the knights[m
+[32m+[m[32m                //    canRunAfterKill = true,[m
+[32m+[m[32m                //});[m
+[32m+[m[32m                //__instance.Queue(new ADelay[m
+[32m+[m[32m                //{[m
+[32m+[m[32m                //    time = 0.0,[m
+[32m+[m[32m                //    timer = 0.1,[m
+[32m+[m[32m                //    canRunAfterKill = true,[m
+[32m+[m[32m                //});[m
+[32m+[m[32m                //__instance.Queue(new AEscape[m
+[32m+[m[32m                //{[m
+[32m+[m[32m                //    targetPlayer = true,[m
+[32m+[m[32m                //    canRunAfterKill = true,[m
+[32m+[m[32m                //});[m
+             }[m
+         }[m
+ [m
+[1mdiff --git a/Treasurer/Cards.cs b/Treasurer/Cards.cs[m
+[1mindex 88bbf1d..c4a2b63 100644[m
+[1m--- a/Treasurer/Cards.cs[m
+[1m+++ b/Treasurer/Cards.cs[m
+[36m@@ -125,7 +125,8 @@[m [mnamespace KnightsCohort.Treasurer.Cards[m
+         {[m
+             return new()[m
+             {[m
+[31m-                new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },[m
+[32m+[m[32m                // new AStatus() { status = (Status)MainManifest.statuses["honor"].Id, targetPlayer = false, statusAmount = 2 },[m
+[32m+[m[32m                new AStatus() { status = Status.overdrive, targetPlayer = false, statusAmount = 1 },[m
+                 new ADrawCard() { count = 1 }[m
+             };[m
+         }[m
+[36m@@ -198,7 +199,7 @@[m [mnamespace KnightsCohort.Treasurer.Cards[m
+             return new()[m
+             {[m
+                 xEqualsEnemyHonor,[m
+[31m-                new AStatus() { status = Status.tempShield, targetPlayer = false, statusAmount = c.otherShip.Get((Status)MainManifest.statuses["honor"].Id), xHint=1 },[m
+[32m+[m[32m                new AStatus() { status = Status.tempShield, targetPlayer = true, statusAmount = c.otherShip.Get((Status)MainManifest.statuses["honor"].Id), xHint=1 },[m
+             };[m
+         }[m
+         public override CardData GetData(State state)[m
