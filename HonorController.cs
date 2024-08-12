@@ -95,7 +95,10 @@ namespace KnightsCohort
             }
             else if (__instance.otherShip.Get((Status)MainManifest.statuses["honor"].Id) >= s.ship.hull + s.ship.Get(Enum.Parse<Status>("shield")))
             {
-                __instance.QueueImmediate(new AHurt() { targetPlayer = true, hurtAmount = 9999999 });
+                //__instance.QueueImmediate(new AHurt() { targetPlayer = true, hurtAmount = 9999999 });
+                
+                __instance.QueueImmediate(new ADie());
+
                 //__instance.noReward = true;
                 //__result = true;
 
