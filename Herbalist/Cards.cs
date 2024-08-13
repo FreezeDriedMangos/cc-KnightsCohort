@@ -181,14 +181,18 @@ namespace KnightsCohort.Herbalist.Cards
                     new TTText() { text = $"The randomly generated herb cards will have 2-3 of the following actions, with potential repeats: " }
                 };
 
-                foreach (HerbActions a in PossibleActions())
+                var possibleActions = PossibleActions();
+                foreach (HerbActions a in possibleActions)
                 {
-                    TTGlossary ttg = HerbCard.ParseSerializedAction(a).GetTooltips(s).First() as TTGlossary;
-                    //tooltips.Add(new TTGlossaryNoDesc(ttg.key, ttg.vals));
-                    string name = HerbCard.GetName(a);
-                    string suffix = name.StartsWith("Reduce") ? ".reduce" : "";
-                    tooltips.Add(new TTGlossaryNoDescNameOverride(ttg.key + suffix, name, ttg.vals));
-                    //MainManifest.Instance.Logger.LogInformation($"Adding tooltip on {GetHerbType()} for {a} : {HerbCard.GetName(a)}");
+                    Tooltip? originalTooltip = HerbCard.ParseSerializedAction(a).GetTooltips(s).First();
+                    if (originalTooltip != null && originalTooltip is TTGlossary ttg)
+                    {
+                        //tooltips.Add(new TTGlossaryNoDesc(ttg.key, ttg.vals));
+                        string name = HerbCard.GetName(a);
+                        string suffix = name.StartsWith("Reduce") ? ".reduce" : "";
+                        tooltips.Add(new TTGlossaryNoDescNameOverride(ttg.key + suffix, name, ttg.vals));
+                        //MainManifest.Instance.Logger.LogInformation($"Adding tooltip on {GetHerbType()} for {a} : {HerbCard.GetName(a)}");
+                    }
                 }
                 tooltips.Add(new TTDivider());
 
