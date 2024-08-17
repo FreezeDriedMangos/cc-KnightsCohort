@@ -198,8 +198,13 @@ namespace KnightsCohort.Herbalist.Cards
 
 
                 List<CardAction> actions = new();
-                for (int i = 0; i < numCards; i++) actions.Add(new ATooltipDummy() { icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) } });
-                if (actions.Count > 0) (actions[0] as ATooltipDummy).tooltips = tooltips;
+                for (int i = 0; i < numCards; i++) 
+                    actions.Add(new ATooltipDummy() 
+                    { 
+                        icons = new() { new Icon(Enum.Parse<Spr>("icons_addCard"), null, Colors.textMain) }, 
+                        tooltips = i == 0 ? tooltips : new() 
+                    });
+
                 return actions;
             }
         }
