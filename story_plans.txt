@@ -7,6 +7,12 @@ Halla, as a senior knight, was sent to supervise them and guide them
 
 they have some adventures as they make their way over to the lawless sector
 
+----- RATZO MEMORY 1 ------
+Ratzo recieving the quest from Halla "Ratzo, today's your lucky day"
+"it is?"
+"quest time! and you're bringing Halla and Emily with you"
+
+
 ----- RATZO MEMORY 2 ------
 eventually they run into a pirate, who immediately attempts to mug them. 
 Halla> Ratzo, don't-
@@ -14,7 +20,37 @@ Ratzo> A duel??? We accept!!
 Halla exasperated> Of course.
 They lose the fight, and Emily's comms go to static. Ruby is horrified, Ratzo wishes her well on her new "quest"
 
------ ????? Memory ? -----
+
+----- Ratzo Memory 3 -----
+They've done some reconnisance (Ratzo has a clever streak in him under all the thickheaddedness), maybe by talking to the walrus
+and tracked the pirates that they fought before (if anyone knows what's happened to her, it's them)
+finds out they're going to the cobalt
+
+time skip
+
+they spot the ship
+huh, why's the ship glowing? ... wait, there's no way
+hey ruby? I think I found excalibur. 
+yeah, I can see that. that pirate ship is glowing
+what? that tiny light? no look over here. now THAT'S a glow
+Core explosion flash sweeps over the scene
+
+
+----- Emily Memory 1 -----
+34 Days Before
+
+Emily (sad): I just-
+Emily (sad): I don't know if I'm cut out for knighthood, I...
+Halla (eyes closed, gently serious): Emily.
+Halla: Do you know why I gave you the banner?
+BLACK
+Young Emily, looking up with expectation and hope and wonder: ...
+BLACK
+Emily: No, I don't understand, I don't have skill with a sword, I don't have the manners of a proper knight, why am I here?
+Halla: I gave it to you because the bannerholder is a leader. I gave it to you because of who you are, Emily. Not because of anything so silly as skill with a sword. No, enough training will make anyone a master. Emily, you have great courage and great heart. Be proud of that.
+
+
+----- Emily Memory 2 -----
 
 Explosions rock the ship
 Emily (nervous)> Guys, I don't think the ship can take this, we gotta eject! We gotta do SOMETHING!
@@ -25,11 +61,6 @@ Ruby (face falling)> We...
 Ruby (continuing to fall)> I...
 Ruby (anguished / disbelief)> Emily?
 
-
------ RUBY MEMORY 2 -----
-immediately after the Ratzo memory where they lose Emily. Ruby is disconsolate, she's lost another. She tells Ratzo off for being excited about her "new quest". If she didn't die in that fight, then certainly she's dead now, in the hands of pirates. Ratzo successfuly reassures her. They decide to look for her.
-don't reference Emily by name
-draw portraits of 3-4 other knights (as ghosts?) and have each of them say "..." at the start of the memory, followed by Ruby with closed eyes saying "I've lost another..."
 
 
 ----- EMILY MEMORY 3 -----
@@ -63,27 +94,36 @@ Emily, scared> Wait, that light, that's not from the sword, what is-
 Core explosion flash sweeps over the scene
 
 
------ Ratzo Memory 3 -----
-They've done some reconnisance (Ratzo has a clever streak in him under all the thickheaddedness), maybe by talking to the walrus
-and tracked the pirates that they fought before (if anyone knows what's happened to her, it's them)
-finds out they're going to the cobalt
 
-time skip
+----- Ruby Memory 1 -----
 
-they spot the ship
-huh, why's the ship glowing? ... wait, there's no way
-hey ruby? I think I found excalibur. 
-yeah, I can see that. that pirate ship is glowing
-what? that tiny light? no look over here. now THAT'S a glow
-Core explosion flash sweeps over the scene
+Young Halla, inducted into the knight order, talking to Ruby
+Halla's asking Ruby for advice on something, Ruby's unsure, Halla hits her with the little kid "but *I* believe in you" causing Ruby to pause and think
+
+BLACK SCREEN
+
+Toddler Halla: Ms Dwagon? 
+Young Halla: Will you 
+Teenage Halla: help me
+Adult Halla: to get you to see
+Old Halla: what you're really made of?
 
 
------ First Ruby/Emily run intro -----
-Have Ruby call Emily by the wrong name - the name of a knight that's now long dead (and appears in the list that Ruby gets flashbacks of)
-Ruby: Jonna? What are you doing here?
-Emily (squint): ... I think I'm Emily?
-Ruby: Oh. Are you sure?
-Emily: Not in the slightest
+----- RUBY MEMORY 2 -----
+immediately after the Ratzo memory where they lose Emily. Ruby is disconsolate, she's lost another. She tells Ratzo off for being excited about her "new quest". If she didn't die in that fight, then certainly she's dead now, in the hands of pirates. Ratzo successfuly reassures her. They decide to look for her.
+don't reference Emily by name
+draw portraits of 3-4 other knights (as ghosts?) and have each of them say "..." at the start of the memory, followed by Ruby with closed eyes saying "I've lost another..."
+
+Ratzo> *slap*
+Ruby> Hey! What was that for??
+Ratzo> She could still be out there Ruby, we have to-
+Ruby> What are you talking about Ratzo?! She's dead and it's my fault. I've killed-
+Ratzo> *slap*
+Ruby> HEY!!
+Ratzo> You're not listening to me. Her transponder was still communicating.
+Ratzo> We recieved static yes, but that means her command module was intact.
+Ruby> No... It can't be... could it?
+Ratzo> It can, and it is. And we will find her.
 
 
 ----- Ruby Memory 3 -----
@@ -103,28 +143,26 @@ Halla: Every time.
 
 knight 1: secretary bird
 knight 2: little starling constantly flying to stay in frame (frame 1 at top of arc, wings down, frame 2 drop one pixel, wings half extend, frame 3 drop one pixel, wings full spread, frame 4 up one pixel, wings mostly closed)
-knight 3: honey badger in a space suit (like sanghili space suits from Reach) with a plume on the helmet
+knight 3: honey badger in a space suit (like sanghili space suits from Reach) with a plume on the helmet and a rifle strapped to his back
 knight 4: scarred and serious red squirrel (like jester)
 knight 5: (Rithaniel's idea): A very prim and respectful black bear who is honestly a bit too large for his armor (needs a big moustache)
-
-
------ Emily Memory 2 -----
-34 Days Before
-
-Emily (sad): I just-
-Emily (sad): I don't know if I"m cut oout for knighthood, I...
-Halla (eyes closed, gently serious): Emily.
-Halla: Do you know why I gave you the banner?
-Emily: No, I don't understand, I don't have skill with a sword, I don't have the manners of a proper knight, why am I here?
-Halla: I gave it to you because the bannerholder is a leader. I gave it to you because of who you are, Emily. Not because of anything so silly as skill with a sword. No, enough training will make anyone a master. Emily, you have great courage and great heart. Be proud of that.
+additional: hyena
 
 
 
+----- First Ruby/Emily run intro -----
+Have Ruby call Emily by the wrong name - the name of a knight that's now long dead (and appears in the list that Ruby gets flashbacks of)
+Ruby: Jonna? What are you doing here?
+Emily (squint): ... I think I'm Emily actually?
+Ruby: Oh. Are you sure?
+Emily: ...
+Emily: Not in the slightest.
 
-Not story relevant, but a memory of young halla joining the order, and of her asking Ruby for advice, then later of Ruby coming to her for advice
-^ Montage of halla growing up, with an unchanging Ruby sharing scenes with her?
 
-Halla inducts Emily into the order, an orphan - Halla sees something in her and wants to give her a future where she can make something of it and of herself.
+
+
+
+---------------------------------
 
 
 
