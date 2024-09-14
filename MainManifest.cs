@@ -355,7 +355,7 @@ namespace KnightsCohort
                 new ExternalCard(namePrefix + "All In", typeof(AllIn), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Deluxe Edition", typeof(DeluxeEdition), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Market Sense", typeof(MarketSense), sprites["card_default_treasurer"], decks["treasurer"]),
-                new ExternalCard(namePrefix + "UNNAMED", typeof(UNNAMED), sprites["card_default_treasurer"], decks["treasurer"]),
+                new ExternalCard(namePrefix + "Hoard Wards", typeof(HoardWards), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Suitable Weapons", typeof(Treasurer.Cards.SuitableWeapons), sprites["card_default_treasurer"], decks["treasurer"]),
                 //new ExternalCard(namePrefix + "Layered Shield", typeof(LayeredShield), sprites["card_default_treasurer"], decks["treasurer"]),
                 new ExternalCard(namePrefix + "Shield Charge", typeof(ShieldCharge), sprites["card_default_treasurer"], decks["treasurer"]),
