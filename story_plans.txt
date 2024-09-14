@@ -186,12 +186,12 @@ In Ratzo fight, instead of offering duel, give both ships a vow of chivalry (the
 
 ----- RUBY PRE MEMORY 1 -----
 Cobalt> That is quite the expression you have.
-Ruby (smug/smirking)> Hello. I'm contracting your services. Name your price.
+Ruby (smug/smirking)> Why thank you. So. I'm contracting your services. Name your price.
 Cobalt> That is not how this works.
-Ruby> Alright, I'll name it then, my hoard is vast. Whatever your price is, I can afford it.
+Ruby> Alright, I'll name it then. My hoard is vast, you know. Whatever your price is, I can afford it.
 Cobalt> ... I have no interest in gold.
 Ruby (surprised)> ...
-Ruby> are you sure?
+Ruby> Are you sure?
 Cobalt> Quite.
 
 
