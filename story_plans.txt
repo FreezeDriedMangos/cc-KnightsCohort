@@ -49,16 +49,10 @@ Sir Ratzo> Aha, very well then. Duel accepted!
 
 
 ----- Ratzo Memory 3 -----
-They've done some reconnisance (Ratzo has a clever streak in him under all the thickheaddedness), maybe by talking to the walrus
-and tracked the pirates that they fought before (if anyone knows what's happened to her, it's them)
-finds out they're going to the cobalt
 
-// Ratzo> Hail, good sir! We are about a quest of the utmost importance.
-// Ratzo> The life of a brave and good knight rests on our success, and now, rests on you.
-
-Sir Ratzo> Hail, good sir!
-Brimford> Huh, here I thought we were due for a sun shower.
-Sir Ratzo> Nay, simply a greeting. My noble companion and mineself are errant searching for the last of our cohort. Have you heard tell of her wherabouts?
+Sir Ratzo> Aha, herin lies my contact.
+Sir Ratzo> Well met, good sir! We are about a quest of the utmost importance.
+Sir Ratzo> The life of a brave and good knight rests on our success, and now, rests on you. Have you heard tell of the last of our cohort?
 Brimford> I... uh... couldja repeat that?
 Ruby> We're looking for someone named Emily. About this tall, carries a giant flag around? Shiny armor?
 Brimford> Ah one o' them knight types. I may have...
