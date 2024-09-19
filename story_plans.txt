@@ -85,15 +85,24 @@ Core explosion flash sweeps over the scene
 ----- Emily Memory 1 -----
 34 Days Before
 
-Emily (sad): I just-
-Emily (sad): I don't know if I'm cut out for knighthood, I...
-Halla (eyes closed, gently serious): Emily.
-Halla: Do you know why I gave you the banner?
+Sword clangs>
+Sir Ratzo> Aha! A good bout, Dame Emily! I see your improvement, you may get me yet!
+Emily (sad)> Good match Ratzo. You fought well.
+Halla> Sir Ratzo is right, you are improving. Well done.
+Emily> Grandmaster Halla!
+Halla> You look like you have something to say, child. Say it.
+Emily> I just-
+Emily (sad)> I lost again, and it wasn't even close. I don't know if I'm cut out for knighthood, I...
+Halla (eyes closed, gently serious)> Emily.
+Halla> Do you know why I gave you the banner?
 BLACK
 Young Emily, looking up with expectation and hope and wonder: ...
 BLACK
-Emily: No, I don't understand, I don't have skill with a sword, I don't have the manners of a proper knight, why am I here?
-Halla: I gave it to you because the bannerholder is a leader. I gave it to you because of who you are, Emily. Not because of anything so silly as skill with a sword. No, enough training will make anyone a master. Emily, you have great courage and great heart. Be proud of that.
+Emily> No, I don't understand, I don't have skill with a sword, I don't have the diction of a proper knight, why am I here?
+Halla> Emily... I gave you the banner not because of anything so silly as skill with a sword. 
+Halla> No, enough training will make anyone a master.
+Halla> You have great courage and great heart. Be proud of that, and keep trying. 
+Halla> You carry the banner not to prove your worth, but because you already earned it simply by being who you are.
 
 
 ----- Emily Memory 2 -----
