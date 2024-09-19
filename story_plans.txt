@@ -8,17 +8,44 @@ Halla, as a senior knight, was sent to supervise them and guide them
 they have some adventures as they make their way over to the lawless sector
 
 ----- RATZO MEMORY 1 ------
-Ratzo recieving the quest from Halla "Ratzo, today's your lucky day"
-"it is?"
-"quest time! and you're bringing Halla and Emily with you"
+Halla> Ah, just the knight I was hoping to see. It's your lucky day, good Sir Ratzo!
+Ratzo> Tis?
+Halla> Can you even use that word like that...?
+Halla> Nevermind that, I've come to tell you that we've found Excalibur. You know what that means!
+Ratzo, giant hamster watery eyes> Quest time?
+Halla> Quest time.
+Sir Ratzo> And who else shall ye name to be part of this merry band?
+Halla> Sers Ruby and Emily.
+Sir Ratzo> ... ah.
 
 
 ----- RATZO MEMORY 2 ------
-eventually they run into a pirate, who immediately attempts to mug them. 
-Halla> Ratzo, don't-
-Ratzo> A duel??? We accept!!
-Halla exasperated> Of course.
-They lose the fight, and Emily's comms go to static. Ruby is horrified, Ratzo wishes her well on her new "quest"
+
+
+Pirate 2> Look, I *told* you. This is a shortcut!
+Pirate 1> Yeah, through contested space. While carrying cargo worth more than anything you'll ever touch in your life again.
+Pirate 2> We were just on our way to raid that experimental station anyway, what's one more sector, hey?
+
+Enter the Cohort
+
+Pirate 2> Hey look! A mark! I knew this shortcut would pay off!
+Pirate 1> That's not even why you picked this course.
+Pirate 2> Whatever. HEY YOU!
+Sir Ratzo> Hail! And good tidings to you!
+Pirate 2> Hail? In space? I thought that was like... just a weather thing.
+Ruby> He means hello.
+Pirate 2> Well it should be goodbye he should be saying! Give us whatever you've got on you and we'll let you live!
+Pirate 1, hand over face> ...
+Pirate 1> Alright, guess we're doing this. 
+Emily> Guys I don't know if we should-
+Ruby, smug> Don't worry about it Emily, we can take them.
+Sir Ratzo> Ah, kind friends, a duel with pirates shall not be an honorable one. I should warn you against your current course.
+Pirate 1> It's worked so far. 
+Pirate 2> Besides, a bunch of stuffy knights? Honor is worthless, it doesn't protect anyone. Why live honorably when you'll die one day anyway?
+Ruby> HAVE AT YOU!!!
+Sir Ratzo> Aha, very well then. Duel accepted!
+
+
 
 
 ----- Ratzo Memory 3 -----
@@ -26,14 +53,39 @@ They've done some reconnisance (Ratzo has a clever streak in him under all the t
 and tracked the pirates that they fought before (if anyone knows what's happened to her, it's them)
 finds out they're going to the cobalt
 
+// Ratzo> Hail, good sir! We are about a quest of the utmost importance.
+// Ratzo> The life of a brave and good knight rests on our success, and now, rests on you.
+
+Sir Ratzo> Hail, good sir!
+Brimford> Huh, here I thought we were due for a sun shower.
+Sir Ratzo> Nay, simply a greeting. My noble companion and mineself are errant searching for the last of our cohort. Have you heard tell of her wherabouts?
+Brimford> I... uh... couldja repeat that?
+Ruby> We're looking for someone named Emily. About this tall, carries a giant flag around? Shiny armor?
+Brimford> Ah one o' them knight types. I may have...
+Gold bag on table> *CLUNK*
+Ruby> Will this help you remember?
+Brimford> ...
+Brimford> I heard PIRATE 1 and PIRATE 2 talkin about ransoms and whatnot earlier.
+Sir Ratzo> Excellent! And where might their heading be?
+Brimford> On their shoulders I imagine.
+Brimford> But if y'all want to talk to 'em they were headin out to that big ol' unregistered craft. It's just the next sector over from here.
+Sir Ratzo> Wonderful. Many thanks for your time, and a good day to you sir.
+
 time skip
 
-they spot the ship
-huh, why's the ship glowing? ... wait, there's no way
-hey ruby? I think I found excalibur. 
-yeah, I can see that. that pirate ship is glowing
-what? that tiny light? no look over here. now THAT'S a glow
+they spot the pirate ship
+Ruby, excited> THAT'S IT! THAT'S THE SHIP!!
+Ruby> Is it... completely empty?
+Sir Ratzo> Ah, it has just launched its pods of life.
+Sir Ratzo> What is that radiance?
+Ruby> ... there's no way.
+Sir Ratzo> Lady Ruby? I believe I have found Excalibur.
+Ruby> Yeah, I can see that. The glowing escape pod.
+Sir Ratzo> That pinprick? Nay, cast your eyes towards THAT glow.
+Ruby> Woah, what is tha-
+
 Core explosion flash sweeps over the scene
+
 
 
 ----- Emily Memory 1 -----
@@ -65,18 +117,15 @@ Ruby (anguished / disbelief)> Emily?
 
 ----- EMILY MEMORY 3 -----
 Day 127
-Pirate 2> Ohoho! A knight! I heard your order pays out ransoms. I reckon you'll fetch at least a relic of some sort.
+Pirate 2> Ohoho! A hostage! I heard your knight order pays out ransoms. I reckon you'll fetch at least a relic of some sort.
 Pirate 1> But where do we keep her until the other knights arrive...? It's not like we have prisons.
-Emily> Well if I'm worth at least some magical relic, seems to me like you should keep me in your ship's vault. // storehouse?? idk
-Pirate 2> Don't-
-Pirate 1> You're totally right! What a great idea!
-Pirate 2> This is a terrible idea-
-Pirate 2> Wait. If we convince her we'll split the haul with her order, maybe...
+Emily> Well if I'm worth at least some magical relic, seems to me like you should keep me in your ship's hold. // storehouse?? idk
+Pirate 1> Don't-
+Pirate 2> You're totally right! What a great idea!
+Pirate 1> This is a terrible idea-
 
-// Something about bringing her to the Cobalt, maybe having her wield excalibur to help them in some heist. they can't pick it up anyway
+cut to black
 
-Day 134
-Pirate 2> If you're just gonna keep trying mutiny, you can wait in here until we're done with the Cobalt.
 Emily> Ouhf!
 Vault door> *slam!*
 Emily, just eyes in darkness> I can't believe that worked. 
@@ -87,9 +136,15 @@ Emily's hands with cut ropes hanging off of them> If this sword is even half of 
 Valut door>
 *no dialouge box for a second*
 Vault door, split in half>
+Emily, smug> Oh yes.
 Emily, fierce> Have at you!!
-Pirate 1> You! How'd you get out?
-Pirate 2> Ugh. The giant glowing sword, maybe?
+Pirate 2> You! How'd you get out?
+Pirate 1> Ugh. The giant glowing sword, maybe?
+
+cut to black
+new background: emily in escape pod
+
+Emily> Well that didn't go exactly as expected, but at least I've got the sword.
 Emily, scared> Wait, that light, that's not from the sword, what is-
 Core explosion flash sweeps over the scene
 
@@ -121,15 +176,15 @@ Ruby> What are you talking about Ratzo?! She's dead and it's my fault. I've kill
 Ratzo> *slap*
 Ruby> HEY!!
 Ratzo> You're not listening to me. Her transponder was still communicating.
-Ratzo> We recieved static yes, but that means her command module was intact.
+Ratzo> We recieved static yes, but the stregth of the static means her command module was intact.
 Ruby> No... It can't be... could it?
-Ratzo> It can, and it is. And we will find her.
+Ratzo> It can, and it is. We WILL find her.
 
 
 ----- Ruby Memory 3 -----
 248 Days Before
 
-// TODO: needs something before this line, maybe Ruby coming to Halla 
+// TODO: needs something before this line, something about Ruby coming to Halla 
 Ruby: 
 Halla: I can't tell you anything you don't already know
 Halla: But I can tell you something you don't want to acknowledge
@@ -141,9 +196,9 @@ Ghost knight 5: And you've had it.
 Halla: Every time.
 
 
-knight 1: secretary bird
-knight 2: little starling constantly flying to stay in frame (frame 1 at top of arc, wings down, frame 2 drop one pixel, wings half extend, frame 3 drop one pixel, wings full spread, frame 4 up one pixel, wings mostly closed)
-knight 3: honey badger in a space suit (like sanghili space suits from Reach) with a plume on the helmet and a rifle strapped to his back
+coraline  knight 1: secretary bird
+maizie    knight 2: little starling constantly flying to stay in frame (frame 1 at top of arc, wings down, frame 2 drop one pixel, wings half extend, frame 3 drop one pixel, wings full spread, frame 4 up one pixel, wings mostly closed)
+gwennison knight 3: honey badger in a space suit (like sanghili space suits from Reach) with a plume on the helmet and a rifle strapped to his back
 knight 4: scarred and serious red squirrel (like jester)
 knight 5: (Rithaniel's idea): A very prim and respectful black bear who is honestly a bit too large for his armor (needs a big moustache)
 additional: hyena
@@ -153,9 +208,9 @@ additional: hyena
 ----- First Ruby/Emily run intro -----
 Have Ruby call Emily by the wrong name - the name of a knight that's now long dead (and appears in the list that Ruby gets flashbacks of)
 Ruby: Jonna? What are you doing here?
-Emily (squint): ... I think I'm Emily actually?
+Emily (squint): ... I think I'm Emily, actually?
 Ruby: Oh. Are you sure?
-Emily: ...
+Emily (squint): ...
 Emily: Not in the slightest.
 
 
